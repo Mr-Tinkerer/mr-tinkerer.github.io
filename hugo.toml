@@ -1,7 +1,7 @@
 # baseURL = 'https://example.org/'
 locale = 'en-us'
 title = "Mr.Tinkerer's Blogs"
-languageCode = "en-us"
+locale = "en-us"
 theme = 'archie'
 
 [params]
