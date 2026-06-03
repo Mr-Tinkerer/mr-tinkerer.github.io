@@ -1,3 +1,36 @@
-baseURL = 'https://example.org/'
+# baseURL = 'https://example.org/'
 locale = 'en-us'
-title = 'My New Hugo Project'
+title = "Mr.Tinkerer's Blogs"
+languageCode = "en-us"
+theme = 'archie'
+
+[params]
+mode = "toggle"
+useCDN = false
+subtitle = "Mr.Tinkerer's Blog site for documenting his progress with tinkering with tech."
+description = "Welcome to my blog site, where I document my progress tinkering with tech projects."
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[[ menu.main ]]
+  name="Blogs"
+  url = "/posts/"
+  weight = 1
+
+[[ menu.main ]]
+  name="Search"
+  url = "/search/"
+  weight = 2
+
+[[ menu.main ]]
+  name="About"
+  url = "/about/"
+  weight = 3
+
+[[ menu.main ]]
+  name="RSS"
+  url = "/index.xml"
+  weight = 4
