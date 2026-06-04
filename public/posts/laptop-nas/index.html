@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Turning the Laptop into a NAS - Mr.Tinkerer&#39;s Blogs</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="I will be turning an old laptop into a NAS that fits my basic needs." />
+	<meta property="og:image" content="https://mr-tinkerer.github.io/"/>
+	<meta property="og:url" content="https://mr-tinkerer.github.io/posts/laptop-nas/">
+	<meta property="og:site_name" content="Mr.Tinkerer&#39;s Blogs">
+	<meta property="og:title" content="Turning the Laptop into a NAS">
+	<meta property="og:description" content="I will be turning an old laptop into a NAS that fits my basic needs.">
+	<meta property="og:locale" content="en_us">
+	<meta property="og:type" content="article">
+		<meta property="article:section" content="posts">
+		<meta property="article:published_time" content="2026-05-18T00:00:00+00:00">
+		<meta property="article:modified_time" content="2026-05-18T00:00:00+00:00">
+		<meta property="article:tag" content="OpenMediaVault">
+		<meta property="article:tag" content="Laptop">
+		<meta property="article:tag" content="Server">
+		<meta property="article:tag" content="Fixing">
+		<meta property="article:tag" content="Hardware">
+		<meta property="article:tag" content="Bash Script">
+
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="Turning the Laptop into a NAS">
+	<meta name="twitter:description" content="I will be turning an old laptop into a NAS that fits my basic needs.">
+
+        <link href="https://mr-tinkerer.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://mr-tinkerer.github.io/css/main.475e92bd33b8431a5ff779310e6b247c1b8ee0f01e4acf38c4c8f786fc707e0f.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://mr-tinkerer.github.io/css/dark.4529c04ce20ceac5a42e37a63e092c89354fbd00e6209bd2995100d61b71e8df.css"  disabled />
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://mr-tinkerer.github.io/">Mr.Tinkerer&#39;s Blogs</a>
+	</div>
+	<nav>
+		
+		<a href="/posts/">Blogs</a>
+		
+		<a href="/search/">Search</a>
+		
+		<a href="/about/">About</a>
+		
+		<a href="/index.xml">RSS</a>
+		
+		<button id="dark-mode-toggle" class="nav-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" type="button"><svg class="feather" viewBox="0 0 24 24" fill="none" stroke="#232333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg></button>
+		<script src="https://mr-tinkerer.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+  <article>
+    <div class="post-container">
+      
+      <div class="post-content">
+        <div class="title">
+          <h1 class="title">Turning the Laptop into a NAS</h1>
+          <div class="meta">Posted on May 18, 2026</div>
+        </div>
+        
+        <section class="body">
+          <h2 id="the-nas-plan">The NAS Plan</h2>
+<p>So recently, I have successfully <a href="/posts/old-laptop-into-proxmox-server">turned an old laptop into a Proxmox server</a>.  However, I have only got the OS installed on the laptop. No VMs, and no LXCs containers on there. So this blog will be me changing that by stetting up a NAS (Network Attached Storage).</p>
+<p>Now there are many options for me to use for the NAS software. I could go with a NAS OS that has all of the tools setup like <a href="https://www.truenas.com/">TrueNAS</a>. Or I could install a Linux Distro and manually install &amp; setup the tools. I have decided to go with <a href="https://www.openmediavault.org/">OpenMediaVault</a> (OMV). The reason why is that I didn&rsquo;t want to manually create the NAS from a linux distro (yet). However, going with something like TrueNAS wouldn&rsquo;t be possible, as their minimum requirements would take up most of the resources of the laptop.</p>
+<p><img src="Pasted%20image%2020260512140559.png" alt="">
+<em>The minimum requirements for TrueNAS Scale.<sup>[1]</sup></em></p>
+<h2 id="installing-openmediavault">Installing OpenMediaVault</h2>
+<p>So I have installed the ISO and uploaded it to Proxmox. I then created a New VM with 2 CPU cores, 4GB of RAM, the ethernet NIC that&rsquo;s connected to the switch, a disk with 10GB of storage, and another disk with 500GB of storage. You might be wondering why I put two disk on the VM. The reason why is that most NAS software requires a separate disk that&rsquo;s dedicated for the NAS OS. That disk cant be used to host the NAS shares. The other 500GB disk will be used for storing all of the NAS shares.</p>
+<p><img src="OMV%20Disk%20Layout.svg" alt="">
+<em>A diagram of what the VM&rsquo;s storage looks like.</em></p>
+<p>After that, I booted up the VM, and got into the OMV installer. The first screen was to select what language to set the system to. Now it would be stupid to set the language to something you don&rsquo;t know anything about. Especially if that language&rsquo;s character set is completely different then a language you know.</p>
+<p><img src="Pasted%20image%2020260512232114.png" alt="">
+<em>OpenMediaVault&rsquo;s installer in Russian.</em></p>
+<p><strong>I accidentally set the installer to Russian</strong>. Now the smart thing here would be to reboot the VM to start all over, especially since the VM was only up for a minute. However for some reason, I&rsquo;ve decided to continue on installing OMV in Russian.  So I&rsquo;ve spent the new few minute going through the menu&rsquo;s without knowing what they are talking about. However, that doesn&rsquo;t mean that they weren&rsquo;t any messages that I had no clue about. Some of the words weren&rsquo;t fully translated to Russian, allowing me to have a clue of what&rsquo;s going on.</p>
+<p><img src="Pasted%20image%2020260512232538.png" alt="">
+<em>OpenMediaVault attempting to get a DHCP in Russian. Notice how DHCP isn&rsquo;t translated.</em></p>
+<p>For instance, I was able to tell that OMV tried to setup DHCP because DHCP isn&rsquo;t translated. Not only that, but in the following screen, I was able to deduce that it was trying to ask me what to do with the failed DHCP attempt because hostname wasn&rsquo;t translated.</p>
+<p><img src="Pasted%20image%2020260512233011.png" alt="">
+<em>OpenMediaVault asking the user what to do with the failed DHCP attempt.</em></p>
+<p>From that screen, I was able to successfully guessed the manual IP setup option. From there, I gave it a static IP, a subnet mask of <code>/24</code>, and no DNS and gateway. The reason why is that there is no router connected to the switch. Just the Proxmox Laptop and my personal device. So OMV wouldn&rsquo;t have any way of accessing the internet. Now if you read how <a href="/posts/">I&rsquo;ve setup the Proxmox Laptop</a>, then you would have known that there is a way for me to connect the VM to the internet via the Wi-Fi dongle. However, I&rsquo;ve decided against that, as I just want this NAS to only be accessible by me.</p>
+<p>After that, I was able to finagle my way through the Russian menus, and setup OMV.  I finally got to the part where OMV installer installs OMV. &ldquo;Ah finally, the installer. Surely nothing will go wrong at this point,&rdquo; I thought to myself.</p>
+<p><img src="2026-05-12-23h39m59s445.png" alt="">
+<em>The Proxmox Laptop with a kernel panic.</em></p>
+<p>Yeah so installing OMV somehow caused Proxmox to have a kernel panic and crashed. After forcing the laptop to reboot itself, Proxmox came back alive. I&rsquo;ve booted up the OMV VM to be greeted with the installer again. So I&rsquo;ve reinstalled OMV with the language set to one that I actually know.</p>
+<h2 id="the-gaslighting-browsers">The Gaslighting Browsers</h2>
+<p>After installing OMV, I was greeting to the login screen, as well as the greeter. The greeter has the OMV&rsquo;s IP address, and the default user login info.</p>
+<p><img src="Pasted%20image%2020260512234644.png" alt="">
+<em>OMV&rsquo;s greeter and login screen.</em></p>
+<p>However, I was confused on why the IP address in the greeter was different then what I assign to it. But I ignored it as I typed in <code>https://192.168.100.3</code> into LibreWolf (Firefox clone that focus on privacy<sup>[2]</sup>). But LibreWolf said that there&rsquo;s no website on that IP address.</p>
+<p><img src="Pasted%20image%2020260512235228.png" alt="">
+<em>LibreWolf failed to connect to OMV.</em></p>
+<p>&ldquo;Ah, OMV must not have a self signed certificate to use HTTPS. Let me just removed the s from the URL,&rdquo; I thought to myself. Too bad that didn&rsquo;t work, as I got the same error message. I&rsquo;ve tried HTTP and HTTPS with the <code>192.168.178.15</code> and the <code>192.168.122.1</code> IPs, even tho they&rsquo;re not on the same subnet as my personal device. And to no one surpised, those IPs addresses didn&rsquo;t work. I thought that LibreWolf might be breaking the website, so I tried again on Chromium (Open source engine that powers Google Chrome<sup>[3]</sup>).</p>
+<p><img src="Pasted%20image%2020260513000024.png" alt="">
+<em>Chromium was unable to access OpenMediaVault, regardless of HTTP or HTTPS.</em></p>
+<p>At this point, I thought that maybe I wasn&rsquo;t able to access the OMV&rsquo;s VM. However, that was quickly proven wrong as I was able to successfully ping the OMV&rsquo;s VM. I thought that maybe I messed up the install of OMV. So I reinstalled it with a different IP this time (<code>192.168.100.4</code>). That didn&rsquo;t fix anything. After a lot of headbanging, I was able to finally able to fix the problem. Turns out, both LibreWolf and Chromium were liars. You see, whenever I was trying to use HTTP, the browsers were automatically changing it to HTTPS, <strong>without letting me know</strong>. I had to enter in the HTTP URL multiple times for them to let me use HTTP.  But after that, I was able to access the login screen of OMV. After logging in with the default login of <code>admin</code> and <code>openmediavault</code><sup>[4]</sup>, I was able to sucessfuly land in the homepage.</p>
+<p><img src="Pasted%20image%2020260513001317.png" alt="">
+<em>The OpenMediaVault&rsquo;s login page.</em></p>
+<p><img src="Pasted%20image%2020260514191123.png" alt="">
+<em>OpenMediaVaults home page.</em></p>
+<h2 id="setup-the-drive">Setup the Drive</h2>
+<p>Now that OMV is installed, it&rsquo;s time to make the 2nd disk a NAS storage drive. To do that, I would need to put a file system on the drive. To do that, I can navigate to <code>Storage</code> -&gt; <code>File Systems</code>.  From there, I can click the + button to create a new file system. From doing that, I can pick a file system from the drop-down list.
+<img src="Pasted%20image%2020260514191815.png" alt="">
+<em>The file systems&rsquo; menu.</em></p>
+<p><img src="Pasted%20image%2020260514192030.png" alt="">
+<em>A list of supported file systems in OpenMediaVault.</em></p>
+<p>Now I am famillar with EXT4 and BTRFS, since I have used both of them in my experience using Linux as my daily driver. I have also used ZFS before as a NAS file system, but OMV doesn&rsquo;t support that<sup>[5]</sup>. I have heard of XFS before, but I don&rsquo;t fully understand it, and the pros/cons of it. The same can&rsquo;t be said with JFS and F2FS, as I have never heard of them until now.</p>
+<p>As for the file system I&rsquo;ve went with, it was BTRFS. The reason why is that it has support for snapshots, self-healing, data compression, and more<sup>[6]</sup>. EXT4 doesn&rsquo;t have any of those features, which isn&rsquo;t a bad thing. While it sucks that EXT4 isn&rsquo;t as feature complete as BTRFS, it also doesn&rsquo;t have to worry about those features over complimenting things. So after a quick formatting the drive with BTRFS in single mode, it has been mounted into OMV while not being complicated.</p>
+<p><img src="Pasted%20image%2020260514193139.png" alt="">
+<em>The 2nd drive formatted and mounted into OpenMediaVault.</em></p>
+<h2 id="sharing-is-caring">Sharing is Caring</h2>
+<p>But in order for me to use that drive, I would need to make a shared folder. So I navigated to <code>Storage</code> -&gt; <code>Shared Folders</code>, and click on the create new button. From there, I created a new shared called &ldquo;NAS&rdquo;, put it in the root of the newly crated file system, and gave it the predefined permission set of <code>Admin: read/write, Users: read/write, others: no access</code>.</p>
+<p><img src="Pasted%20image%2020260515154027.png" alt="">
+<em>The menu of shared folder in OpenMediaVault.</em></p>
+<p><img src="Pasted%20image%2020260515154330.png" alt="">
+<em>The shared folder creation screen with the settings applied to it.</em></p>
+<p>Now, I would need to attach that shared folder to a service for hosting folders. In OMV, there are two main ways for me to share a folder: NFS (Network File Sharing<sup>[7]</sup>) and SMB(Server Message Block<sup>[8]</sup>)/CIFS(Common Internet File System<sup>[9]</sup>). Both of these protocols will allow file sharing. The difference between them is how they operate under the hood.</p>
+<p>SMB was created by IBM in the 1980s for the DOS systems<sup>[10]</sup>. When Microsoft made MS-DOS, SMB became a core part of Windows OS<sup>[10]</sup>. Because of that, SMB is has been made to become the native to Windows<sup>[10]</sup>. Meanwhile, NFS was created by Sun Microsystems in 1984 for Unix-based systems<sup>[10]</sup>. This makes the file permission system that NFS uses identical to Unix-based systems<sup>[10]</sup>. There are other difference between the two, but the file permission system is the biggest one to understand, for now. Also, this doesn&rsquo;t mean that SMB can&rsquo;t be used on Unix-based systems, and NFS can&rsquo;t be used in Windows, as there has been tools made to allow that.</p>
+<p>With that in mind, I am going to share the folder with NFS, as I recently migrated my personal device to Linux <del>(I use arch, btw)</del>. Not only that, but I&rsquo;ve never used the NFS share before. I did have Linux machines that mounted a shared folder, but it was with SMB. The reason why was that I didn&rsquo;t understand NFS at the time, and I already had the SMB setup for my Windows machine, so I reused that. Anyway, enough yapping. In order for me to use NFS, I had to install the <code>nfs-utils</code> package, and enable the NFS client service<sup>[11]</sup>. Then I went to the <code>Services</code> -&gt; <code>NFS</code> -&gt; <code>Shares</code> section of OMV. From there, I created a new NFS share. I assigned it the NAS folder, set the allow network IP, and gave it the <code>Read/Write</code> permission.</p>
+<p><img src="Pasted%20image%2020260517204620.png" alt="">
+<em>The NFS section in OpenMediaVault.</em></p>
+<p><img src="Pasted%20image%2020260517225557.png" alt="">
+<em>The NFS share setting.</em></p>
+<p>With the NFS share made, I just have to mount it. I created the <code>/mnt/OMV</code> directory to use for mounting the share. And with the <code>mount -t nfs 192.168.100.4:/ /mnt/OMV</code>, I was able to mount it.  Just remember to enable the NFS share beforehand, or else you&rsquo;ll waste 20 minutes trying to figure out why you can&rsquo;t mount it.</p>
+<p><img src="Pasted%20image%2020260517225715.png" alt="">
+<em>NFS being disabled by default.</em></p>
+<p><img src="Pasted%20image%2020260517225827.png" alt="">
+<em>The NAS folder being accessible from my local machine.</em></p>
+<h2 id="its-always-permissions-issues">It&rsquo;s Always Permissions Issues.</h2>
+<p>Now wait a minute, we&rsquo;re not done yet with the NAS. Even though I can access the NAS from my machine, I can&rsquo;t do anything with it, as I don&rsquo;t have permission to access it.</p>
+<p><img src="Pasted%20image%2020260517233142.png" alt="">
+<em>Unable to enter in the NAS shared folder, even as the root user.</em></p>
+<p>This is most likely because I haven&rsquo;t setup the correct permission for the share.  So the first thing I need to do is to create a new user for my device to use. So I&rsquo;ve created an owner user with a &ldquo;temporary&rdquo; password for testing. I also add it to all of the groups that I think it would need to work.</p>
+<p>Then I went to the permission of the NAS shared folder. From there, I gave the user read &amp; write access. Did this allow me to access the NAS share? Nope, as I still get the same error.</p>
+<p><img src="Pasted%20image%2020260518003635.png" alt="">
+<em>The permission button for the NAS share.</em></p>
+<p><img src="Pasted%20image%2020260518003643.png" alt="">
+<em>Giving the Owner user read/write access.</em></p>
+<p><img src="Pasted%20image%2020260518003723.png" alt="">
+<em>Still unable to access the NAS folder from my machine.</em></p>
+<p>I was confused on what to do next, as I was sure that it was a permission error. So I went back to the NAS share folder menu, and that&rsquo;s when I notice the ACL button. &ldquo;That whats must be the issue,&rdquo; I thought to myself. And sure enough, when I click the button, I see that the file owner is set to root.</p>
+<p><img src="Pasted%20image%2020260518004055.png" alt="">
+<em>The access control list button for shared folders.</em></p>
+<p><img src="Pasted%20image%2020260518004104.png" alt="">
+<em>the NAS share folder&rsquo;s current access control list.</em></p>
+<p>After I switch it to the owner user, I was now able to access the NAS folder I was even able to create a test file in it.  I then unmount the NFS share. The reason why is that I wanted to remount it directory to the NAS folder, instead of mounting the entire <code>/export</code> directory. Doing it that way could cause permission issues in the future, due to how OMV setup the <code>/export</code> share options<sup>[12]</sup>.</p>
+<p><img src="Pasted%20image%2020260518004114.png" alt="">
+<em>Obtaining permission to access the NAS folder, and creating a file in it.</em></p>
+<p><img src="Pasted%20image%2020260518005014.png" alt="">
+<em>Unmounting the share, and remounting with a direct path to the correct share.</em></p>
+<h2 id="auto-mount-that-share">Auto-mount that share!</h2>
+<p>Now from here, I could add in the share into the <code>/etc/fstab</code>, to make the it auto mount it, and call it a day. However, that wouldn&rsquo;t be optimal for me. The reason why is that my personal device is a laptop. So if I make it auto mount it from the kernel, then I would have to wait for it to mount it every time I boot up the laptop. Now Normally, this wouldn&rsquo;t be an issue, until I am waiting for my laptop to boot up because it&rsquo;s trying to connect to the NAS back home when I am in a <strong>public coffee shop</strong>.</p>
+<p>So from my quick googling, I found a tool that will fix this issue for me. It is called autofs. What this tool does is that it will automatically mount the shares whenever it is being requested by an service, and auto unmount it when the share been&rsquo;s inactive<sup>[13]</sup>.  So I installed it to my laptop. Then, I went to set it up. Here&rsquo;s the thing, on Debian, Ubuntu, Fedora, and RHEL based distros, the config file for autofs is located at <code>/etc/auto.master</code><sup>[14]</sup>. However, for Arch Linux,  it is instead located at <code>/etc/autofs/autofs.master</code><sup>[15]</sup>. So just keep in mind that only Arch based distros have the autofs&rsquo;s files dumped into <code>/etc</code> instead of being a directory inside it.</p>
+<p>But regardless of distro you&rsquo;re using, the <code>autofs.master</code> behaves the same. The file will be modified to append the following line: <code>/mnt /etc/autofs/auto.nfs --timeout=60</code>. What this line does is that it tells autofs where to automatically mount the shares (<code>/mnt</code>), what shares to map to the parent directory (<code>/etc/autofs/auto.nfs</code>), and to automatically unmap the shares after 60 seconds inactivity (<code>--timeout=60</code>).</p>
+<p>Now the map file (<code>/etc/autofs/auto.nfs</code>) doesn&rsquo;t exist, so it needs to be manually created.  Then from here, you would add in the NFS shares you would want to be automatically mounted. <code>OMV -rw,soft,rsize=8192,wsize=8192 192.168.100.4:/export/NAS</code>. The first part would be the name of the directory that the share will be mounted <strong>locally</strong> (<code>OMV</code>). The second part is the NFS mounting options (<code>-rw,soft,rsize=8192,wsize=8192</code>). And the last part is the location of the NFS share (<code>OMV -rw,soft,rsize=8192,wsize=8192 192.168.100.4:/export/NAS</code>).</p>
+<p>From here, I would need to restart the autofs service for the new changes to be applied to it. Then I checked if the share is mounted. It isn&rsquo;t mounted, which is expected. But to see if autofs would mount it, I ran the <code>ls</code> command in the directory. And <code>ls</code> returned the file stored in the NAS, meaning that autofs automatically mounted it.  A quick verification proves that it is mounted.  And after waiting for a minute, the NFS share has been automatically unmounted.</p>
+<p><img src="Pasted%20image%2020260518013133.png" alt="">
+<em>The NFS share being automatically mounted and unmounted.</em></p>
+<p>The problem that I didn&rsquo;t see is that I also had my Windows drive mounted in <code>/mnt/Windows</code>, causing it to be hidden by autofs. To fix this, I appended the following line to <code>auto.nfs</code>: <code>Windows -fstype=ntfs3,rw,uid=1000,gid=1000 :/dev/disk/by-uuid/A890A4F690A4CC5E</code>. But it&rsquo;s bothering me that there is a NTFS share in the <code>auto.nfs</code> file. Now I could have put that line in a seperate file (<code>auto.NTFS</code>), but then I wasn&rsquo;t sure if I could have one line in the <code>auto.master</code> file have more then one map file in it. So I renamed it to <code>auto.mnt</code>, updated that line, and append <code>--ghost</code> to that line so it would create the empty directories of them. After a quick restart of autofs, I was now able to see Windows in there.</p>
+<h2 id="backup-automation">Backup Automation</h2>
+<p>Now that the NAS is setup properly, I should actually use it. Right now, my only plans for this NAS is to backup my personal laptop. To be more specific, I am just going to backup my home directory, since that&rsquo;s where all of the files I care about live at. To do that, I will be using using a tool called Borg Backup. It is a free and open source tool that will copy the data given to it, compress the data, and encrypt the data<sup>[16]</sup>. Not only that, but any future backups will automatically remove any repeating data, saving tons of space<sup>[16]</sup>.  However, Borg does not do automatic backups, but I can take care of that later. One thing that&rsquo;s a downside about Borg is that it only supports UNIX devices, meaning that Windows is the only OS that it doesn&rsquo;t support<sup>[16]</sup>.</p>
+<p>The first thing I would need to do with Borg is to create a repo for the backups to live at. So I navigated to the NAS mount, and ran <code>borg init --encryption=repokey borg</code>. With the repo created, I can now start backing up data with it. So I used the following command to backup my home directory, excluding the cache, games, and the trashcan. I also added <code>notify-send</code> so that I would be notify when it&rsquo;s done, as it&rsquo;s going to take a while. And took a while it did, as I got the notification after 3 hours of waiting.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>borg create <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -e <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.cache&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -e <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.local/share/Steam/steamapps&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -e <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.steam&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -e <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/Games&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -e <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.local/share/Trash/&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;/mnt/OMV/borg::</span><span style="color:#66d9ef">$(</span>date +%m-%d-%Y__%H-%M-%S<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    $HOME <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    --stats --progress <span style="color:#f92672">&amp;&amp;</span> notify-send <span style="color:#e6db74">&#34;The Borg backup is done.&#34;</span>
+</span></span></code></pre></div><p><img src="Pasted%20image%2020260518175915.png" alt="">
+<em>The borg backup stats.</em></p>
+<p>Now manually running the command would be lame, as I would have to remember to actually do that. That&rsquo;s why I&rsquo;m going to automate it. The first thing I would need to do to automate it is to have a script that it will run. So I wrote a bash script (without using AI) that will backup the home directory, and notify me as well.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the borg directory</span>
+</span></span><span style="display:flex;"><span>REPO<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/mnt/OMV/borg&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the name of the current archive</span>
+</span></span><span style="display:flex;"><span>ARCHIVE_NAME<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>date +%m-%d-%Y__%H-%M-%S<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#the maxinium amount of backups to keep before it start to delete the older ones.</span>
+</span></span><span style="display:flex;"><span>MAX_BACKUPS<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#stop if the borg repo doesn&#39;t exist</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> ! -e $REPO/data <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    notify-send <span style="color:#e6db74">&#34;Auto Borg Backup Error&#34;</span> <span style="color:#e6db74">&#34;the Borg repo path is invalid. Make it first before running this script&#34;</span>
+</span></span><span style="display:flex;"><span>    exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the file that&#39;s storing the borg secret</span>
+</span></span><span style="display:flex;"><span>SECRET_FILE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;./BORG_SECRET&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#check if the file exists</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -e $SECRET_FILE <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#check if the file is readable, and has content inside it</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -r $SECRET_FILE <span style="color:#f92672">]]</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">[[</span> -s $SECRET_FILE <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#get the password and set it to 400 for security</span>
+</span></span><span style="display:flex;"><span>        export BORG_PASSPHRASE<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>cat $SECRET_FILE<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>        chmod <span style="color:#ae81ff">400</span> $SECRET_FILE
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#notify the file error</span>
+</span></span><span style="display:flex;"><span>        notify-send <span style="color:#e6db74">&#34;Auto Borg Backup Error&#34;</span> <span style="color:#e6db74">&#34;The </span>$SECRET_FILE<span style="color:#e6db74"> needs to be readable, and have the password inside it.&#34;</span>
+</span></span><span style="display:flex;"><span>        exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#notify the missing file error</span>
+</span></span><span style="display:flex;"><span>    notify-send <span style="color:#e6db74">&#34;Auto Borg Backup Error&#34;</span> <span style="color:#e6db74">&#34;The </span>$SECRET_FILE<span style="color:#e6db74"> file needs to exist in order for the script to work.&#34;</span>
+</span></span><span style="display:flex;"><span>    exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#the borg file that will be used to store the stats of the backup </span>
+</span></span><span style="display:flex;"><span>BORG_FILE<span style="color:#f92672">=</span>borg_results.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#start the borg backup while ignoring the cache, games, and the trash directory.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#also redirect the output to a file for parsing. </span>
+</span></span><span style="display:flex;"><span>notify-send <span style="color:#e6db74">&#34;Starting Auto Borg Backup...&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>borg create <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -e <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.cache&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -e <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.local/share/Steam/steamapps&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -e <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.steam&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -e <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/Games&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -e <span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/.local/share/Trash/&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;</span>$REPO<span style="color:#e6db74">::</span>$ARCHIVE_NAME<span style="color:#e6db74">&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    $HOME <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    --stats 2&gt;&amp;1<span style="color:#f92672">)</span> &gt; $BORG_FILE
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the stats from the borg backup file and delete it</span>
+</span></span><span style="display:flex;"><span>DURATION<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>grep <span style="color:#e6db74">&#34;Duration&#34;</span> $BORG_FILE | awk -F <span style="color:#e6db74">&#39; &#39;</span> <span style="color:#e6db74">&#39;{print $2, $3}&#39;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>CURRENT_STORAGE<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>grep <span style="color:#e6db74">&#34;This archive&#34;</span> $BORG_FILE | awk -F <span style="color:#e6db74">&#39; &#39;</span> <span style="color:#e6db74">&#39;{print $7, $8}&#39;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>TOTAL_STORAGE<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>grep <span style="color:#e6db74">&#34;All archives&#34;</span> $BORG_FILE | awk -F <span style="color:#e6db74">&#39; &#39;</span> <span style="color:#e6db74">&#39;{print $7, $8}&#39;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>rm $BORG_FILE
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#notify that it&#39;s done with stats</span>
+</span></span><span style="display:flex;"><span>notify-send <span style="color:#e6db74">&#34;Auto Borg Backup Done in </span>$DURATION<span style="color:#e6db74">.&#34;</span> <span style="color:#e6db74">&#34;This borg backup has taken up </span>$CURRENT_STORAGE<span style="color:#e6db74"> out of </span>$TOTAL_STORAGE<span style="color:#e6db74">.&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#check if there is more backups then the maxinium</span>
+</span></span><span style="display:flex;"><span>BACKUPS<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>borg list $REPO | wc -l<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $BACKUPS -gt $MAX_BACKUPS <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#notify about the backups higher then the max</span>
+</span></span><span style="display:flex;"><span>    notify-send <span style="color:#e6db74">&#34;Auto Borg Backup Prune.&#34;</span> <span style="color:#e6db74">&#34;There is currently </span>$BACKUPS<span style="color:#e6db74"> out of </span>$MAX_BACKUPS<span style="color:#e6db74"> maxinium allowed. Going to delete the old one to make space.&#34;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#delete the older backups to make the backups under the max</span>
+</span></span><span style="display:flex;"><span>    borg prune --verbose --keep-last $MAX_BACKUPS $REPO
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#get the new size of the borg repo </span>
+</span></span><span style="display:flex;"><span>    SIZE<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>du -sh $REPO | awk -F <span style="color:#e6db74">&#39; &#39;</span> <span style="color:#e6db74">&#39;{print $1}&#39;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#notify that it&#39;s done, and say the new size.</span>
+</span></span><span style="display:flex;"><span>    notify-send <span style="color:#e6db74">&#34;Auto Borg Backup Prune Done.&#34;</span> <span style="color:#e6db74">&#34;Sucessfully prune the old backups. The repo is now </span>$SIZE<span style="color:#e6db74">.&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p><em><a href="https://gist.github.com/Mr-Tinkerer/e9748457eb8958dde768ad0ac3b25a54">The link to the Github Gist of this script.</a></em></p>
+<p>Now if you want to use this script, note that you would have to change the borg&rsquo;s repo path, place the borg&rsquo;s secret inside the <code>BORG_SECRET</code> file, set that file to be that you&rsquo;re the only one that can read it (<code>chown 1000:1000 BORG_SECRET &amp;&amp; chmod 400 BORG_SECRET</code>), and exclude/include any paths in the backup command. Now running that script should automatically create a new backup without any user input.</p>
+<p><img src="Pasted%20image%2020260518181500.png" alt="">
+<em>The script being executed for 46 seconds.</em></p>
+<p><img src="Pasted%20image%2020260518181514.png" alt="">
+<em>The notifications that the script sent.</em></p>
+<p>Now this script is great and all, but I am still running it manually. You can&rsquo;t trust a monkey like me to manually run the script. That&rsquo;s why I am instead going to use systemd&rsquo;s timers to run the script for me. The reason why I am using systemd&rsquo;s timer instead of crontab is that crontab won&rsquo;t trigger the script when the time passed while the machine was off, while systemd tiemrs can do that. To setup systemd&rsquo;s timers, I would first need to make a new service called  <code>~/.config/systemd/user/auto_backup.service</code>. This is to make the systemd service run in user level so that the notification can work. Just note that I put the script in my <code>Documents/scripts </code>directory, so you would need to change that if you want to use this service. You would also have to check if your environments variables for <code>DISPLAY</code> and <code>DBUS_SESSION_BUS_ADDRESS</code> are the same, since they&rsquo;re needed for the notifications to work<sup>[17]</sup>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[<span style="color:#a6e22e">Unit</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Description</span>=<span style="color:#a6e22e">Automatically</span> <span style="color:#a6e22e">backup</span> <span style="color:#a6e22e">the</span> <span style="color:#a6e22e">home</span> <span style="color:#a6e22e">directory</span> <span style="color:#a6e22e">via</span> <span style="color:#a6e22e">Borg</span>.
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">After</span>=<span style="color:#a6e22e">graphical-session</span>.<span style="color:#a6e22e">target</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">Service</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Type</span>=<span style="color:#a6e22e">oneshot</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">WorkingDirectory</span>=<span style="color:#960050;background-color:#1e0010">/</span><span style="color:#a6e22e">home</span><span style="color:#960050;background-color:#1e0010">/&lt;</span><span style="color:#a6e22e">YOUR_USERNAME</span><span style="color:#960050;background-color:#1e0010">&gt;/</span><span style="color:#a6e22e">Documents</span><span style="color:#960050;background-color:#1e0010">/</span><span style="color:#a6e22e">scripts</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">ExecStart</span>=<span style="color:#960050;background-color:#1e0010">/</span><span style="color:#a6e22e">bin</span><span style="color:#960050;background-color:#1e0010">/</span><span style="color:#a6e22e">bash</span> <span style="color:#a6e22e">borg_backup</span>.<span style="color:#a6e22e">sh</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Environment</span>=<span style="color:#e6db74">&#34;DISPLAY=:0&#34;</span> <span style="color:#e6db74">&#34;DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">Install</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">WantedBy</span>=<span style="color:#a6e22e">graphical-session</span>.<span style="color:#a6e22e">target</span><span style="color:#960050;background-color:#1e0010">⏎</span>
+</span></span></code></pre></div><p>But the service isn&rsquo;t enough to make it automatic. I would need systemd&rsquo;s timer as well. So in the same directory as where I made the <code>auto_backup.service</code>, I made the <code>auto_backup.timer</code>. This timer will run the service (which has the script) every 6th hour of the day, even if the machine was off at that time. Now obviously, you can adjust the times to fit your needs.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[<span style="color:#a6e22e">Unit</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Description</span>=<span style="color:#a6e22e">Auto</span> <span style="color:#a6e22e">backup</span> <span style="color:#a6e22e">the</span> <span style="color:#a6e22e">home</span> <span style="color:#a6e22e">directory</span> <span style="color:#a6e22e">via</span> <span style="color:#a6e22e">Borg</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">Timer</span>] 
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">OnCalendar</span>=<span style="color:#960050;background-color:#1e0010">*</span><span style="color:#a6e22e">-</span><span style="color:#960050;background-color:#1e0010">*</span><span style="color:#a6e22e">-</span><span style="color:#960050;background-color:#1e0010">*</span> <span style="color:#ae81ff">06</span><span style="color:#960050;background-color:#1e0010">:</span><span style="color:#ae81ff">00</span><span style="color:#960050;background-color:#1e0010">:</span><span style="color:#ae81ff">00</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">OnCalendar</span>=<span style="color:#960050;background-color:#1e0010">*</span><span style="color:#a6e22e">-</span><span style="color:#960050;background-color:#1e0010">*</span><span style="color:#a6e22e">-</span><span style="color:#960050;background-color:#1e0010">*</span> <span style="color:#ae81ff">18</span><span style="color:#960050;background-color:#1e0010">:</span><span style="color:#ae81ff">00</span><span style="color:#960050;background-color:#1e0010">:</span><span style="color:#ae81ff">00</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Persistent</span>=<span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">Install</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">WantedBy</span>=<span style="color:#a6e22e">timers</span>.<span style="color:#a6e22e">target</span>
+</span></span></code></pre></div><p>After that, systemd user&rsquo;s daemon will need to be reload, via <code>systemctl --user daemon-reload</code>, for it to see the new files. Finally, the timer would need to be enabled for it to be activated via <code>systemctl --user enable auto_backup.timer</code>. You can run <code>systemctl --user list-timers</code> to check when the next time the timer is going to be run, or you can run <code>systemctl --user start auto_backup.timer</code> to manually trigger the timer.</p>
+<h2 id="citations">Citations</h2>
+<blockquote>
+<p>[1] TrueNAS. “SCALE Hardware Guide.” <em>Truenas.com</em>, TrueNAS, 3 Sept. 2024, <a href="https://www.truenas.com/docs/scale/24.10/gettingstarted/scalehardwareguide/">www.truenas.com/docs/scale/24.10/gettingstarted/scalehardwareguide/</a>. Accessed 12 May 2026.
+[2] LibreWolf. “LibreWolf Browser.” <em>Librewolf.net</em>, 7 Mar. 2020, librewolf.net/#what-is-librewolf. Accessed 13 May 2026.
+[3] Google Inc. “The Chromium Projects.” <em>Chromium</em>, Google Inc, 8 Sept. 2008, <a href="https://www.chromium.org/chromium-projects/">www.chromium.org/chromium-projects/</a>. Accessed 13 May 2026.
+[4] OpenMediaVault. “FAQ — Openmediavault 7.X.y Documentation.” <em>Openmediavault.org</em>, 9 Nov. 2018, docs.openmediavault.org/en/stable/faq.html#what-are-the-default-credentials-for-the-ui. Accessed 14 May 2026.
+[5] OpenMediaVault. “Filesystems — Openmediavault 8.X.y Documentation.” <em>Openmediavault.org</em>, 9 Mar. 2025, docs.openmediavault.org/en/latest/administration/storage/filesystems.html#id1. Accessed 14 May 2026.
+[6] BTRFS. “Introduction — BTRFS Documentation.” <em>Readthedocs.io</em>, btrfs.readthedocs.io/en/latest/Introduction.html#introduction. Accessed 14 May 2026.
+[7] Wikipedia Contributors. “Network File System.” <em>Wikipedia</em>, Wikimedia Foundation, 22 Sept. 2019, en.wikipedia.org/wiki/Network_File_System. Accessed 17 May 2026.
+[8] Wikipedia Contributors. “Server Message Block.” <em>Wikipedia</em>, Wikimedia Foundation, 9 July 2019, en.wikipedia.org/wiki/Server_Message_Block.
+[9] Wikipedia Contributors. “CIFS.” <em>Server Message Block</em>, Wikimedia Foundation, 9 July 2019, en.wikipedia.org/wiki/Server_Message_Block.
+[10] AWS. “NFS vs SMB - Difference between File Access Storage Protocols - AWS.” <em>Amazon Web Services, Inc.</em>, Amazon, aws.amazon.com/compare/the-difference-between-nfs-smb/. Accessed 17 May 2026.
+[11] Arch Wiki Contributors. “NFS - ArchWiki.” <em>Wiki.archlinux.org</em>, Arch Linux, wiki.archlinux.org/title/NFS. Accessed 17 May 2026.
+[12] OpenMediaVault Docs. “NFSv4 Pseudo filesystem” <em>NFS — Openmediavault 8.X.y Documentation</em>, OpenMediaVault, 2018, docs.openmediavault.org/en/latest/administration/services/nfs.html#nfsv4-pseudo-filesystem. Accessed 17 May 2026.
+[13] The Linux Foundation. “Autofs - How It Works — the Linux Kernel Documentation.” <em>Kernel.org</em>, 2024, <a href="https://www.kernel.org/doc/html/latest/filesystems/autofs.html">www.kernel.org/doc/html/latest/filesystems/autofs.html</a>. Accessed 18 May 2026.
+[14] Josphat, Mutai. “How to Automatically Mount NFS File System with AutoFS [Guide].” <em>Computing for Geeks</em>, 16 Mar. 2026, computingforgeeks.com/how-to-automatically-mount-nfs-file-system-with-autofs/. Accessed 18 May 2026.
+[15] Arch Wiki Contributors. “Autofs - ArchWiki.” <em>Wiki.archlinux.org</em>, Arch Linux, wiki.archlinux.org/title/autofs. Accessed 18 May 2026.
+[16] Borg Maintainers. “BorgBackup – Deduplicating Archiver with Compression and Authenticated Encryption.” <em>Borgbackup.org</em>, 2024, <a href="https://www.borgbackup.org/">www.borgbackup.org/</a>. Accessed 18 May 2026.
+[17] Cirelli94. “Systemd Service Not Executing Notify-Send.” <em>Stack Overflow</em>, 2 Apr. 2018, stackoverflow.com/a/66879066. Accessed 18 May 2026.</p>
+</blockquote>
+
+        </section>
+        <div class="post-tags">
+          
+          
+          <nav class="nav tags">
+            <ul class="tags">
+              
+              <li><a href="/tags/openmediavault/">OpenMediaVault</a></li>
+              
+              <li><a href="/tags/laptop/">Laptop</a></li>
+              
+              <li><a href="/tags/server/">Server</a></li>
+              
+              <li><a href="/tags/fixing/">Fixing</a></li>
+              
+              <li><a href="/tags/hardware/">Hardware</a></li>
+              
+              <li><a href="/tags/bash-script/">Bash Script</a></li>
+              
+            </ul>
+          </nav>
+          
+          
+        </div>
+      </div>
+
+      
+      
+      <div class="toc">
+        <strong>Table of contents:</strong>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#the-nas-plan">The NAS Plan</a></li>
+    <li><a href="#installing-openmediavault">Installing OpenMediaVault</a></li>
+    <li><a href="#the-gaslighting-browsers">The Gaslighting Browsers</a></li>
+    <li><a href="#setup-the-drive">Setup the Drive</a></li>
+    <li><a href="#sharing-is-caring">Sharing is Caring</a></li>
+    <li><a href="#its-always-permissions-issues">It&rsquo;s Always Permissions Issues.</a></li>
+    <li><a href="#auto-mount-that-share">Auto-mount that share!</a></li>
+    <li><a href="#backup-automation">Backup Automation</a></li>
+    <li><a href="#citations">Citations</a></li>
+  </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    </article>
+</main>
+<footer>
+  <div style="display:flex"></div>
+  <div class="footer-info">
+    2026  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+
+</div>
+    </body>
+</html>

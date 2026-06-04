@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Hardware on Mr.Tinkerer&#39;s Blogs</title>
+		<link>https://mr-tinkerer.github.io/tags/hardware/</link>
+		<description>Recent content in Hardware on Mr.Tinkerer&#39;s Blogs</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Mon, 18 May 2026 00:00:00 +0000</lastBuildDate>
+		
+			<atom:link href="https://mr-tinkerer.github.io/tags/hardware/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Turning the Laptop into a NAS</title>
+				<link>https://mr-tinkerer.github.io/posts/laptop-nas/</link>
+				<pubDate>Mon, 18 May 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/posts/laptop-nas/</guid>
+				<description>&lt;h2 id=&#34;the-nas-plan&#34;&gt;The NAS Plan&lt;/h2&gt;&#xA;&lt;p&gt;So recently, I have successfully &lt;a href=&#34;https://mr-tinkerer.github.io/posts/old-laptop-into-proxmox-server&#34;&gt;turned an old laptop into a Proxmox server&lt;/a&gt;.  However, I have only got the OS installed on the laptop. No VMs, and no LXCs containers on there. So this blog will be me changing that by stetting up a NAS (Network Attached Storage).&lt;/p&gt;&#xA;&lt;p&gt;Now there are many options for me to use for the NAS software. I could go with a NAS OS that has all of the tools setup like &lt;a href=&#34;https://www.truenas.com/&#34;&gt;TrueNAS&lt;/a&gt;. Or I could install a Linux Distro and manually install &amp;amp; setup the tools. I have decided to go with &lt;a href=&#34;https://www.openmediavault.org/&#34;&gt;OpenMediaVault&lt;/a&gt; (OMV). The reason why is that I didn&amp;rsquo;t want to manually create the NAS from a linux distro (yet). However, going with something like TrueNAS wouldn&amp;rsquo;t be possible, as their minimum requirements would take up most of the resources of the laptop.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Turning an Old Laptop into a Proxmox Server</title>
+				<link>https://mr-tinkerer.github.io/posts/old-laptop-into-proxmox-server/</link>
+				<pubDate>Tue, 03 Mar 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/posts/old-laptop-into-proxmox-server/</guid>
+				<description>&lt;h2 id=&#34;the-old-laptop&#34;&gt;The Old Laptop&lt;/h2&gt;&#xA;&lt;p&gt;So I was recently talking to an classmate of mine when he mention that he has an old, semi-broken, laptop that he doesn&amp;rsquo;t know what to do with it. Being someone who recently lost their home lab due to moving, I took that opportunity to rebuild my home lab. The laptop is an Asus x555q with an an AMD A12-9720P APU with 8GB of RAM, and 256GB SATA SSD&lt;sup&gt;[1]&lt;/sup&gt;.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Tags on Mr.Tinkerer&#39;s Blogs</title>
+		<link>https://mr-tinkerer.github.io/tags/</link>
+		<description>Recent content in Tags on Mr.Tinkerer&#39;s Blogs</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Mon, 18 May 2026 00:00:00 +0000</lastBuildDate>
+		
+			<atom:link href="https://mr-tinkerer.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Bash Script</title>
+				<link>https://mr-tinkerer.github.io/tags/bash-script/</link>
+				<pubDate>Mon, 18 May 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/tags/bash-script/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Fixing</title>
+				<link>https://mr-tinkerer.github.io/tags/fixing/</link>
+				<pubDate>Mon, 18 May 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/tags/fixing/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Hardware</title>
+				<link>https://mr-tinkerer.github.io/tags/hardware/</link>
+				<pubDate>Mon, 18 May 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/tags/hardware/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Laptop</title>
+				<link>https://mr-tinkerer.github.io/tags/laptop/</link>
+				<pubDate>Mon, 18 May 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/tags/laptop/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>OpenMediaVault</title>
+				<link>https://mr-tinkerer.github.io/tags/openmediavault/</link>
+				<pubDate>Mon, 18 May 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/tags/openmediavault/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Server</title>
+				<link>https://mr-tinkerer.github.io/tags/server/</link>
+				<pubDate>Mon, 18 May 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/tags/server/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Lots Of_Issues</title>
+				<link>https://mr-tinkerer.github.io/tags/lots-of_issues/</link>
+				<pubDate>Tue, 03 Mar 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/tags/lots-of_issues/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Proxmox</title>
+				<link>https://mr-tinkerer.github.io/tags/proxmox/</link>
+				<pubDate>Tue, 03 Mar 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/tags/proxmox/</guid>
+				<description></description>
+			</item>
+	</channel>
+</rss>
