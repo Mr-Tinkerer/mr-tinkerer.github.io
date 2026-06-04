@@ -14,6 +14,10 @@ description = "Welcome to my blog site, where I document my progress tinkering w
     [markup.goldmark.renderer]
       unsafe = true
 
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'
+
 [[ menu.main ]]
   name="Blogs"
   url = "/posts/"
