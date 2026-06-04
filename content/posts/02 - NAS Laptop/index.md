@@ -126,12 +126,6 @@ Now wait a minute, we're not done yet with the NAS. Even though I can access the
 
 This is most likely because I haven't setup the correct permission for the share.  So the first thing I need to do is to create a new user for my device to use. So I've created an owner user with a "temporary" password for testing. I also add it to all of the groups that I think it would need to work.
 
-![](Pasted%20image%2020260517230644.png)
-*The user page in OpenMediaVault.*
-
-![](Pasted%20image%2020260517232159.png)
-*The settings used to create the owner user.*
-
 Then I went to the permission of the NAS shared folder. From there, I gave the user read & write access. Did this allow me to access the NAS share? Nope, as I still get the same error.
 
 ![](Pasted%20image%2020260518003635.png)
