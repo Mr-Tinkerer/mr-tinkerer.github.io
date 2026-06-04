@@ -10,9 +10,16 @@
 		
 		
 		
-			<lastBuildDate>Wed, 27 May 2026 00:00:00 +0000</lastBuildDate>
+			<lastBuildDate>Thu, 04 Jun 2026 00:00:00 +0000</lastBuildDate>
 		
 			<atom:link href="https://mr-tinkerer.github.io/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>How I Streamline the Creation of Blogs</title>
+				<link>https://mr-tinkerer.github.io/posts/blogs-streamlined/</link>
+				<pubDate>Thu, 04 Jun 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/posts/blogs-streamlined/</guid>
+				<description>&lt;h2 id=&#34;the-issue&#34;&gt;The Issue&lt;/h2&gt;&#xA;&lt;p&gt;So I have written the two blogs (&lt;a href=&#34;https://mr-tinkerer.github.io/posts/old-laptop-into-proxmox-server&#34;&gt;The Laptop Proxmox Blog&lt;/a&gt;, and &lt;a href=&#34;https://mr-tinkerer.github.io/posts/laptop-nas&#34;&gt;Laptop NAS build&lt;/a&gt;), but I don&amp;rsquo;t have a way to share them. I have written in &lt;a href=&#34;https://www.markdownguide.org/getting-started/&#34;&gt;markdown&lt;/a&gt; file (via &lt;a href=&#34;https://obsidian.md/&#34;&gt;Obsidian&lt;/a&gt;), since it would be easy for me to write them. The problem is that you can&amp;rsquo;t just put a markdown file into a web server and expect it to work. So I would need to find a way to convert them into &lt;a href=&#34;https://en.wikipedia.org/wiki/HTML&#34;&gt;HTML&lt;/a&gt;. So after a some research, I have developed a plan.&lt;/p&gt;</description>
+			</item>
 			<item>
 				<title>About me</title>
 				<link>https://mr-tinkerer.github.io/about/</link>

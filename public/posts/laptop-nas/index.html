@@ -91,7 +91,7 @@
 <p>For instance, I was able to tell that OMV tried to setup DHCP because DHCP isn&rsquo;t translated. Not only that, but in the following screen, I was able to deduce that it was trying to ask me what to do with the failed DHCP attempt because hostname wasn&rsquo;t translated.</p>
 <p><img src="Pasted%20image%2020260512233011.png" alt="">
 <em>OpenMediaVault asking the user what to do with the failed DHCP attempt.</em></p>
-<p>From that screen, I was able to successfully guessed the manual IP setup option. From there, I gave it a static IP, a subnet mask of <code>/24</code>, and no DNS and gateway. The reason why is that there is no router connected to the switch. Just the Proxmox Laptop and my personal device. So OMV wouldn&rsquo;t have any way of accessing the internet. Now if you read how <a href="/posts/">I&rsquo;ve setup the Proxmox Laptop</a>, then you would have known that there is a way for me to connect the VM to the internet via the Wi-Fi dongle. However, I&rsquo;ve decided against that, as I just want this NAS to only be accessible by me.</p>
+<p>From that screen, I was able to successfully guessed the manual IP setup option. From there, I gave it a static IP, a subnet mask of <code>/24</code>, and no DNS and gateway. The reason why is that there is no router connected to the switch. Just the Proxmox Laptop and my personal device. So OMV wouldn&rsquo;t have any way of accessing the internet. Now if you read how <a href="/posts/old-laptop-into-proxmox-server">I&rsquo;ve setup the Proxmox Laptop</a>, then you would have known that there is a way for me to connect the VM to the internet via the Wi-Fi dongle. However, I&rsquo;ve decided against that, as I just want this NAS to only be accessible by me.</p>
 <p>After that, I was able to finagle my way through the Russian menus, and setup OMV.  I finally got to the part where OMV installer installs OMV. &ldquo;Ah finally, the installer. Surely nothing will go wrong at this point,&rdquo; I thought to myself.</p>
 <p><img src="2026-05-12-23h39m59s445.png" alt="">
 <em>The Proxmox Laptop with a kernel panic.</em></p>
@@ -264,8 +264,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">#notify that it&#39;s done, and say the new size.</span>
 </span></span><span style="display:flex;"><span>    notify-send <span style="color:#e6db74">&#34;Auto Borg Backup Prune Done.&#34;</span> <span style="color:#e6db74">&#34;Sucessfully prune the old backups. The repo is now </span>$SIZE<span style="color:#e6db74">.&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
-</span></span></code></pre></div><p><em><a href="https://gist.github.com/Mr-Tinkerer/e9748457eb8958dde768ad0ac3b25a54">The link to the Github Gist of this script.</a></em></p>
-<p>Now if you want to use this script, note that you would have to change the borg&rsquo;s repo path, place the borg&rsquo;s secret inside the <code>BORG_SECRET</code> file, set that file to be that you&rsquo;re the only one that can read it (<code>chown 1000:1000 BORG_SECRET &amp;&amp; chmod 400 BORG_SECRET</code>), and exclude/include any paths in the backup command. Now running that script should automatically create a new backup without any user input.</p>
+</span></span></code></pre></div><p>Now if you want to use this script, note that you would have to change the borg&rsquo;s repo path, place the borg&rsquo;s secret inside the <code>BORG_SECRET</code> file, set that file to be that you&rsquo;re the only one that can read it (<code>chown 1000:1000 BORG_SECRET &amp;&amp; chmod 400 BORG_SECRET</code>), and exclude/include any paths in the backup command. Now running that script should automatically create a new backup without any user input.</p>
 <p><img src="Pasted%20image%2020260518181500.png" alt="">
 <em>The script being executed for 46 seconds.</em></p>
 <p><img src="Pasted%20image%2020260518181514.png" alt="">
@@ -295,6 +294,8 @@
 </span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">Install</span>]
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">WantedBy</span>=<span style="color:#a6e22e">timers</span>.<span style="color:#a6e22e">target</span>
 </span></span></code></pre></div><p>After that, systemd user&rsquo;s daemon will need to be reload, via <code>systemctl --user daemon-reload</code>, for it to see the new files. Finally, the timer would need to be enabled for it to be activated via <code>systemctl --user enable auto_backup.timer</code>. You can run <code>systemctl --user list-timers</code> to check when the next time the timer is going to be run, or you can run <code>systemctl --user start auto_backup.timer</code> to manually trigger the timer.</p>
+<h2 id="github-repo-for-the-files">Github Repo for the files</h2>
+<p><a href="https://github.com/Mr-Tinkerer/Laptop-NAS">https://github.com/Mr-Tinkerer/Laptop-NAS</a></p>
 <h2 id="citations">Citations</h2>
 <blockquote>
 <p>[1] TrueNAS. “SCALE Hardware Guide.” <em>Truenas.com</em>, TrueNAS, 3 Sept. 2024, <a href="https://www.truenas.com/docs/scale/24.10/gettingstarted/scalehardwareguide/">www.truenas.com/docs/scale/24.10/gettingstarted/scalehardwareguide/</a>. Accessed 12 May 2026.
@@ -356,6 +357,7 @@
     <li><a href="#its-always-permissions-issues">It&rsquo;s Always Permissions Issues.</a></li>
     <li><a href="#auto-mount-that-share">Auto-mount that share!</a></li>
     <li><a href="#backup-automation">Backup Automation</a></li>
+    <li><a href="#github-repo-for-the-files">Github Repo for the files</a></li>
     <li><a href="#citations">Citations</a></li>
   </ul>
 </nav>

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>How I Streamline the Creation of Blogs - Mr.Tinkerer&#39;s Blogs</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Streamlining the process of creating blogs to be as easy as possible." />
+	<meta property="og:image" content="https://mr-tinkerer.github.io/"/>
+	<meta property="og:url" content="https://mr-tinkerer.github.io/posts/blogs-streamlined/">
+	<meta property="og:site_name" content="Mr.Tinkerer&#39;s Blogs">
+	<meta property="og:title" content="How I Streamline the Creation of Blogs">
+	<meta property="og:description" content="Streamlining the process of creating blogs to be as easy as possible.">
+	<meta property="og:locale" content="en_us">
+	<meta property="og:type" content="article">
+		<meta property="article:section" content="posts">
+		<meta property="article:published_time" content="2026-06-04T00:00:00+00:00">
+		<meta property="article:modified_time" content="2026-06-04T00:00:00+00:00">
+		<meta property="article:tag" content="Hugo">
+		<meta property="article:tag" content="Obsidian">
+		<meta property="article:tag" content="Streamlined">
+		<meta property="article:tag" content="Automation">
+		<meta property="article:tag" content="Website">
+		<meta property="article:tag" content="Bash Script">
+
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="How I Streamline the Creation of Blogs">
+	<meta name="twitter:description" content="Streamlining the process of creating blogs to be as easy as possible.">
+
+        <link href="https://mr-tinkerer.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://mr-tinkerer.github.io/css/main.475e92bd33b8431a5ff779310e6b247c1b8ee0f01e4acf38c4c8f786fc707e0f.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://mr-tinkerer.github.io/css/dark.4529c04ce20ceac5a42e37a63e092c89354fbd00e6209bd2995100d61b71e8df.css"  disabled />
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://mr-tinkerer.github.io/">Mr.Tinkerer&#39;s Blogs</a>
+	</div>
+	<nav>
+		
+		<a href="/posts/">Blogs</a>
+		
+		<a href="/search/">Search</a>
+		
+		<a href="/about/">About</a>
+		
+		<a href="/index.xml">RSS</a>
+		
+		<button id="dark-mode-toggle" class="nav-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" type="button"><svg class="feather" viewBox="0 0 24 24" fill="none" stroke="#232333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg></button>
+		<script src="https://mr-tinkerer.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+  <article>
+    <div class="post-container">
+      
+      <div class="post-content">
+        <div class="title">
+          <h1 class="title">How I Streamline the Creation of Blogs</h1>
+          <div class="meta">Posted on Jun 4, 2026</div>
+        </div>
+        
+        <section class="body">
+          <h2 id="the-issue">The Issue</h2>
+<p>So I have written the two blogs (<a href="/posts/old-laptop-into-proxmox-server">The Laptop Proxmox Blog</a>, and <a href="/posts/laptop-nas">Laptop NAS build</a>), but I don&rsquo;t have a way to share them. I have written in <a href="https://www.markdownguide.org/getting-started/">markdown</a> file (via <a href="https://obsidian.md/">Obsidian</a>), since it would be easy for me to write them. The problem is that you can&rsquo;t just put a markdown file into a web server and expect it to work. So I would need to find a way to convert them into <a href="https://en.wikipedia.org/wiki/HTML">HTML</a>. So after a some research, I have developed a plan.</p>
+<p><img src="Pasted%20image%2020260523223746.png" alt="">
+<em>The plan for creating blog articles from markdown files.</em></p>
+<p>As you can see, there will be a lot of setup needed for this to work. But after all of that, writing a new blog will be easier since I would just need to run a bash script to automatically publish it.</p>
+<h2 id="setup-the-structure">Setup the Structure</h2>
+<p>The first thing I did is install <a href="https://gohugo.io/">hugo</a>. In case you don&rsquo;t know what hugo is, hugo is a static site generator<sup>[1]</sup>. Essentially, it takes a blueprint of a website, and turn it into an actual website that can be hosted<sup>[1]</sup>.  Since I have zero experience with hugo, I followed their <a href="https://gohugo.io/getting-started/quick-start/">quickstart page</a>. I ran the following commands from their docs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>hugo new project quickstart
+</span></span><span style="display:flex;"><span>cd quickstart
+</span></span><span style="display:flex;"><span>git init
+</span></span><span style="display:flex;"><span>git submodule add https://github.com/gohugo-ananke/ananke themes/ananke
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;theme = &#39;ananke&#39;&#34;</span> &gt;&gt; hugo.toml
+</span></span><span style="display:flex;"><span>hugo server
+</span></span></code></pre></div><p>Basically, what that code snippet does is create a new project called <code>quickstart</code>, create a new git repo inside the <code>quickstart</code>, import and used the <code>anake</code> theme, and start the server. The server is hosted at <code>http://localhost:1313</code>.</p>
+<p><img src="Pasted%20image%2020260524161951.png" alt="">
+<em>The folder structure that hugo project creates.</em></p>
+<p><img src="Pasted%20image%2020260524162322.png" alt="">
+<em>What the hugo website looks like after creating the project.</em></p>
+<p>Now the website looks bland, and that&rsquo;s because it&rsquo;s missing content in it. Meaning that the next thing I would have to do is import content into hugo. So I copied the <a href="/posts/old-laptop-into-proxmox-server">Proxmox Laptop Server</a> markdown file into <code>quickstart/content</code> folder. And this is what the first paragraph looks like without any changes made to it. Not only that, but hugo (or ananke, not sure which one) automatically put the blog into the home page.</p>
+<p><img src="Pasted%20image%2020260524163411.png" alt="">
+<em>Hugo rendering the raw markdown file of the blog from Obsidian.</em></p>
+<p><img src="Pasted%20image%201779655020196708229.png" alt="">
+<em>The blog automatically being placed in the home page.</em></p>
+<h2 id="making-the-blog-compatible-with-hugo">Making the Blog Compatible with Hugo</h2>
+<p>So at first glace, the markdown files seems to work just fine with Hugo. But take a closer look at it, and you would notice some issues.</p>
+<p><img src="Pasted%20image%2020260524162836.png" alt="">
+<em>The first paragraph from the markdown file. Notice how not everything isn&rsquo;t being render properly.</em></p>
+<p>From that screenshots, there are two things that isn&rsquo;t being render properly, the superscript and the images. The first one that I wanted to tackle is the superscript. The reason why it might not be rendering properly  how it looks behind the scene.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">sup</span>&gt;[1]&lt;/<span style="color:#f92672">sup</span>&gt;
+</span></span></code></pre></div><p>As you can tell, that is raw HTML being placed inside markdown. Now hugo seems to be ignoring raw HTML being used. This makes sense, as allowing raw HTML be parsed could be used as an exploit. However, this will will only be an issue if you don&rsquo;t know that HTML is being injected into the markdown (EX: an AI model sneaking in malicious HTML when generating the markdown). Since all of the text, including the HTML, is being written by me, I can trust myself that I wont inject malicious HTML (or can I?). So to disable that, I would have to insert the following into the <code>hugo.toml</code> file<sup>[2]</sup>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[<span style="color:#a6e22e">markup</span>] 
+</span></span><span style="display:flex;"><span>  [<span style="color:#a6e22e">markup</span>.<span style="color:#a6e22e">goldmark</span>]
+</span></span><span style="display:flex;"><span>	  [<span style="color:#a6e22e">markup</span>.<span style="color:#a6e22e">goldmark</span>.<span style="color:#a6e22e">renderer</span>] 
+</span></span><span style="display:flex;"><span>		  <span style="color:#a6e22e">unsafe</span> = <span style="color:#66d9ef">true</span>
+</span></span></code></pre></div><p><img src="Pasted%20image%2020260524165205.png" alt="">
+<em>The superscripts now being rendered properly.</em></p>
+<p>With that fixed, the next thing I have to fix is the images not loading. The reason why they&rsquo;re not being loaded is that Obsidian uses an non-conventional way of loading images in markdown, <a href="https://obsidian.md/help/plugins/backlinks">backlinks</a>. So I would need to convert them into a markdown standard so that Hugo can understand them. But before I can do that, I would need to tell Hugo where the images are stored at. Becuase of the way that backlinks work in Obsidian, Obsidian will be able to link to them, regardless of where they are in the vault<sup>[3]</sup>. So because of this, Obsidian&rsquo;s back links are only the name of the file.</p>
+<p>To do that, I would be using <a href="https://gohugo.io/content-management/page-bundles/">Hugo&rsquo;s page bundles</a>. What page bundles are is a way of organising the page&rsquo;s content by putting all of the relevant content in the same folder<sup>[4]</sup>.   There are two types of page bundles, leaf bundles, and branch bundles. The difference between them is that the leaf bundles has no child bundles inside of it, while a parent bundles does <sup>[4]</sup>. Since the blogs isn&rsquo;t going to have nested blogs inside of them, a leaf bundles makes more sense. So I reorganise the blogs to be leaf bundles.</p>
+<p><img src="Pasted%20image%2020260524182737.png" alt="">
+<em>The new blog folder structure as a leaf bundle.</em></p>
+<p>Now with the reorganisation, it will make loading the images easier. All I would have to do is tell Hugo that the image is in the same spot as the markdown file. But that will only work after I convert the Obsidian&rsquo;s backlinks into markdown&rsquo;s images format. In case you don&rsquo;t know how markdown images are formatted, it is as follows: <code>![Image alt text](link to image)</code>.  Since I have the image&rsquo;s alt text as the image&rsquo;s caption, I can just leave that blank. That leaves the converted format to be <code>![](Pasted image 20260307124029.png)</code>.</p>
+<p><img src="Pasted%20image%2020260524183058.png" alt="">
+<em>The convert image format not loading.</em></p>
+<p>Except that it didn&rsquo;t work, even with the alt text in it. My guess is that the spaces in the image name is breaking it. But no matter what combination of <code>-</code>, <code>_</code>, <code>/</code>, <code>\</code>, <code>&quot;</code>, or <code>'</code>, it still wouldn&rsquo;t load. Eventually, I found out that the spaces has to be replaced with <code>%20</code> for it to work<sup>[5]</sup>.</p>
+<p><img src="Pasted%20image%2020260524194557.png" alt="">
+<em>The image being properly render in Hugo.</em></p>
+<h2 id="theme-things-up">Theme Things Up.</h2>
+<p>With the markdown being render correctly, it&rsquo;s time to move on to the most important decision of my life, picking what theme to go with. With 100s of themes to pick from, picking one is almost going to be impossi- I picked <a href="https://github.com/athul/archie">archie</a>.</p>
+<p><img src="Pasted%20image%2020260524195125.png" alt="">
+<img src="1779666725458776693.png" alt="">
+<em>The Archie showcase images from their <a href="https://github.com/athul/archie">repo</a>.</em></p>
+<p>Archie wasn&rsquo;t the first theme I picked. I was browsing the <a href="https://themes.gohugo.io/">theme&rsquo;s repo page</a>, and saved the ones that look interesting. The ones I&rsquo;ve saved are <a href="https://github.com/panr/hugo-theme-terminal#how-to-start">Terminal</a>,  <a href="https://github.com/hugo-sid/hugo-blog-awesome">Hugo Blog Awesome</a>, <a href="https://github.com/AmazingRise/hugo-theme-diary">Diary</a>, <a href="https://github.com/mrmierzejewski/hugo-theme-console">Hugo Theme Console</a>, and <a href="https://github.com/athul/archie">archie</a>. From there I tested all of them to see which one I like, and which one I didn&rsquo;t like.</p>
+<p>But the thing is, I couldn&rsquo;t even do that for two of them because they threw an error at me. To be more specific, the Hugo Blog Awesome and the Diary theme both to an RSS error at me. so I had to immediately eliminate them from being used. Now, yes, obviously I could have spent some time trying to debug the error and fix it. But I was too lazy to do that. So I just move on to the other teams.</p>
+<p><img src="Pasted%20image%2020260525180801.png" alt="">
+<em>The Hugo Awesome Blog theme throwing an error about <code>rss.xml</code> file</em></p>
+<p><img src="Pasted%20image%2020260525181132.png" alt="">
+<em>The Diary theme throwing an error about <code>rss.xml</code> file</em></p>
+<p>The good thing is that the Terminal theme, the Console theme, and the Archie theme all work just fine without editing errors.</p>
+<p><img src="Pasted%20image%2020260527124204.png" alt="">
+<em>The Terminal theme not auto loading any of the blogs.</em></p>
+<p><img src="Pasted%20image%2020260527124208.png" alt="">
+<em>The Hugo Theme Console theme not auto loading any of the blogs.</em></p>
+<p><img src="Pasted%20image%2020260527124213.png" alt="">
+<em>The Archie theme not auto loading any of the blogs.</em></p>
+<p>Alright, there might have been an error with those three themes.  But that&rsquo;s because they were expecting the blogs to be in <code>content/posts</code> instead of just <code>content</code>.</p>
+<p><img src="Pasted%20image%2020260527124801.png" alt="">
+<img src="Pasted%20image%2020260527124822.png" alt="">
+*A snippet of the first blog in the Terminal theme on both desktop and mobile. *</p>
+<p><img src="Pasted%20image%2020260527124806.png" alt="">
+<img src="Pasted%20image%2020260527124921.png" alt="">
+*A snippet of the first blog in the Hugo Theme Console theme on both desktop and mobile. *</p>
+<p><img src="Pasted%20image%2020260527124811.png" alt="">
+<img src="Pasted%20image%2020260527125338.png" alt="">
+*A snippet of the first blog in the Archie theme on both desktop and mobile. *</p>
+<p>Eventually, I went with Archie because it&rsquo;s the cleanest theme while also looking the best on mobile.</p>
+<h2 id="features--site-cleanup">Features &amp; Site Cleanup</h2>
+<p>The next thing I wanted to do is figure out how to setup RSS. Seeing the RSS error in the Diary theme and the Hugo Awesome Blog theme gave me the idea to set that up.  Turns out, Hugo automatically creates an RSS feed when it builds the server<sup>[6]</sup>. So all I would have to do is to navigate to <code>http://localhost:1313/index.xml</code>, and the file needed for RSS to work will appear.</p>
+<p><img src="Pasted%20image%2020260527130444.png" alt="">
+<em>A screenshot of the RSS file.</em></p>
+<p>Now I just need an easy way for people to access the RSS file. That&rsquo;s when I saw that Hugo has an option to create buttons for menu entries<sup>[7]</sup>.  By adding the following to the <code>hugo.toml</code> file, the <code>blogs</code>, <code>about</code>, and <code>rss</code> buttons will be created.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span> [[ <span style="color:#a6e22e">menu</span>.<span style="color:#a6e22e">main</span> ]]
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>=<span style="color:#e6db74">&#34;blogs&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">url</span> = <span style="color:#e6db74">&#34;/posts/&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">weight</span> = <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[ <span style="color:#a6e22e">menu</span>.<span style="color:#a6e22e">main</span> ]]
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>=<span style="color:#e6db74">&#34;about&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">url</span> = <span style="color:#e6db74">&#34;/about/&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">weight</span> = <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[ <span style="color:#a6e22e">menu</span>.<span style="color:#a6e22e">main</span> ]]
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>=<span style="color:#e6db74">&#34;rss&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">url</span> = <span style="color:#e6db74">&#34;/index.xml&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">weight</span> = <span style="color:#ae81ff">3</span>     
+</span></span></code></pre></div><p><img src="Pasted%20image%2020260527141510.png" alt="">
+<em>The menu buttons being created.</em></p>
+<p>The <code>blogs</code> button links to the page that is a list of all of the blogs.  The <code>about</code> button will link to the about page for the site. For the about page to exist, I would have to put the <code>about.md</code> file into the <code>content</code>.</p>
+<p><img src="Pasted%20image%2020260527143254.png" alt="">
+<em>The blog page that shows all of the articles.</em></p>
+<p><img src="Pasted%20image%2020260527143321.png" alt="">
+<em>The about page.</em></p>
+<p>Alright, now it&rsquo;s time to deal with the fact that the blogs look empty and ugly. The reason why is that they&rsquo;re missing metadata.  Hugo uses Front Matter for the page&rsquo;s metadata<sup>[8]</sup>. So after spending some time reading the doc page, I added the following front matter into the start of the first blog.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>date: 2026-05-20T14:34:00
+</span></span><span style="display:flex;"><span>title: Turning an Old Laptop into a Proxmox Server
+</span></span><span style="display:flex;"><span>slug: Old Laptop Into Proxmox Server
+</span></span><span style="display:flex;"><span>description: I try to turn an old laptop into a Proxmox server, but struggle in the process due to factors out of my control.
+</span></span><span style="display:flex;"><span>tags:
+</span></span><span style="display:flex;"><span>  - Proxmox
+</span></span><span style="display:flex;"><span>  - Laptop
+</span></span><span style="display:flex;"><span>  - Server
+</span></span><span style="display:flex;"><span>  - Fixing
+</span></span><span style="display:flex;"><span>  - Hardware
+</span></span><span style="display:flex;"><span>  - Lots of Issues
+</span></span><span style="display:flex;"><span>---
+</span></span></code></pre></div><p>Most of the values are pretty self explanatory, except for the <code>slug</code> value. What <code>slug</code> value is the value of the last segment in the URL. For example, instead of the url being <code>http://localhost:1313/posts/01_proxmox_server</code>, it will instead be <code>http://localhost:1313/posts/Old-Laptop Into-Proxmox-Server</code> . I can also import the front matter into obsidian to make it easier to enter them in when writing.</p>
+<p><img src="Pasted%20image%2020260527151643.png" alt="">
+<em>The new overview of the blog in the home page.</em></p>
+<p><img src="Pasted%20image%2020260527151717.png" alt="">
+<em>The tags at the end of the blog.</em></p>
+<p>I then check if Archie has any additional front matter options, and I saw that they have a <code>toc</code> option. What this option does is adds in a table of contents to the page. The table of contents will be pinned in place, staying in spot as you scroll. But the thing is the table of contents doesn&rsquo;t work when the heading aren&rsquo;t being used with <code>#</code>. So I had to change all of them into <code>##</code>.</p>
+<p><img src="Pasted%20image%2020260527152219.png" alt="">
+<em>The tables of content created by Archie.</em></p>
+<p><img src="Pasted%20image%2020260527152746.png" alt="">
+<em>The table of contents being pinned to place as you scroll along.</em></p>
+<p>It is annoying me that the width of the article gets smaller because of the table of contents. There is a lot of dead space that could have been taken up by the blog&rsquo;s content. So after a quick search, I found out that I can modify the theme&rsquo;s style without messing with the source files. What I can do is create a local clone of the CSS file, and place it into the <code>assets</code> file with the same folder structures<sup>[9]</sup>.</p>
+<p>But before I can do that, I would need to figure out which value to modify. So using Firefox&rsquo;s inspect element, I was quickly able to figure out that I would need to modify the <code>--content-max-width</code> in the &ldquo;:root&rdquo; class. I also use the sliders in the inspect element to find out that I would want to change the value from <code>800px</code> to <code>1110px</code>. The last thing I would need to do is find the <code>.css</code> file that has the <code>--content-max-width</code> value.  So after I find out that the value is in the <code>main.css</code> file, I copied it into the <code>assets/css/</code>, and change the value.</p>
+<p><img src="Pasted%20image%2020260527211345.png" alt="">
+<em>The blog now has more space due to the custom css file.</em></p>
+<p>Knowing this, I also wanted to fix how some of the image&rsquo;s caption will be on the same line instead of below it. So using the same trick before, I inserted the following into the css file. This will force the caption to be in a new line, and make some extra space as well.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-css" data-lang="css"><span style="display:flex;"><span><span style="color:#f92672">em</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">display</span>: <span style="color:#66d9ef">block</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">margin-bottom</span>: <span style="color:#ae81ff">10</span><span style="color:#66d9ef">px</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><img src="Pasted%20image%2020260527215931.png" alt="">
+<em>An example of the image caption not working as intended.</em></p>
+<p><img src="Pasted%20image%2020260527220008.png" alt="">
+<em>An example of the image caption working after I fix it.</em></p>
+<p>I then saw that Archie has a search feature built into it. To  use it, I would have to make a <code>search.md</code> file into the root of the <code>content</code> folder, and place the following into that file. I also added it as one of the menu&rsquo;s button.</p>
+<pre tabindex="0"><code>---
+title: &#34;Search&#34;
+layout: &#34;search&#34;
+outputs:
+  - html
+  - json
+---
+</code></pre><p><img src="Pasted%20image%2020260527213127.png" alt="">
+<em>Archie&rsquo;s built in search bar in action.</em></p>
+<p>The only thing that the site is now missing is dark mode, and Archie has support for that. By adding the <code>mode</code> value into <code>hugo.toml</code>, I can tell what Hugo what color theme to set it to. My options are <code>light</code>, <code>dark</code>, <code>auto</code>, and <code>toggle</code>. I went with toggle for more user control, as it adds the toggle button in the top right.</p>
+<p><img src="Pasted%20image%2020260527220512.png" alt="">
+<em>The site in dark mode via the toggle.</em></p>
+<p>The final thing I would need to do is to create a new Hugo site for the actual blog, as this one was just for testing. So I ran <code>hugo new site Mr.Tinkerer</code> to create it. Since this is the actual one I want to use, I will be actually using git to make commit between changes and blog creations. So this will the final version of the <code>hugo.toml</code> file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span><span style="color:#75715e">## baseURL = &#39;https://example.org/&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">locale</span> = <span style="color:#e6db74">&#39;en-us&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">title</span> = <span style="color:#e6db74">&#34;Mr.Tinkerer&#39;s Blogs&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">theme</span> = <span style="color:#e6db74">&#39;archie&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">params</span>]
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">mode</span> = <span style="color:#e6db74">&#34;toggle&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">useCDN</span> = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">subtitle</span> = <span style="color:#e6db74">&#34;Mr.Tinkerer&#39;s Blog site for documenting his progress with tinkering with tech.&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">description</span> = <span style="color:#e6db74">&#34;Welcome to my blog site, where I document my progress tinkering with tech projects.&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">markup</span>]
+</span></span><span style="display:flex;"><span>  [<span style="color:#a6e22e">markup</span>.<span style="color:#a6e22e">goldmark</span>]
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">markup</span>.<span style="color:#a6e22e">goldmark</span>.<span style="color:#a6e22e">renderer</span>]
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">unsafe</span> = <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[ <span style="color:#a6e22e">menu</span>.<span style="color:#a6e22e">main</span> ]]
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>=<span style="color:#e6db74">&#34;Blogs&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">url</span> = <span style="color:#e6db74">&#34;/posts/&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">weight</span> = <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[ <span style="color:#a6e22e">menu</span>.<span style="color:#a6e22e">main</span> ]]
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>=<span style="color:#e6db74">&#34;Search&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">url</span> = <span style="color:#e6db74">&#34;/search/&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">weight</span> = <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[ <span style="color:#a6e22e">menu</span>.<span style="color:#a6e22e">main</span> ]]
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>=<span style="color:#e6db74">&#34;About&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">url</span> = <span style="color:#e6db74">&#34;/about/&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">weight</span> = <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[[ <span style="color:#a6e22e">menu</span>.<span style="color:#a6e22e">main</span> ]]
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>=<span style="color:#e6db74">&#34;RSS&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">url</span> = <span style="color:#e6db74">&#34;/index.xml&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">weight</span> = <span style="color:#ae81ff">4</span>
+</span></span></code></pre></div><h2 id="automate-the-blog-conversion">Automate the Blog Conversion</h2>
+<p>So after spending many hours overthinking things, googling things, banging my head onto the desk, and even <em>asking AI for help with the script (so scary)</em>, I was finally able to create the script that will auto convert the obsidian markdown into generic markdowns for Hugo to use. Note that the script is only halfway done, since I would need to make it publish it as well. But that&rsquo;s for later me to deal with.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the starting time in milliseconds</span>
+</span></span><span style="display:flex;"><span>START<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>date +%s%3N<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#store where the markdown files are, and where to put the converted one at</span>
+</span></span><span style="display:flex;"><span>MD_FOLDER<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/Documents/Obsidian/Mr.Tinkerer/Blogs&#34;</span>
+</span></span><span style="display:flex;"><span>BLOG_FOLDER<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$HOME<span style="color:#e6db74">/Documents/Mr.Tinkerer/content/posts&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#create the blog folder if it doesn&#39;t exist</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> ! -e $BLOG_FOLDER <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span> 
+</span></span><span style="display:flex;"><span>    mkdir -p $BLOG_FOLDER
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Created the blog folder.&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>The first part of the script is just defining the constant variables to use in the script. The <code>START</code> is for timing how long the script take to execute, in milliseconds, and the <code>MD_FOLDER</code> and <code>BLOG_FOLDER</code> is for defining where the important folders are stored at.  It also creates the blog folder if it doesn&rsquo;t exist.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#list of markdowns that will be converted</span>
+</span></span><span style="display:flex;"><span>mds_to_convert<span style="color:#f92672">=()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#go through all of the folders in the markdown folder, and get the basename </span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> md in $MD_FOLDER/*; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    md_base<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>basename <span style="color:#e6db74">&#34;</span>$md<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#skip looking into the blog folder if it&#39;s empty</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -n <span style="color:#66d9ef">$(</span>ls -A $BLOG_FOLDER<span style="color:#66d9ef">)</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#assumes that the blog doesnt exist</span>
+</span></span><span style="display:flex;"><span>        ADD<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#go through all of the folders in the blog folder, and get the basename</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> blog in $BLOG_FOLDER/*; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>            blog_base<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>basename <span style="color:#e6db74">&#34;</span>$blog<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># if the markdown base does exist in the blog, then skip it </span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $md_base <span style="color:#f92672">==</span> $blog_base <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>                ADD<span style="color:#f92672">=</span>false
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#add the markdown to the list of conversion</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $ADD <span style="color:#f92672">=</span> true <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>            echo <span style="color:#e6db74">&#34;&#39;</span>$md_base<span style="color:#e6db74">&#39; doesn&#39;t have a blog, yet&#34;</span>
+</span></span><span style="display:flex;"><span>            mds_to_convert<span style="color:#f92672">+=(</span><span style="color:#e6db74">&#34;</span>$md_base<span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#auto add it to the list, since the blog folder is empty</span>
+</span></span><span style="display:flex;"><span>        mds_to_convert<span style="color:#f92672">+=(</span><span style="color:#e6db74">&#34;</span>$md_base<span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><p>This part is all about finding out which blogs to convert, instead of doing all of them. I feel like that if I made it have to convert every single blog in the site, it would take a while, especially if there are hundreds of blogs to convert.</p>
+<p>So what it does is that it first creates a list of markdown files to convert. Then it&rsquo;ll iter over every single folder in the obsidian folder. Then it checks if the blog folder is empty. If it is, It&rsquo;ll automatically adds every single markdown to the list . If the blog folder isn&rsquo;t empty, then it will first assume that the blog version doesn&rsquo;t exist. Then it will check the blog folder if it has a folder with the same name. If it does, then it knows that the blog version exist, and skip it. If it can&rsquo;t find the blog version, then it is added to the list.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#copy over each article to the blog folder</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> md_article in <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>mds_to_convert[@]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#copy the markdown&#39;s article folder to the blog folder</span>
+</span></span><span style="display:flex;"><span>    md_path<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$MD_FOLDER<span style="color:#e6db74">/</span>$md_article<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    cp -r <span style="color:#e6db74">&#34;</span>$md_path<span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span>$BLOG_FOLDER<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Copied over the </span>$md_article<span style="color:#e6db74"> over to the blog folder.&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#go into the blog article path</span>
+</span></span><span style="display:flex;"><span>    cd <span style="color:#e6db74">&#34;</span>$BLOG_FOLDER<span style="color:#e6db74">/</span>$md_article<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#renamed the .md file into index.md for hugo</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> file in *.md; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>            mv <span style="color:#e6db74">&#34;</span>$file<span style="color:#e6db74">&#34;</span> index.md
+</span></span><span style="display:flex;"><span>            echo <span style="color:#e6db74">&#34;Renamed &#39;</span>$file<span style="color:#e6db74">&#39; to index.md&#34;</span>
+</span></span><span style="display:flex;"><span>            break
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#replace all heading 1 (#) with heading 2 (##) for the table of contents to work</span>
+</span></span><span style="display:flex;"><span>    sed -i <span style="color:#e6db74">&#34;s/^# /## /g&#34;</span> index.md
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Fixed the table of contents for </span>$md_article<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#iter through every obsidian backlink for images </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#(NOTE: this line was generated by Google&#39;s Gemini cause I couldn&#39;t figure out how to do it by hand)</span>
+</span></span><span style="display:flex;"><span>    grep -oP <span style="color:#e6db74">&#39;(?&lt;=!\[\[).*?(?=\]\])&#39;</span> index.md | <span style="color:#66d9ef">while</span> IFS<span style="color:#f92672">=</span> read -r line; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#replace spaces with %20 for compability</span>
+</span></span><span style="display:flex;"><span>        safe_img<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo $line | sed <span style="color:#e6db74">&#34;s/ /%20/g&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#replace all of the obsidian backlink with markdown link with the safe version</span>
+</span></span><span style="display:flex;"><span>        sed -i -E <span style="color:#e6db74">&#34;s/!\[\[</span>$line<span style="color:#e6db74">\]\]/![](</span>$safe_img<span style="color:#e6db74">)/&#34;</span> index.md
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;Fixed the images for </span>$md_article<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><p>Now this is the part where the magic happens. It will go through every markdown file in the list, and actually convert them. Since I want the source file to still be in the same shape as before, it will make a copy of it into the blog folder, and rename the markdown file into <code>index.md</code>, since the Hugo&rsquo;s leaf bundle need it<sup>[4]</sup>.  Then it will use <code>sed</code> to change all of the headings in the file from heading 1 (#) to heading 2 (##).</p>
+<p>Then It will fix the images. It will first do this by using <code>grep</code> to get a list of images using the Obsidian&rsquo;s backlink in the file. Now I do what to note that the <code>grep</code>  line was generated by Google&rsquo;s Gemini, since I couldn&rsquo;t figure out how to do it myself. While I was able to figure out how to use regex to filter for the Obsidian&rsquo;s backlink, I couldn&rsquo;t figure out how to only return the content inside the backlink. That&rsquo;s where Gemini instead use <code>grep</code>&rsquo;s Peral regex mode to extract the text, which I would have never figure out myself. Not only that, but Gemini also use <code>IFS= read -r line</code> to be able to iter over each line and store it as the <code>line</code> variable.  From there, I first use <code>sed</code> to convert all spaces into <code>%20</code> to make it URL friendly<sup>[10]</sup>. Finally, I use the second <code>sed</code> to replace the old Obsidian&rsquo;s backlink with the new markdown links.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#generate the static site</span>
+</span></span><span style="display:flex;"><span>cd <span style="color:#e6db74">&#34;</span>$BLOG_FOLDER<span style="color:#e6db74">/../..&#34;</span>
+</span></span><span style="display:flex;"><span>hugo
+</span></span></code></pre></div><p>I then tell the script to go to the root of the Hugo folder, and generate the static version the site.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#caculate how long the script take to execute, and say it</span>
+</span></span><span style="display:flex;"><span>END<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>date +%s%3N<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>duration<span style="color:#f92672">=</span><span style="color:#66d9ef">$((</span> END <span style="color:#f92672">-</span> START <span style="color:#66d9ef">))</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;This script took </span>$duration<span style="color:#e6db74"> ms to run.&#34;</span> 
+</span></span></code></pre></div><p>The last thing that the scipt does, for now, is to calculate how long the script took to execute. This is done by getting the current time, in milliseconds, and subtracting it from the starting time.  This isn&rsquo;t important at all, but it would be nice to know.</p>
+<h2 id="dont-forget-about-backlinks--tags">Don&rsquo;t Forget about Backlinks &amp; Tags</h2>
+<p>I am jumping the gun here, as I almost forgot to convert obsidian&rsquo;s backlinks for articles into markdown links. For context, this is what the backlinks looks like in the <a href="/posts/laptop-nas">Laptop NAS blog post</a>: <code>[[Turning an Old Laptop into a Proxmox Server|turned an old laptop into a Proxmox server].]</code> Everything before the <code>|</code> is the name of the file, and everything after that is the alternative name for the link.</p>
+<p>So I just gotta put into the following format: <code>[turned an old laptop into a Proxmox server](Turning an Old Laptop into a Proxmox Server)</code>. Except that wont work, as it will set the link to  &ldquo;<code>http://localhost:1313/Turning an Old Laptop into a Proxmox Server</code>&rdquo;. Even if I replaces the spaces with <code>%20</code>, it still wont work because of A: the blogs are located under <code>/posts</code>, and B: the the internal name will be different then what&rsquo;s on the URL. Even then, that doesn&rsquo;t matter because the link to the blogs are using slugs instead of the file name.</p>
+<p>This left me scratching my head for a bit as I try to figure out the best way for the script to somehow know what slug to use for the article. Eventually I came up with the script generating a list of markdown files, and their slugs associated with it. The list will be formatted like this: <code>name of the file.md|slug: blog's slug</code>. With this list, I can just lookup the slug associated with the file from one spot, instead of scanning the entire directory &amp; sub directories.  I also tell the script to always create a new file of it. The reason why is that is encase the slug get&rsquo;s updated in the future, then the file will point to the new one.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#The slug file for storing the file&#39;s name and their slug assoications</span>
+</span></span><span style="display:flex;"><span>SLUG_FILE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$BLOG_FOLDER<span style="color:#e6db74">/../../slug.txt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#delete the file before creating it. easier then checking what&#39;s already in there and not adding it</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -e <span style="color:#e6db74">&#34;</span>$SLUG_FILE<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    rm $SLUG_FILE
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>touch $SLUG_FILE
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get all of the markdown files in the obsidian folder, and loop over it</span>
+</span></span><span style="display:flex;"><span>find $MD_FOLDER -name <span style="color:#e6db74">&#34;*.md&#34;</span> | <span style="color:#66d9ef">while</span> IFS<span style="color:#f92672">=</span> read -r line; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#get the slug name, and the basename of the file</span>
+</span></span><span style="display:flex;"><span>    slug<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>grep <span style="color:#e6db74">&#34;slug: &#34;</span> <span style="color:#e6db74">&#34;</span>$line<span style="color:#e6db74">&#34;</span> --max-count 1<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>    md_file<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>basename <span style="color:#e6db74">&#34;</span>$line<span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#format the output and append it to the file</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;</span>$md_file<span style="color:#e6db74">|</span>$slug<span style="color:#e6db74">&#34;</span> &gt;&gt; $SLUG_FILE
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><p>Then from there I tell the script to look for every instance of double square brackets in the file. However, Obsidian&rsquo;s backlinks isn&rsquo;t the only thing that uses double square brackets (for example, Bash uses them for conditions). So I would have to tell it to only look for the ones that have a pipe in it. I did had t use Google&rsquo;s Gemini to generate me the regex statement for <code>grep</code>, since I couldn&rsquo;t get it to return just only the text inside the double square brackets. Then from there, I would use <code>awk</code> to split the Obsidian&rsquo;s backlinks in half at the <code>|</code>. From there, I would use the file name from the backlink to find the slug related to it in the <code>slug.txt</code> file,  extract the slug, lowercase it, and replace the spaces with dashes. Finally, I had the script create the markdown version of the link, and use <code>sed</code> to replace the backlink with the markdown link.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#iter through every obsidian backlink for articles </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#(NOTE: this line was generated by Google&#39;s Gemini cause I couldn&#39;t figure out how to do it by hand)</span>
+</span></span><span style="display:flex;"><span>grep -oP <span style="color:#e6db74">&#39;\[\[\K[^\]]*\|[^\]]*(?=\]\])&#39;</span> index.md | <span style="color:#66d9ef">while</span> IFS<span style="color:#f92672">=</span> read -r line; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">#split the line into the file part, and the alt text part </span>
+</span></span><span style="display:flex;"><span>	link_file<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;</span>$line<span style="color:#e6db74">&#34;</span> | awk -F <span style="color:#e6db74">&#39;|&#39;</span> <span style="color:#e6db74">&#39;{print $1}&#39;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>	alt_text<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;</span>$line<span style="color:#e6db74">&#34;</span> | awk -F <span style="color:#e6db74">&#39;|&#39;</span> <span style="color:#e6db74">&#39;{print $2}&#39;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">#look for the slug that&#39;s for the file referenced, extract it, lowercase it, and replace all spaces with -  </span>
+</span></span><span style="display:flex;"><span>	slug_result<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>grep <span style="color:#e6db74">&#34;</span>$link_file<span style="color:#e6db74">&#34;</span> $SLUG_FILE<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>	slug<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo $slug_result | awk -F <span style="color:#e6db74">&#39;|slug: &#39;</span> <span style="color:#e6db74">&#39;{print tolower($2)}&#39;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>	slug<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo $slug | sed <span style="color:#e6db74">&#34;s/ /-/g&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">#create the markdown version of the link</span>
+</span></span><span style="display:flex;"><span>	new_link<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;[</span>$alt_text<span style="color:#e6db74">](\/posts\/</span>$slug<span style="color:#e6db74">)&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">#replace the obsidian backlink with the markdown link</span>
+</span></span><span style="display:flex;"><span>	sed -i <span style="color:#e6db74">&#34;s/\[\[</span>$line<span style="color:#e6db74">\]\]/</span>$new_link<span style="color:#e6db74">/&#34;</span> index.md
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Fixed the backlinsk for </span>$md_article<span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><p>Although while I was doing that, I realise that I wanted to tweak the tags so they would have spaces in them. For some reason, Obsidian doesn&rsquo;t allow spaces in the front matter version of tags, but Hugo does. And I would prefer if the tags do have spaces. So I made the script extract the front matter from the markdown file, extract the tags from the front matter, and replace any dashes with spaces.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#extract the tags from the file</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#(NOTE: this line was generated by Google&#39;s Gemini cause I couldn&#39;t figure out how to do it by hand)</span>
+</span></span><span style="display:flex;"><span>front_matter<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>awk <span style="color:#e6db74">&#39;/^---$/ {p++; next} p==1 {print}&#39;</span> index.md<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>tags<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;</span>$front_matter<span style="color:#e6db74">&#34;</span> | grep <span style="color:#e6db74">&#34;^  - &#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#replace the tag&#39;s _ with spaces</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;</span>$tags<span style="color:#e6db74">&#34;</span> | <span style="color:#66d9ef">while</span> IFS<span style="color:#f92672">=</span> read -r line; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>	new_tag<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;</span>$line<span style="color:#e6db74">&#34;</span> | sed <span style="color:#e6db74">&#34;s/_/ /&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>	sed -i <span style="color:#e6db74">&#34;s/</span>$line<span style="color:#e6db74">/</span>$new_tag<span style="color:#e6db74">/&#34;</span> index.md
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Fixed tags for </span>$md_article<span style="color:#e6db74">&#34;</span>
+</span></span></code></pre></div><h2 id="prepare-to-host">Prepare to Host</h2>
+<p>Since the blog is almost ready to go live, there is a few cleanup things I would want to do. The first one is that I want the Git repo to have a separate branch that&rsquo;s just the <code>public</code> folder. This should make hosting the site easier since it would just have the generated files only in it.  Luckily for me, Git has a built in feature for that called Worktree. A Git worktree is a feature that can assign an directory to a branch<sup>[11]</sup>. So I can have everything, except for <code>public</code> into the main repo, and <code>public</code> into the site repo.</p>
+<p>To use it, I would have to first ensure that the public directory doesn&rsquo;t exist, as the worktree would make the directory. Then, I would run <code>git worktree add --orphan -b site public</code>. What that command would is is create a new worktree at the <code>public</code> directory, with the <code>site</code> branch (<code>-b site</code>), and make it not in have the history of the main branch (<code>--orphan</code>). From there, running <code>hugo</code> would put the static files in both the <code>main</code> branch, and the <code>site</code> branch. I would still have to manually commit to them, but that&rsquo;s where the script comes in, as I can just automate that. To do that, I would have to first commit inside the site folder, then commit the main folder.</p>
+<h2 id="publishing-the-blog-site">Publishing the Blog Site</h2>
+<p>With the blog&rsquo;s repo ready to be public, I have decided to create a Github account to not only host the repo, but to also host the blog site. I went with Github because A) I needed a place to host the blog&rsquo;s source code, and B) they can host static pages for free*.
+<em>*There are limits to how the website can be hosted on Github, such as the site being no bigger then 1GB.<sup>[12]</sup></em></p>
+<p>So I created a brand new <a href="https://github.com/Mr-Tinkerer">Github account</a> for the blog posts. I then uploaded a newly generated SSH key for it, since that&rsquo;s what I would be using to push the blog repo, and I create the GitHub repo (<a href="https://github.com/Mr-Tinkerer/mr-tinkerer.github.io">https://github.com/Mr-Tinkerer/mr-tinkerer.github.io</a>) for it. After pushing the main branch, and the site branch, I went into the repo&rsquo;s settings to find the option to create a Github Page. From there, I told it to <code>Depoly from a branch</code>, with the branch being <code>site</code>, and the folder being <code>/root</code>.</p>
+<p><img src="Pasted%20image%2020260604061509.png" alt="">
+<em>The setting page for creating the Github Page for the blog.</em></p>
+<p>And after giving Github some time to deploy the site automatically, it is now live @ <a href="https://mr-tinkerer.github.io/Blog-Site/">https://mr-tinkerer.github.io/Blog-Site/</a>.</p>
+<p><img src="Pasted%20image%2020260604061621.png" alt="">
+<em>The website after I published it.</em></p>
+<p>Except that the site is broken. Not only that the CSS is broken, but also the URLs. I clicked on any of the URLs, and they take me to <code>/posts/Laptop-NAS</code> instead of <code>https://mr-tinkerer.github.io/posts/Laptop-NAS/</code>. I reran the <code>hugo server</code> command to see if the script broke the site, but it still works there, meaning that the issue is at the generation of the static site.</p>
+<p>So the first thing that I went to go check is the <code>hugo.toml</code>, and that&rsquo;s when I notice that the <code>BaseURL</code> is not only set to <code>https://example.org/</code>, but also commented out. That explains why the URLs are broken. So I set it to the Github URL, and rebuild the site. I then check the <code>index.html</code>, and saw that the links were now pointing to the Github URL. I then pushed the fix to Github, and waited for the site to auto redeploy. After some time, Github said that the changes is now live. However, when I went to go check on the site, it is still broken as before.</p>
+<p>I went to go check on the <code>index.html</code> file in the Github repo, and that&rsquo;s when I notice that it&rsquo;s missing the Github URL. But when I check the latest commit in the <code>site</code> branch, it&rsquo;s at the commit where the Github URL is added. I went back to the local git repo to check the status, and it&rsquo;s up to date with the remote repo. I tried to do another push, but with force this time, and it still in the broken spot. Not only that, but when I click on the <code>public</code> directory in the <code>main</code> branch, it does nothing. So with those two issues, I decided to just delete the <code>site</code> worktree and branch, and just have Github Pages deploy from the <code>public</code> directory. Except I can&rsquo;t do that, as Github Pages only give me two directory options when I choose to <code>deploy from a branch</code>.</p>
+<p><img src="Pasted%20image%2020260604063528.png" alt="">
+<em>The two folder options I am allow to choose.</em></p>
+<p>At this point, I decided to use my brains cells and check if there is a guide on how to deploy a Hugo blog to a Github Page. And sure enough, there is an official guide from the <a href="https://gohugo.io/host-and-deploy/host-on-github-pages/#types-of-sites">Hugo&rsquo;s docs</a>. Interesting enough, it doesn&rsquo;t tell you to use the <code>deploy from a branch</code> option, but instead the <code>Github Actions</code>. Now I never use Github Actions before, so this will be interesting.</p>
+<p>So after the guide tells you to switch the deployment option to Github Actions, it want you to add the following into the <code>hugo.toml</code> file.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span><span style="color:#a6e22e">caches</span><span style="color:#960050;background-color:#1e0010">:</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">images</span><span style="color:#960050;background-color:#1e0010">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">dir</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">:</span><span style="color:#a6e22e">cacheDir</span><span style="color:#960050;background-color:#1e0010">/</span><span style="color:#a6e22e">images</span>
+</span></span></code></pre></div><p>From there, it wants you to create a Github Action file at <code>.github/workflows/hugo.yaml</code> in the local repo. This file will tell Github when to run the action, and how to build and deploy the site. Now I don&rsquo;t understand it fully on how it works, but I get an general idea from skimming over it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Build and deploy</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">on</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">push</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">branches</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">main</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">workflow_dispatch</span>:
+</span></span><span style="display:flex;"><span><span style="color:#f92672">permissions</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">contents</span>: <span style="color:#ae81ff">read</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">pages</span>: <span style="color:#ae81ff">write</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">id-token</span>: <span style="color:#ae81ff">write</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">concurrency</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">group</span>: <span style="color:#ae81ff">pages</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cancel-in-progress</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">defaults</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">run</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">shell</span>: <span style="color:#ae81ff">bash</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">build</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">DART_SASS_VERSION</span>: <span style="color:#ae81ff">1.99.0</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">GO_VERSION</span>: <span style="color:#ae81ff">1.26.2</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">HUGO_VERSION</span>: <span style="color:#ae81ff">0.161.1</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">NODE_VERSION</span>: <span style="color:#ae81ff">24.15.0</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">TZ</span>: <span style="color:#ae81ff">Europe/Oslo</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Checkout</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v6</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">submodules</span>: <span style="color:#ae81ff">recursive</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">fetch-depth</span>: <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Setup Go</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/setup-go@v6</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">go-version</span>: <span style="color:#ae81ff">${{ env.GO_VERSION }}</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">cache</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Setup Node.js</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/setup-node@v6</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">node-version</span>: <span style="color:#ae81ff">${{ env.NODE_VERSION }}</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Setup Pages</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">id</span>: <span style="color:#ae81ff">pages</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/configure-pages@v6</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Create directory for user-specific executable files</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          mkdir -p &#34;${HOME}/.local&#34;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Install Dart Sass</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          curl -sLJO &#34;https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          tar -C &#34;${HOME}/.local&#34; -xf &#34;dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          rm &#34;dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;${HOME}/.local/dart-sass&#34; &gt;&gt; &#34;${GITHUB_PATH}&#34;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Install Hugo</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          curl -sLJO &#34;https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          mkdir &#34;${HOME}/.local/hugo&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          tar -C &#34;${HOME}/.local/hugo&#34; -xf &#34;hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          rm &#34;hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;${HOME}/.local/hugo&#34; &gt;&gt; &#34;${GITHUB_PATH}&#34;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Verify installations</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;Dart Sass: $(sass --version)&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;Go: $(go version)&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;Hugo: $(hugo version)&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;Node.js: $(node --version)&#34;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Install Node.js dependencies</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          [](/posts/) &amp;&amp; npm ci || true</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Configure Git</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          git config core.quotepath false</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Cache restore</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">id</span>: <span style="color:#ae81ff">cache-restore</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/cache/restore@v5</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">path</span>: <span style="color:#ae81ff">${{ runner.temp }}/hugo_cache</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">key</span>: <span style="color:#ae81ff">hugo-${{ github.run_id }}</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">restore-keys</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#ae81ff">hugo-</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Build the site</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          hugo build \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            --gc \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            --minify \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            --baseURL &#34;${{ steps.pages.outputs.base_url }}/&#34; \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            --cacheDir &#34;${{ runner.temp }}/hugo_cache&#34;</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Cache save</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">id</span>: <span style="color:#ae81ff">cache-save</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/cache/save@v5</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">path</span>: <span style="color:#ae81ff">${{ runner.temp }}/hugo_cache</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">key</span>: <span style="color:#ae81ff">${{ steps.cache-restore.outputs.cache-primary-key }}</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Upload artifact</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/upload-pages-artifact@v5</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">path</span>: <span style="color:#ae81ff">./public</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">deploy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">environment</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">github-pages</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">url</span>: <span style="color:#ae81ff">${{ steps.deployment.outputs.page_url }}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">needs</span>: <span style="color:#ae81ff">build</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Deploy to GitHub Pages</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">id</span>: <span style="color:#ae81ff">deployment</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/deploy-pages@v5</span>
+</span></span></code></pre></div><p>Once I pushed the Github Actions file to Github, it immediately, started to build it. After a minute, the new version of the site is now live. And this time it works exactly how it should.</p>
+<p><img src="Pasted%20image%2020260604064821.png" alt="">
+<em>The fixed version of the site.</em></p>
+<h2 id="github-repo-for-the-script">Github Repo for the script</h2>
+<p><a href="https://github.com/Mr-Tinkerer/mr-tinkerer.github.io/tree/script">https://github.com/Mr-Tinkerer/mr-tinkerer.github.io/tree/script</a></p>
+<h2 id="citations">Citations</h2>
+<blockquote>
+<p>[1] Hugo. “Introduction.” <em>Gohugo.io</em>, 3 Apr. 2024, gohugo.io/about/introduction/. Accessed 24 May 2026.
+[2] Hugo. “Configure Markup.” <em>Gohugo.io</em>, 16 Mar. 2026, gohugo.io/configuration/markup/#rendererunsafe. Accessed 24 May 2026.
+[3] Anderson, Dominic. “How to Use Backlinks in Obsidian.” <em>Alphr</em>, 23 Aug. 2023, <a href="https://www.alphr.com/obsidian-how-to-use-backlinks/">www.alphr.com/obsidian-how-to-use-backlinks/</a>. Accessed 24 May 2026.
+[4] Hugo. “Page Bundles.” <em>Gohugo.io</em>, 18 May 2026, gohugo.io/content-management/page-bundles/. Accessed 24 May 2026.
+[5] Chris. “How to Escape Spaces in Filename When Including Image in Markdown?” <em>Stack Overflow</em>, Stack Overflow, 10 July 2020, stackoverflow.com/a/62833782. Accessed 24 May 2026.
+[6] Hugo. “RSS Templates.” <em>Gohugo.io</em>, 25 Feb. 2026, gohugo.io/templates/rss/. Accessed 27 May 2026.
+[7] Hugo. “Configure Menus.” <em>Gohugo.io</em>, 25 May 2026, gohugo.io/configuration/menus/#example. Accessed 27 May 2026.
+[8] Hugo. “Front Matter.” <em>Gohugo.io</em>, 24 May 2026, gohugo.io/content-management/front-matter/. Accessed 27 May 2026.
+[9] irkode. “Adding Custom.css to Hugo Modules.” <em>HUGO Discourse</em>, Hugo, 28 Sept. 2025, discourse.gohugo.io/t/adding-custom-css-to-hugo-modules/55989/2. Accessed 28 May 2026.
+[10] Blender. “The Origin on Why “%20” Is Used as a Space in URLs.” <em>Stack Overflow</em>, 16 Dec. 2012, stackoverflow.com/a/13900863. Accessed 30 May 2026.
+[11] NameOcean. “NameOcean | Find Your Treasure in Domain Name Ocean.” <em>Nameocean.net</em>, 29 May 2026, nameocean.net/article/supercharge-your-git-workflow-how-worktree-based-team-coordination-transforms-collaborative-development/. Accessed 31 May 2026.
+[12] Github. “GitHub Pages Limits - GitHub Docs.” <em>GitHub Docs</em>, docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits. Accessed 3 June 2026.</p>
+</blockquote>
+
+        </section>
+        <div class="post-tags">
+          
+          
+          <nav class="nav tags">
+            <ul class="tags">
+              
+              <li><a href="/tags/hugo/">Hugo</a></li>
+              
+              <li><a href="/tags/obsidian/">Obsidian</a></li>
+              
+              <li><a href="/tags/streamlined/">Streamlined</a></li>
+              
+              <li><a href="/tags/automation/">Automation</a></li>
+              
+              <li><a href="/tags/website/">Website</a></li>
+              
+              <li><a href="/tags/bash-script/">Bash Script</a></li>
+              
+            </ul>
+          </nav>
+          
+          
+        </div>
+      </div>
+
+      
+      
+      <div class="toc">
+        <strong>Table of contents:</strong>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#the-issue">The Issue</a></li>
+    <li><a href="#setup-the-structure">Setup the Structure</a></li>
+    <li><a href="#making-the-blog-compatible-with-hugo">Making the Blog Compatible with Hugo</a></li>
+    <li><a href="#theme-things-up">Theme Things Up.</a></li>
+    <li><a href="#features--site-cleanup">Features &amp; Site Cleanup</a></li>
+    <li><a href="#automate-the-blog-conversion">Automate the Blog Conversion</a></li>
+    <li><a href="#dont-forget-about-backlinks--tags">Don&rsquo;t Forget about Backlinks &amp; Tags</a></li>
+    <li><a href="#prepare-to-host">Prepare to Host</a></li>
+    <li><a href="#publishing-the-blog-site">Publishing the Blog Site</a></li>
+    <li><a href="#github-repo-for-the-script">Github Repo for the script</a></li>
+    <li><a href="#citations">Citations</a></li>
+  </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    </article>
+</main>
+<footer>
+  <div style="display:flex"></div>
+  <div class="footer-info">
+    2026  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+
+</div>
+    </body>
+</html>

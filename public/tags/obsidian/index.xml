@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Obsidian on Mr.Tinkerer&#39;s Blogs</title>
+		<link>https://mr-tinkerer.github.io/tags/obsidian/</link>
+		<description>Recent content in Obsidian on Mr.Tinkerer&#39;s Blogs</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Thu, 04 Jun 2026 00:00:00 +0000</lastBuildDate>
+		
+			<atom:link href="https://mr-tinkerer.github.io/tags/obsidian/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>How I Streamline the Creation of Blogs</title>
+				<link>https://mr-tinkerer.github.io/posts/blogs-streamlined/</link>
+				<pubDate>Thu, 04 Jun 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/posts/blogs-streamlined/</guid>
+				<description>&lt;h2 id=&#34;the-issue&#34;&gt;The Issue&lt;/h2&gt;&#xA;&lt;p&gt;So I have written the two blogs (&lt;a href=&#34;https://mr-tinkerer.github.io/posts/old-laptop-into-proxmox-server&#34;&gt;The Laptop Proxmox Blog&lt;/a&gt;, and &lt;a href=&#34;https://mr-tinkerer.github.io/posts/laptop-nas&#34;&gt;Laptop NAS build&lt;/a&gt;), but I don&amp;rsquo;t have a way to share them. I have written in &lt;a href=&#34;https://www.markdownguide.org/getting-started/&#34;&gt;markdown&lt;/a&gt; file (via &lt;a href=&#34;https://obsidian.md/&#34;&gt;Obsidian&lt;/a&gt;), since it would be easy for me to write them. The problem is that you can&amp;rsquo;t just put a markdown file into a web server and expect it to work. So I would need to find a way to convert them into &lt;a href=&#34;https://en.wikipedia.org/wiki/HTML&#34;&gt;HTML&lt;/a&gt;. So after a some research, I have developed a plan.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

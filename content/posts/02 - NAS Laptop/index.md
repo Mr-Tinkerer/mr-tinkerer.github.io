@@ -43,7 +43,7 @@ For instance, I was able to tell that OMV tried to setup DHCP because DHCP isn't
 ![](Pasted%20image%2020260512233011.png)
 *OpenMediaVault asking the user what to do with the failed DHCP attempt.*
 
-From that screen, I was able to successfully guessed the manual IP setup option. From there, I gave it a static IP, a subnet mask of `/24`, and no DNS and gateway. The reason why is that there is no router connected to the switch. Just the Proxmox Laptop and my personal device. So OMV wouldn't have any way of accessing the internet. Now if you read how [I've setup the Proxmox Laptop](/posts/), then you would have known that there is a way for me to connect the VM to the internet via the Wi-Fi dongle. However, I've decided against that, as I just want this NAS to only be accessible by me. 
+From that screen, I was able to successfully guessed the manual IP setup option. From there, I gave it a static IP, a subnet mask of `/24`, and no DNS and gateway. The reason why is that there is no router connected to the switch. Just the Proxmox Laptop and my personal device. So OMV wouldn't have any way of accessing the internet. Now if you read how [I've setup the Proxmox Laptop](/posts/old-laptop-into-proxmox-server), then you would have known that there is a way for me to connect the VM to the internet via the Wi-Fi dongle. However, I've decided against that, as I just want this NAS to only be accessible by me. 
 
 After that, I was able to finagle my way through the Russian menus, and setup OMV.  I finally got to the part where OMV installer installs OMV. "Ah finally, the installer. Surely nothing will go wrong at this point," I thought to myself. 
 
@@ -271,7 +271,6 @@ if [[ $BACKUPS -gt $MAX_BACKUPS ]]; then
     notify-send "Auto Borg Backup Prune Done." "Sucessfully prune the old backups. The repo is now $SIZE."
 fi
 ```
-*[The link to the Github Gist of this script.](https://gist.github.com/Mr-Tinkerer/e9748457eb8958dde768ad0ac3b25a54)*
 
 Now if you want to use this script, note that you would have to change the borg's repo path, place the borg's secret inside the `BORG_SECRET` file, set that file to be that you're the only one that can read it (`chown 1000:1000 BORG_SECRET && chmod 400 BORG_SECRET`), and exclude/include any paths in the backup command. Now running that script should automatically create a new backup without any user input.
 
@@ -314,6 +313,9 @@ WantedBy=timers.target
 ```
 
 After that, systemd user's daemon will need to be reload, via `systemctl --user daemon-reload`, for it to see the new files. Finally, the timer would need to be enabled for it to be activated via `systemctl --user enable auto_backup.timer`. You can run `systemctl --user list-timers` to check when the next time the timer is going to be run, or you can run `systemctl --user start auto_backup.timer` to manually trigger the timer.
+
+## Github Repo for the files
+https://github.com/Mr-Tinkerer/Laptop-NAS
 
 ## Citations
 > [1] TrueNAS. “SCALE Hardware Guide.” _Truenas.com_, TrueNAS, 3 Sept. 2024, www.truenas.com/docs/scale/24.10/gettingstarted/scalehardwareguide/. Accessed 12 May 2026.
