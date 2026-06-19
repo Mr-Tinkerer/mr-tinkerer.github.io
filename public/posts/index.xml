@@ -10,9 +10,16 @@
 		
 		
 		
-			<lastBuildDate>Thu, 04 Jun 2026 00:00:00 +0000</lastBuildDate>
+			<lastBuildDate>Mon, 08 Jun 2026 00:00:00 +0000</lastBuildDate>
 		
 			<atom:link href="https://mr-tinkerer.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Creating an (Almost) Friction-less Gaming VM in Linux</title>
+				<link>https://mr-tinkerer.github.io/posts/frictionless-gaming-vm/</link>
+				<pubDate>Mon, 08 Jun 2026 00:00:00 +0000</pubDate>
+				<guid>https://mr-tinkerer.github.io/posts/frictionless-gaming-vm/</guid>
+				<description>&lt;h2 id=&#34;the-plan&#34;&gt;The Plan&lt;/h2&gt;&#xA;&lt;p&gt;So I want to create a VM (Virtual Machine) that&amp;rsquo;s designed to let me able to game inside it. Not only that, but at the end, I want make giving the VM my GPU as easy as possible. Now there are many reasons why someone would want to set something like this up, but there are two for me.&lt;/p&gt;&#xA;&lt;p&gt;The first is that if I am encountering an issue with &lt;a href=&#34;https://github.com/ValveSoftware/Proton&#34;&gt;Valve&amp;rsquo;s Proton&lt;/a&gt; (which is a tool that makes it easy to run Windows game under Linux)&lt;sup&gt;[1]&lt;/sup&gt;, I want to be able to use that VM to confirm that the issue is coming from Proton, and not the game being buggy. Now I know that I could just re-import the game into my Window&amp;rsquo;s drive, and test it their. But not only that would require me to reboot my laptop to access Windows, but additional storage would be wasted, as I would have to copy the game&amp;rsquo;s files over to Windows. I could just, instead, share the game&amp;rsquo;s folder into the VM. The second reason is that there might be some times where I would want to test some software that I don&amp;rsquo;t fully trust. By putting those software into the VM, and giving the VM my GPU, I could run those software to the fullest power while still isolating it from my host system.&lt;/p&gt;</description>
+			</item>
 			<item>
 				<title>How I Streamline the Creation of Blogs</title>
 				<link>https://mr-tinkerer.github.io/posts/blogs-streamlined/</link>

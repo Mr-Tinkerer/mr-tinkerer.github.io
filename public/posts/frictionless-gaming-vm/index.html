@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Creating an (Almost) Friction-less Gaming VM in Linux - Mr.Tinkerer&#39;s Blogs</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="I will be creating a windows 10 VM, and I will be giving it my GPU in order to be able to play games inside of it. In addition to that, I will make it extremely simple to connect the GPU to/from the host machine and the VM." />
+	<meta property="og:image" content="https://mr-tinkerer.github.io/"/>
+	<meta property="og:url" content="https://mr-tinkerer.github.io/posts/frictionless-gaming-vm/">
+	<meta property="og:site_name" content="Mr.Tinkerer&#39;s Blogs">
+	<meta property="og:title" content="Creating an (Almost) Friction-less Gaming VM in Linux">
+	<meta property="og:description" content="I will be creating a windows 10 VM, and I will be giving it my GPU in order to be able to play games inside of it. In addition to that, I will make it extremely simple to connect the GPU to/from the host machine and the VM.">
+	<meta property="og:locale" content="en_us">
+	<meta property="og:type" content="article">
+		<meta property="article:section" content="posts">
+		<meta property="article:published_time" content="2026-06-08T00:00:00+00:00">
+		<meta property="article:modified_time" content="2026-06-08T00:00:00+00:00">
+		<meta property="article:tag" content="Virtual Machines">
+		<meta property="article:tag" content="Gaming">
+		<meta property="article:tag" content="Linux">
+		<meta property="article:tag" content="QEMU">
+		<meta property="article:tag" content="Hardware">
+		<meta property="article:tag" content="Bash Script">
+
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="Creating an (Almost) Friction-less Gaming VM in Linux">
+	<meta name="twitter:description" content="I will be creating a windows 10 VM, and I will be giving it my GPU in order to be able to play games inside of it. In addition to that, I will make it extremely simple to connect the GPU to/from the host machine and the VM.">
+
+        <link href="https://mr-tinkerer.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://mr-tinkerer.github.io/css/main.475e92bd33b8431a5ff779310e6b247c1b8ee0f01e4acf38c4c8f786fc707e0f.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://mr-tinkerer.github.io/css/dark.4529c04ce20ceac5a42e37a63e092c89354fbd00e6209bd2995100d61b71e8df.css"  disabled />
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://mr-tinkerer.github.io/">Mr.Tinkerer&#39;s Blogs</a>
+	</div>
+	<nav>
+		
+		<a href="/posts/">Blogs</a>
+		
+		<a href="/search/">Search</a>
+		
+		<a href="/about/">About</a>
+		
+		<a href="/index.xml">RSS</a>
+		
+		<button id="dark-mode-toggle" class="nav-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" type="button"><svg class="feather" viewBox="0 0 24 24" fill="none" stroke="#232333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg></button>
+		<script src="https://mr-tinkerer.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+  <article>
+    <div class="post-container">
+      
+      <div class="post-content">
+        <div class="title">
+          <h1 class="title">Creating an (Almost) Friction-less Gaming VM in Linux</h1>
+          <div class="meta">Posted on Jun 8, 2026</div>
+        </div>
+        
+        <section class="body">
+          <h2 id="the-plan">The Plan</h2>
+<p>So I want to create a VM (Virtual Machine) that&rsquo;s designed to let me able to game inside it. Not only that, but at the end, I want make giving the VM my GPU as easy as possible. Now there are many reasons why someone would want to set something like this up, but there are two for me.</p>
+<p>The first is that if I am encountering an issue with <a href="https://github.com/ValveSoftware/Proton">Valve&rsquo;s Proton</a> (which is a tool that makes it easy to run Windows game under Linux)<sup>[1]</sup>, I want to be able to use that VM to confirm that the issue is coming from Proton, and not the game being buggy. Now I know that I could just re-import the game into my Window&rsquo;s drive, and test it their. But not only that would require me to reboot my laptop to access Windows, but additional storage would be wasted, as I would have to copy the game&rsquo;s files over to Windows. I could just, instead, share the game&rsquo;s folder into the VM. The second reason is that there might be some times where I would want to test some software that I don&rsquo;t fully trust. By putting those software into the VM, and giving the VM my GPU, I could run those software to the fullest power while still isolating it from my host system.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>It is also important to note that before I can even start this, I would need two things. The first thing is that I would need two GPUs in order to do this. Now they don&rsquo;t have to be two dedicated GPUs, as the second one could just be an Integrated GPU (the GPU that&rsquo;s inside the CPU). The reason why is that when you give the VM the GPU, you&rsquo;re OS will no longer have access to it.<sup>[2]</sup> So the second GPU will be there to ensure that the OS can still render things properly.<sup>[2]</sup></p>
+<p>The second thing that you will need is an Intel CPU that supports VT-d (or VT-x), or an AMD chip that supports AMD-Vi<sup>[2]</sup>. What those feature do is that they will make VMs able to use the hardware more efficiently. If you have an AMD CPU that&rsquo;s from the bulldozer generation or higher (October 2011 or higher), then it has AMD-Vi built into it.<sup>[2]</sup> For Intel, using the <a href="https://ark.intel.com/content/www/us/en/ark/search/featurefilter.html?productType=873&amp;0_VTD=True&amp;2_VTX=true">Intel compatible website checker</a> will let you know which ones has VT-d (or VT-x).<sup>[2]</sup>  Not only that, but you would need an motherboard that supports IOMMU.<sup>[2]</sup> IOMMU allows the devices to be more efficiently mapped to the system&rsquo;s RAM.<sup>[5]</sup> This will make it easier for the VM to access the physical hardware. <sup>[5]</sup></p>
+<p>The third thing that you would need is a monitor that you can plug your GPU and IGPU into. If you&rsquo;re on a desktop computer, then you should already have one.  If you only have one monitor, then I would recommend getting two monitors so that one of them can be plugged into the GPU, and the other into the IGPU at the same time. If you can&rsquo;t get a second monitor, then you could either borrow one from someone you know, or juggle between plugging between the GPU and the IGPU.</p>
+<p>The last thing that you will need is any modern Linux Distro. I&rsquo;ll explain more in detail when I get to the hypervisors section, but just know that the tools being used here doesn&rsquo;t support Windows, nor Mac OS.</p>
+<p>With that being said, I am using a <a href="https://www.gigabyte.com/Laptop/GIGABYTE-GAMING-A16-GA6H">GIGABYTE-GAMING-A16-GA6H</a> gaming laptop on <a href="https://cachyos.org/">CachyOS</a> (mandatory &ldquo;I use Arch, btw&rdquo;).</p>
+<h2 id="prepare-for-the-vm">Prepare for the VM</h2>
+<p>Obviously, The first step would be to get the Windows ISO. Now I am going to use the Windows 10, as I feel like modifying the VM to meet Windows 11 requirements, and bypassing the requirement for connecting a Microsoft account just to be able to install Windows. Not only that, but since this VM will almost never be connected to the internet, I don&rsquo;t have to worry about future Windows 10 vulnerability affecting the machine. Now luckily for me, Microsoft is still hosting the ISO image for <a href="https://www.microsoft.com/en-ca/software-download/windows10iso">Windows 10</a>.</p>
+<p><img src="Pasted%20image%2020260608105844.png" alt="">
+<em>The download button for Window 10&rsquo;s ISO.</em></p>
+<p>Now the next question is what VM platform should I use? Before I can pick that, I can already eliminate some options, since a type 2 hypervisor won&rsquo;t work with this. If you don&rsquo;t know what a type 2 or a type 1 hypervisor is, then let me quickly explain. A type 1 and a type 2 hypervisor are different types of virtual machine platform. A type 2 live on top of the existing OS (Windows, Mac, Linux, etc&hellip;), while a type 1 hypervisor lives on top of the physical hardware.<sup>[5]</sup> Because type 2 hypervisor lives on top of an OS, it would have to fight against the OS in order to use the hardware efficiently.<sup>[5]</sup> So because of that, the VMs would not only be slower, but it would also be extremely harder to give the VM full access to the physical hardware, like a GPU<sup>[5]</sup>. Type 1 hypervisor don&rsquo;t have this issue because they&rsquo;re the only ones who have access to the hardware, giving them complete control over it<sup>[5]</sup>.  So any type 2 hypervisor platforms, like <a href="https://www.virtualbox.org/">VirtualBox</a> and <a href="https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion">VMWare Workstation</a>, are out of the question.</p>
+<p>But the next question would be which type 1 hypervisor to use? The problem with type 1 hypervisors is that since they avoid existing OS, then the only way for me to put them onto my host system is to install their OS for it. But then it won&rsquo;t be friction-less if I would have to reboot my device just to use the VM. Luckily for me, there&rsquo;s one hypervisor that lets me use it on my existing Linux Distro, and that&rsquo;s <a href="https://www.qemu.org/">QEMU</a>. QEMU is a powerful VM that can run VMs on top of any modern Linux Distro.<sup>[6]</sup> Now this does make it a type 2 hypervisor. But QEMU has support for other hypervisors, including KVM.<sup>[6]</sup> KVM is a virtualization module that&rsquo;s built into the modern Linux kernel.<sup>[7]</sup> So by using KVM, QEMU can bypass the OS, and have direct access to the physical hardware via by the Linux Kernel<sup>[7]</sup>. This turns it into a type 1 hypervisor.</p>
+<p>Now I do want to note that Microsoft does have a type 1 hypervisor that&rsquo;s can run on top of Windows 8 and above.<sup>[8]</sup> The problem is that it&rsquo;s locked behind the Pro and Enterprise version of the consumer version of windows.<sup>[8]</sup></p>
+<p>That being said, one problem with QEMU is that it&rsquo;s command line only.  It has no way of saving the configuration of the VM, so you would have to run the same command everytime. This is an example of an command taken from <a href="https://andreavouk.com/blog/2024/09/15/qemu-practical-noob-guide-101">andreavouk&rsquo;s guide on QEMU</a>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>/opt/qemu/bin/qemu-system-x86_64 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -enable-kvm <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -cpu host <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -smp <span style="color:#ae81ff">4</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -m <span style="color:#ae81ff">4096</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -netdev user,id<span style="color:#f92672">=</span>net0 -device virtio-net-pci,netdev<span style="color:#f92672">=</span>net0 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -device virtio-scsi-pci -drive file<span style="color:#f92672">=</span>demo-ubuntu24.qcow2,if<span style="color:#f92672">=</span>none,id<span style="color:#f92672">=</span>hd0,cache<span style="color:#f92672">=</span>writeback -device scsi-hd,drive<span style="color:#f92672">=</span>hd0 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -cdrom <span style="color:#e6db74">&#39;./ubuntu-24.04-desktop-amd64.iso&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -device usb-ehci,id<span style="color:#f92672">=</span>usb,bus<span style="color:#f92672">=</span>pci.0 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    -device usb-tablet
+</span></span></code></pre></div><p>As you can see, it can be complex to control and manage the VMs like this. Luckily for us, there are external tools to make it easier to manage QEMU&rsquo;s VMs. One such tool is <a href="https://libvirt.org/">libvirt</a>. Libvirt is a toolkit that handles managing QEMU for us.<sup>[9]</sup> It saves the VM&rsquo;s config as a XML, making it simpler to start the VM. Unfortunately, it is still command line based only. It is not as bad as QEMU.  The last tool that would be needed is <a href="https://virt-manager.org/">Virt Manager</a>. Virt manager is a GUI wrapper for libvirt, and by extension, QEMU.<sup>[10]</sup></p>
+<p><img src="Pasted%20image%2020260608142406.png" alt="">
+<em>An example of Virt Manager from their website.<sup>[10]</sup></em></p>
+<h2 id="setting-up-the-vm">Setting up the VM</h2>
+<p>With all of that out of the way, I can finally get around to creating the VM. With the Windows 10 ISO in my hand, I created a new VM for it. The VM is set to have 16GB of RAM, and 6 CPU cores. The RAM usage might be overkill, but I just want to ensure that the VM can handle anything I throw at it. The same can&rsquo;t be said for the storage, as I only give it 64GB. I want the main disk to just be small enough to host Windows, and the drivers needed onto it. When I get to the final screen, I select the <code>Customize configuration before install</code>, as I want to make some changes to it before installing.</p>
+<p><img src="Pasted%20image%2020260608191125.png" alt="">
+*The memory and CPU cores settings. *</p>
+<p><img src="Pasted%20image%2020260608191300.png" alt="">
+<em>The Storage Settings.</em></p>
+<p><img src="Pasted%20image%2020260608191642.png" alt="">
+<em>Selected the customize configuration befroe install option.</em></p>
+<p>The first thing that  I have to change is the topology of the CPU. You see, when I set the CPU cores earlier, it didn&rsquo;t actually gave the VM 6 CPU cores. Instead, it gives the VM 6 CPU sockets by default. I&rsquo;m not sure why it does that by default, but I do know that I would have to manually change it for Windows to perform better, or else it will only use one core. I also disabled the NIC interface in the VM. The reason why is that I want to setup Windows 10 offline so I don&rsquo;t have to go through the process of logging into a Microsoft account.</p>
+<p><img src="Pasted%20image%2020260608215550.png" alt="">
+<em>The updated CPU topology.</em></p>
+<p><img src="Pasted%20image%2020260608215751.png" alt="">
+<em>The NIC being disabled.</em></p>
+<p>With those two being set, I begin the installation of Windows 10. The VM booted into the ISO, and I begin the installation. I&rsquo;m sure that you have install Windows 10 before, so I&rsquo;m going to skim over this. The first thing I did is that I didn&rsquo;t provided a licence key Windows, since I don&rsquo;t feel like paying for Windows. I also went with the <code>Windows 10 Home</code> version.  Finally, I told it to take the entire drive, and begin the installation.</p>
+<p><img src="Pasted%20image%2020260608215955.png" alt="">
+<em>License key not being provided to Windows.</em></p>
+<p><img src="Pasted%20image%2020260608220000.png" alt="">
+<em>Windows 10 home being used.</em></p>
+<p><img src="Pasted%20image%2020260608220008.png" alt="">
+<em>The entire drive being used.</em></p>
+<p><img src="Pasted%20image%2020260608220012.png" alt="">
+<em>Windows being installed.</em></p>
+<p>After Window 10 installed, I got to the setup screen. After selecting the country and keyboard layout, I got to the part where it ask to connect Windows to the network. But I wouldn&rsquo;t be able to do that since I &ldquo;unplugged&rdquo; the ethernet cable. Since I didn&rsquo;t go with Windows 11, I am able to select <code>I don't have internet</code>. Microsoft did try to convince me to connect to the internet so I can connect an Microsoft account, but I can just skip it since I&rsquo;m not on Windows 11.</p>
+<p><img src="Pasted%20image%2020260608220517.png" alt="">
+<em>No network connection appearing, and Windows allowing me to skip connecting to the network.</em></p>
+<p><img src="Pasted%20image%2020260608220639.png" alt="">
+<em>Microsoft trying to convince me to connect a Microsoft account, but I can skip it.</em></p>
+<p>I then got to the part where it ask me to create a local user. I set the username to be <code>Owner</code>, the password to be <code>password</code>, and the security answers to be <code>Owner</code>. Clearly, this is a very secure account that definitely wont easily be hacked. But it doesn&rsquo;t matter for this VM since it&rsquo;s almost never going to talk to the internet. After that, Windows 10 has been successfully been installed.</p>
+<p><img src="Pasted%20image%2020260608221433.png" alt="">
+<em>The VM being sucessfully installed.</em></p>
+<p>With the installer now being in the past, I can re-enable the NIC to install drivers. After a minute of the NIC being enabled, Window 10 was able to detected and connect to it.</p>
+<p><img src="Pasted%20image%2020260608221859.png" alt="">
+<em>The NIC being re-enabled.</em></p>
+<p><img src="Pasted%20image%2020260608221834.png" alt="">
+<em>Windows seeing that the NIC was re-enabled.</em></p>
+<p>Now as of right now, the only drivers I would need to install is the VirtIO drivers. The VirtIO drivers is a set of drivers that allow Windows to work better with the devices.<sup>[11]</sup> As of the time that I am writing this, the following devices are support with the drivers:<sup>[11]</sup></p>
+<ul>
+<li>Disk drivers</li>
+<li>Ethernet cards</li>
+<li>Dynamic Memory Management.</li>
+</ul>
+<p>In addition to that, the drivers also came with the QEMU guest agent drivers. What the QEMU guest agent does is that allows information to be exchanged between the host and guest.<sup>[12]</sup> This is useful for the following, but not limited to, reasons:<sup>[12]</sup></p>
+<ul>
+<li>Properly shutdown the guest VM from the host device.</li>
+<li>Freeze the guest file system when making a backup/snapshot. It will also use volume shadow copy service if the guest OS is Windows.</li>
+<li>Automatically resize the guest&rsquo;s display size when the VM window has been resized.</li>
+</ul>
+<p>Now the drivers are being maintain by the Fedora Project,<sup>[13]</sup> and the download URL can be found at their <a href="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.285-1/">website repo</a>. I installed the <code>virtio-win-guest-tools.exe</code> option inside the VM. From there, I just ran the file, and just clicked next on every popup window. I didn&rsquo;t want to mess with the installer, so I went with the default options. After installing it, I shutdown the VM, and removed the CD drive that contain the Windows 10 ISO.</p>
+<p><img src="Pasted%20image%2020260608222910.png" alt="">
+<em>The VirtIO driver&rsquo;s repo.</em></p>
+<p><img src="Pasted%20image%2020260608223037.png" alt="">
+<em>The VirtIO driver installer wizard.</em></p>
+<p><img src="Pasted%20image%2020260608224736.png" alt="">
+<em>The CD drive being deleted from the VM.</em></p>
+<p>The last thing that I did to the VM is that I Windows download any of the updates that it&rsquo;s missing. From there, I let the machine download the update, and auto restart a few time to install the updates. Once it was done being updated, I created a snapshot of this point to have a updated version</p>
+<p><img src="Pasted%20image%2020260608224921.png" alt="">
+<em>The Windows update that the VM is missing.</em></p>
+<p><img src="Pasted%20image%2020260608224938.png" alt="">
+<em>The VM being updated.</em></p>
+<p><img src="Pasted%20image%2020260608225040.png" alt="">
+<em>The snapshot of the updated state being created.</em></p>
+<h2 id="setting-up-iommu">Setting up IOMMU</h2>
+<p>With the basic VM setup, it&rsquo;s time to move on to preparing for passing the GPU into the VM. Now, this first step is only needed if you have a Intel CPU, as AMD CPUs already has this applied, but you would need to tell the Linux kernel to boot with <code>IOMMU</code> enabled. Now doing this depends on which boot manager you are using. If you are using <a href="https://www.gnu.org/software/grub/">GRUB</a>, then you would need to modify the <code>GUB_CMDLINE_LINUX_DEFAULT</code> variable inside <code>/etc/default/grub</code> to append <code>intel_iommu=on</code> to it.<sup>[14]</sup> An example of what line would look like is <code>GUB_CMDLINE_LINUX_DEFAULT=&quot;quiet splash intel_iommu=on&quot;</code>.<sup>[15]</sup> From there, you would run <code>grub-mkconfig -o /boot/grub/grub.cfg</code> to generate a new config file, with the modifications you applied to it, for GRUB to use on boot.<sup>[15]</sup></p>
+<p>However, when I was installing CachyOS, I instead went with <a href="https://github.com/Limine-Bootloader/Limine">Limine</a>, as it was the default option for CachyOS. So the steps that I took was similar with GRUB. So what I had to do is that I had to open the <code>/etc/default/limine</code> file.<sup>[16]</sup> From there, I appended the <code>intel_iommu=on</code> value to the <code>KERNEL_CMDLINE[default]</code> line, just like how I would do it in GRUB.<sup>[16]</sup>  The last thing I would need to do is run the <code>limine-mkinitcpio</code> command to apply the kernel parameters to all of them.</p>
+<p>Now this is the part where AMD users can come back in, because we would need to reboot the system into the BIOS. From here, you would need to look for the <code>VT-D</code> option for Intel CPUs, or <code>CBS</code> for AMD CPUs, if you didn&rsquo;t already enabled this earlier.<sup>[14]</sup>  You would also need to look for the <code>IOMMU</code> option. However, my device didn&rsquo;t have the <code>IOMMU</code> option in the BIOS.<sup>[14]</sup> If yours don&rsquo;t have it, then it still might be able to work. You would just need to boot into Linux, and run the following command <code>sudo dmesg | grep -i IOMMU</code>.<sup>[14]</sup> If you see something along the lines of <code>DMAR: IOMMU enabled</code>, then it&rsquo;s enabled.<sup>[14]</sup></p>
+<p><img src="Pasted%20image%2020260610113715.png" alt="">
+<em>What the option looked like on my BIOS.</em></p>
+<p>Now that IOMMU is enabled, the next step would be to see how IOMMU group the various PCI devices.<sup>[17]</sup> The Arch Wiki has provided a simple bash script to easily see the IOMMU groups:<sup>[17]</sup></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span>shopt -s nullglob
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> g in <span style="color:#66d9ef">$(</span>find /sys/kernel/iommu_groups/* -maxdepth <span style="color:#ae81ff">0</span> -type d | sort -V<span style="color:#66d9ef">)</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;IOMMU Group </span><span style="color:#e6db74">${</span>g##*/<span style="color:#e6db74">}</span><span style="color:#e6db74">:&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> d in $g/devices/*; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>        echo -e <span style="color:#e6db74">&#34;\t</span><span style="color:#66d9ef">$(</span>lspci -nns <span style="color:#e6db74">${</span>d##*/<span style="color:#e6db74">}</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">done</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>;
+</span></span></code></pre></div><p>When you run that script, you should see a whole bunch of IOMMU groups. If you just the GPU, the GPU audio controller, and any other physical features that&rsquo;s being listed in the group, then you are good.<sup>[17]</sup> If you see any other devices in the same group, then you would have to pass that device as well.<sup>[17]</sup> If you don&rsquo;t want pass them as well, then try moving your GPU to a different slot, if possible, to generate a different IOMMU group.<sup>[17]</sup> The following is an snippet example of what the script&rsquo;s output look like for me.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-c" data-lang="c"><span style="display:flex;"><span>IOMMU Group <span style="color:#ae81ff">15</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#ae81ff">01</span><span style="color:#f92672">:</span><span style="color:#ae81ff">00.0</span> VGA compatible controller [<span style="color:#ae81ff">0300</span>]<span style="color:#f92672">:</span> NVIDIA Corporation GB206M [GeForce RTX <span style="color:#ae81ff">5060</span> Max<span style="color:#f92672">-</span>Q <span style="color:#f92672">/</span> Mobile] [<span style="color:#ae81ff">10</span>de:<span style="color:#ae81ff">2</span>d19] (rev a1)
+</span></span><span style="display:flex;"><span>	<span style="color:#ae81ff">01</span><span style="color:#f92672">:</span><span style="color:#ae81ff">00.1</span> Audio device [<span style="color:#ae81ff">0403</span>]<span style="color:#f92672">:</span> NVIDIA Corporation GB206 High Definition Audio Controller [<span style="color:#ae81ff">10</span>de:<span style="color:#ae81ff">22</span>eb] (rev a1)
+</span></span><span style="display:flex;"><span>IOMMU Group <span style="color:#ae81ff">16</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#ae81ff">02</span><span style="color:#f92672">:</span><span style="color:#ae81ff">00.0</span> Non<span style="color:#f92672">-</span>Volatile memory controller [<span style="color:#ae81ff">010</span><span style="color:#ae81ff">8</span>]<span style="color:#f92672">:</span> Phison Electronics Corporation PS5021<span style="color:#f92672">-</span>E21 PCIe4 NVMe <span style="color:#a6e22e">Controller</span> (DRAM<span style="color:#f92672">-</span>less) [<span style="color:#ae81ff">1987</span><span style="color:#f92672">:</span><span style="color:#ae81ff">5021</span>] (rev <span style="color:#ae81ff">01</span>)
+</span></span><span style="display:flex;"><span>IOMMU Group <span style="color:#ae81ff">17</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#ae81ff">03</span><span style="color:#f92672">:</span><span style="color:#ae81ff">00.0</span> Non<span style="color:#f92672">-</span>Volatile memory controller [<span style="color:#ae81ff">010</span><span style="color:#ae81ff">8</span>]<span style="color:#f92672">:</span> Samsung Electronics Co Ltd NVMe SSD Controller SM981<span style="color:#f92672">/</span>PM981<span style="color:#f92672">/</span>PM983 [<span style="color:#ae81ff">144</span>d:a808]
+</span></span><span style="display:flex;"><span>IOMMU Group <span style="color:#ae81ff">18</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#ae81ff">04</span><span style="color:#f92672">:</span><span style="color:#ae81ff">00.0</span> Ethernet controller [<span style="color:#ae81ff">0200</span>]<span style="color:#f92672">:</span> Realtek Semiconductor Co., Ltd. RTL8111<span style="color:#f92672">/</span><span style="color:#ae81ff">8168</span><span style="color:#f92672">/</span><span style="color:#ae81ff">8211</span><span style="color:#f92672">/</span><span style="color:#ae81ff">8411</span> PCI Express Gigabit Ethernet Controller [<span style="color:#ae81ff">10</span>ec:<span style="color:#ae81ff">8168</span>] (rev <span style="color:#ae81ff">15</span>)
+</span></span></code></pre></div><h2 id="prepare-the-gpu-for-the-vm">Prepare the GPU for the VM</h2>
+<p>Now that the GPU is isolated in a separate group, it&rsquo;s time to prepare the GPU. To do this, we would need to tell the Linux kernel to not let any programs to touch the GPU.<sup>[18]</sup> To do this, we can give the GPU a VFIO driver, during the boot process, before the NVIDIA drivers take the GPU.<sup>[18]</sup> However, this will make the GPU unusable by the system until the VFIO driver is gone.<sup>[18]</sup></p>
+<p>To do this, we must first get the PCI devices by their IDs. Luckily for us, there&rsquo;s already an easy way to do that. When we ran the script for the IOMMU groups, the PCI&rsquo;s IDs were listed inside the <code>[:]</code> at the very end of the line.<sup>[19]</sup> For example, for my RTX 5060 Mobile GPU, the IDs are listed as <code>[10de:2d19]</code>.  You&rsquo;re going to want to write them down somewhere, as it is going to be used a lot in this section.</p>
+<p>The next step would be to tell the kernel what devices should be use the VFIO driver. To do this, you would use need to create a new kernel module. This can be done by using <a href="https://www.man7.org/linux/man-pages/man8/modprobe.8.html">modprobe</a> by creating the <code>/etc/modprobe.d/vfio.conf</code> file.<sup>[20]</sup> Inside that file, the following line would need to be added: <code>options vfio-pci ids=&lt;INSERT_LIST_OF_IDS_HERE_WITH_COMMA_AND_NO_SPACES&gt;</code>.<sup>[19]</sup> An example of what that line would look like would be <code>options vfio-pci ids=10de:2d19,10de:22eb</code>.<sup>[20]</sup></p>
+<p>But that file alone won&rsquo;t be enough, as the NVIDIA driver would take the GPU before VFIO can. Doing this would depend on which initramfs generator your distro is using. If you&rsquo;re unsure, then the following command will tell you which of the popular ones are installed on your system: <code>which dracut mkinitcpio update-initramfs mkinitrd booster</code>. If it return more then one path, then you would have to search up which one is being primarily used. In my case, CachyOS (and vanilla Arch Linux) uses <code>mkinitcpio</code>.</p>
+<p>After you find your initramfs generator, you would need to tell the initramfs to load the VFIO module (the <code>vfio.conf</code> made earlier) before the NVIDIA driver. Now doing this properly will depend on the initramfs generator you&rsquo;re using. The Arch Wiki has instructions for <a href="https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF#initramfs">mkinitcpio, booster, and dracut</a>. Since CachyOS is using <code>mkinitcpio</code>, I will be following that one. But the instructions should be simillar for the other initramfs.</p>
+<p>What I would need to is modify the <code>/etc/mkinitcpio.conf</code>.<sup>[21]</sup> From there, I would have to modify the <code>MODULES=()</code> line to include <code>vfio_pci vfio vfio_iommu_type1</code> into it.<sup>[21]</sup> So that line would look like <code>MODULES=(vfio_pci vfio vfio_iommu_type1)</code>.  If the <code>MODULES</code> has the <code>nvidia</code> module in there, then make sure it&rsquo;s at the end of the line to load after VFIO.<sup>[21]</sup> I would also have to ensure that the <code>HOOKS=</code> line has the <code>modconf</code> hook inside it.<sup>[21]</sup> So it should look something like <code>HOOKS=(... modconf ...)</code>. Finally, I would have to rebuilt the mkinitcpio via <code>mkinitcpio -P</code>.<sup>[21]</sup>  However, since I am using <code>limine</code> as my boot manager, the command for me would me <code>limine-mkniitcpio -P</code>.<sup>[16]</sup></p>
+<p>After that, you would reboot the machine to reload the drivers. This is the part where I would recommend having two monitors plugged into the GPU and IGPU. The reason why is that if your monitor is only plugged into the GPU, then you&rsquo;ll be stuck into a black screen. Remember that Linux isn&rsquo;t using the GPU, so nothing will display from the GPU. So the only output that will Linux will be using is the IGPU. Having the two monitors will let you immediately see this, and know that the system booted properly. If you don&rsquo;t have a second monitor, then you will have to switch your cable to the IGPU.</p>
+<p>To fully confirm that your GPU is using VFIO drivers,  you can run the following command for each PCI device <code>lspci -nnk -d &lt;INSERT_PCI_ID&gt;</code> (<code>lspci -nnk -d 10de:2d19</code>).<sup>[22]</sup> If you see the <code>Kernel driver in use: vfio-pci</code> line, then the GPU is using the VFIO drivers.<sup>[22]</sup> Your also going to want to write down the PCI numbers in front of the GPU name in the command output. This will be useful when we pass the GPU into the VM. In my case, the numbers are <code>01:00.0</code>, and <code>01:00.1</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>$ lspci -nnk -d 10de<span style="color:#960050;background-color:#1e0010">:</span>2d19
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">01</span><span style="color:#960050;background-color:#1e0010">:</span><span style="color:#ae81ff">00.0</span> VGA compatible controller [<span style="color:#ae81ff">0300</span>]<span style="color:#960050;background-color:#1e0010">:</span> NVIDIA Corporation GB206M [GeForce RTX <span style="color:#ae81ff">5060</span> Max-Q / Mobile] [10de<span style="color:#960050;background-color:#1e0010">:</span>2d19] (rev a1)
+</span></span><span style="display:flex;"><span>	Subsystem<span style="color:#960050;background-color:#1e0010">:</span> Gigabyte Technology Co., Ltd Device [<span style="color:#ae81ff">1458</span><span style="color:#960050;background-color:#1e0010">:</span><span style="color:#ae81ff">6019</span>]
+</span></span><span style="display:flex;"><span>	Kernel driver <span style="color:#66d9ef">in</span> use<span style="color:#960050;background-color:#1e0010">:</span> vfio-pci
+</span></span><span style="display:flex;"><span>	Kernel modules<span style="color:#960050;background-color:#1e0010">:</span> nouveau, nvidia_drm, nvidia
+</span></span><span style="display:flex;"><span>$ lspci -nnk -d 10de<span style="color:#960050;background-color:#1e0010">:</span>22eb
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">01</span><span style="color:#960050;background-color:#1e0010">:</span><span style="color:#ae81ff">00.1</span> Audio device [<span style="color:#ae81ff">0403</span>]<span style="color:#960050;background-color:#1e0010">:</span> NVIDIA Corporation GB206 High Definition Audio Controller [10de<span style="color:#960050;background-color:#1e0010">:</span>22eb] (rev a1)
+</span></span><span style="display:flex;"><span>	Subsystem<span style="color:#960050;background-color:#1e0010">:</span> NVIDIA Corporation Device [10de<span style="color:#960050;background-color:#1e0010">:</span><span style="color:#ae81ff">0000</span>]
+</span></span><span style="display:flex;"><span>	Kernel driver <span style="color:#66d9ef">in</span> use<span style="color:#960050;background-color:#1e0010">:</span> vfio-pci
+</span></span><span style="display:flex;"><span>	Kernel modules<span style="color:#960050;background-color:#1e0010">:</span> snd_hda_intel
+</span></span></code></pre></div><h2 id="insert-the-gpu-into-the-vm">Insert the GPU into the VM</h2>
+<p>With the GPU separated, it&rsquo;s now time to insert it to the VM. This will be simple to do with Virt Manager. With the Hardware page of the VM open, you&rsquo;re going to want to click the &ldquo;Add Hardware&rdquo; button.  From there, you&rsquo;re going to want to select the &ldquo;PCI Host Device&rdquo;.</p>
+<p><img src="Pasted%20image%2020260610203757.png" alt="">
+<em>The location to add in a PCI device in Virt Manager.</em></p>
+<p>Now you will see all of the PCI devices in the device. From there, you will select the PCI device with the same name as the physical device. If you&rsquo;re unsure about the actual name, or you would want to be 100% sure that it&rsquo;s the right device, then that&rsquo;s where the written PCI numbers from earlier come in. Picking the device that has the same PCI number will ensure that it&rsquo;s the right device. Remember to add all of the PCI devices in the same IOMMU group from earlier.</p>
+<p><img src="Pasted%20image%2020260610204027.png" alt="">
+<em>The PCI selection list.</em></p>
+<p>From there, you would want to start the VM up. If you do have your GPU plugged into a monitor, then the monitor might still be undetected when the VM is being used. This is because we&rsquo;re missing the GPU drivers for the display to work properly. So you would have to install the GPU drivers for it to work. Once you install the drivers, the GPU will now be able to display stuff to the second screen.</p>
+<p><img src="20260610_230240.jpg" alt="">
+<em>The monitor that&rsquo;s connected to the GPU working after installing the NVIDIA drivers.</em></p>
+<h2 id="looking-into-the-glass">Looking into the Glass</h2>
+<p>So with the GPU inside the VM, the next step would be to use <a href="https://looking-glass.io/">Looking Glass</a>. Looking Glass is a tool that will allow you to control your VM with low latency.  It does this by reading the raw, unfiltered, frames from the GPU.<sup>[24]</sup></p>
+<p>In order for Looking Glass to read the GPU&rsquo;s frames, it will need IVSHMEM to be setup first.<sup>[25]</sup>  IVSHEM (Inter-Vm SHared MEMory) is a device that will alllow a memory region to be shared between the host and guests.<sup>[26]</sup>  To figure out how big to make the memory, you would have to do the following calculations:<sup>[27]</sup></p>
+<ol>
+<li>Take the width and height of the desired maximum resolution, and multiply them.</li>
+<li>Then multiply the resolution by the BPP. The BPP is the Bits Per Pixel. BPP is 4 for SDR, and 8 for HDR.</li>
+<li>Multiply the number by 2 to get the frame size in bytes.</li>
+<li>Divide the fame size by 1,048,576 to convert the frame size into MiB.</li>
+<li>Add the frame size by 10 to get the required size.</li>
+<li>Find the nearest power of 2 number, and round up to that.</li>
+</ol>
+<p>For example, I would want to calculate the IVSHMEM for 1920x1200 SDR display:</p>
+<ol>
+<li>1920 x 1200 = 2,304,000</li>
+<li>2,304,000 x 4 = 9,216,000</li>
+<li>9,216,000 x 2 = 18,432,000</li>
+<li>18,432,000 / 1,048,576 = 17.578125</li>
+<li>17.578125 + 10 = 27.578125</li>
+<li>The nearest power of two number that is bigger then 27 is 32.</li>
+</ol>
+<ul>
+<li>So for my IVSHMEM, it should be 32MIB.</li>
+</ul>
+<p>With the IVSHMEM calculated, its time to add it to the VM, while it&rsquo;s power off, with Virt Manager. Unfortunately, there&rsquo;s no easy way to add a IVSHMEM without manually editing the XML file. To do so, you would first have to allow XML editing. To do so, you would have to go to <code>Edit</code> -&gt; <code>Preferences</code>. Then from there, go to the <code>General</code> tab, and check <code>Enable XML editing</code>.</p>
+<p><img src="Pasted%20image%2020260611230643.png" alt="">
+<em>The preference option settings.</em></p>
+<p><img src="Pasted%20image%2020260611230706.png" alt="">
+<em>The option to allow XML editing.</em></p>
+<p>Then, go to the hardware option of the VM, select the <code>Overview</code> option, and click onto the <code>XML</code> tab. This will show the entire XML file for the VM.</p>
+<p><img src="Pasted%20image%2020260611230838.png" alt="">
+<em>The XML file editing in Virt Manager.</em></p>
+<p>From there, you will want to add the following XML snippet to the end of the file.<sup>[28]</sup>  Make sure that it&rsquo;s has the correct number in there, in MiB, and it&rsquo;s above the <code>&lt;/devices&gt;</code> section of the XML file.<sup>[28]</sup></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;shmem</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#39;looking-glass&#39;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;model</span> <span style="color:#a6e22e">type=</span><span style="color:#e6db74">&#39;ivshmem-plain&#39;</span><span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;size</span> <span style="color:#a6e22e">unit=</span><span style="color:#e6db74">&#39;M&#39;</span><span style="color:#f92672">&gt;</span>INSERT SHARED MEMORY HERE<span style="color:#f92672">&lt;/size&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/shmem&gt;</span>
+</span></span></code></pre></div><p><img src="Pasted%20image%2020260611231257.png" alt="">
+<em>An example of what it should look like in the XML file.</em></p>
+<p>The next thing that you would have to do is to create a config file that will create the shared memory file on boot.<sup>[28]</sup> To do so, you would have to put the following into the <code>/etc/tmpfiles.d/10-looking-glass.conf</code>.<sup>[28]</sup> Just make sure to replace the <code>user</code> value with the username of your actual user.<sup>[28]</sup> After that, you can run <code>systemd-tmpfiles --create /etc/tmpfiles.d/10-looking-glass.conf</code> to make systemd to create the temp file now.<sup>[28]</sup></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">##  Path                    Mode  UID   GID  Age  Argument</span>
+</span></span><span style="display:flex;"><span>f  /dev/shm/looking-glass  <span style="color:#ae81ff">0660</span>  user  kvm  -    -
+</span></span></code></pre></div><p>The last thing that you have to do is install the Looking Glass Client application for your host device. Installing this will depend on your system. If it&rsquo;s not on there, then you will have to <a href="https://looking-glass.io/docs/B7/install_client/">manually compile it</a>. But for Arch based distros, there&rsquo;s a <a href="https://aur.archlinux.org/packages/looking-glass">AUR package</a> that will handle the compiling for you.</p>
+<p>Now that IVSHMEM is setup for the VM, and Looking Glass Client is installed, it&rsquo;s time to install the Looking Glass Server into the VM. Now I am not sure why, but whenever I reboot right after installing the drivers, the mouse no longer works in Virt-Manager. The keyboard still works, so you can use that to navigate around. Or you can set the mouse to be redirected into the VM by <code>USB Host Device</code>. Regardless of which way you pick, you will have to install the <code>Windows Host Binary</code> from the download page of Looking Glass. From there, you would just click next on everything. Just make sure that the <code>IVSHMEM Driver</code> is checked off for installation.</p>
+<p><img src="Pasted%20image%2020260611233829.png" alt="">
+<em>The Windows Host Binary to install inside the VM.</em></p>
+<p><img src="Pasted%20image%2020260611234028.png" alt="">
+<em>What components to install. Ensure that the IVSHMEM driver is installed.</em></p>
+<p>Now with the GPU plugged into the monitor, you can set the video hardware to be <code>None</code> to make the GPU the only display. After starting the VM, start Looking Glass. If you don&rsquo;t then it will exit since there&rsquo;s no VM&rsquo;s SPICE server to connect to. After that, give it a minute for Windows to boot, and the Looking Glass Server to start. If there&rsquo;s no output to the monitor, and the CPU usage is flat-line at one number, then try disabling ROM BAR for the GPU.<sup>[29]</sup></p>
+<p><img src="Pasted%20image%2020260612000033.png" alt="">
+<em>The CPU flating at one percentage, and being flat-lined.</em></p>
+<p><img src="Pasted%20image%2020260611235829.png" alt="">
+<img src="Pasted%20image%2020260611235833.png" alt="">
+<em>Where to disable the ROM BAR.</em></p>
+<p><img src="Pasted%20image%2020260612000140.png" alt="">
+<em>Looking Glass Client loading the VM display.</em></p>
+<p>But right now, there&rsquo;s an issue with the setup. The GPU will have to be connected to an monitor for it to display something. This can be annoying to deal with, as you&rsquo;re either going to be down a monitor, or can&rsquo;t be portable with this setup. There are two ways to fix this. The first one is buying a dummy plug for the HDMI/DP port in the GPU. This will make the GPU think that there&rsquo;s a monitor connected to it, when there isn&rsquo;t. The second option is to use a virtual display to trick the system into thinking there is a monitor plugged in. To do this, we&rsquo;ll be using a tool called <a href="https://github.com/VirtualDrivers/Virtual-Display-Driver">Virtual Display Driver</a>.</p>
+<p>First, you will want to install the latest release from the Github Repo. Then you will want to extract the zip folder, and run <code>VDD Control.exe</code>. This will bring up a GUI to control the virtual display. From there, you will want to click the <code>Install Driver</code> button. During the installation, there will be a popup asking if you want to add the virtual display driver. Answer yes to that. After that, you can close the Virtual Driver Control window. To ensure that the virtual display is working, you can look for it in <code>Device Manager</code> -&gt;  <code>Display Adapters</code>. After you see it in there, then you can unplug the monitor, and Looking Glass will continue to work.</p>
+<p><img src="Pasted%20image%2020260612001714.png" alt="">
+<em>The Virtual Driver Control GUI.</em></p>
+<p><img src="Pasted%20image%2020260612002223.png" alt="">
+<em>The Virtual Display Driver.</em></p>
+<p>At this point, the only issue I had left was that the resolutions in the virtual display was all in 16:9, but my monitor was in 16:10. Virtual Display Driver does have a way to add in custom resolutions. I would have to modify the <code>C:\VirtualDisplayDriver\vdd_settings.xml</code> file. I added the following into the <code>&lt;resolutions&gt;</code> tag.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;resolution&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;width&gt;</span>1920<span style="color:#f92672">&lt;/width&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;height&gt;</span>1200<span style="color:#f92672">&lt;/height&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;refresh_rate&gt;</span>30<span style="color:#f92672">&lt;/refresh_rate&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/resolution&gt;</span>
+</span></span></code></pre></div><p>Don&rsquo;t worry about the refresh rate being set to 30. There is another option in the file to set the refresh rate, and those will be applied to all resolutions. But after I restart the driver in Virtual Driver Control&rsquo;s GUI, I was able to set the resolution to <code>1920x1200@165</code> in the windows settings.</p>
+<h2 id="vfio-drivers---nvidia-drivers">VFIO Drivers -&gt; Nvidia Drivers</h2>
+<p>So the VM is all setup and ready to be used. The only problem is that it it&rsquo;s a pain to use the VM. If I would what to use the VM, I would have to modify the <code>/etc/mkinitcpio.conf</code> file, rebuilt the initramfs, reboot the laptop, and finally be able to use it. That&rsquo;s too much friction for me to be wanting to be able to use it. So I would have to find a way to unbind and rebind the GPU&rsquo;s drivers without reboot the machine. Now this would be the harder part for me, since almost everything up to this point I&rsquo;ve done before. So most of this was just me retracing my older steps, and remembering why something does a specific thing. The only new part was the Virtual Display Driver tool, since I never heard about it until I stumble upon it.</p>
+<p>What I would want to start with is unbinding the VFIO driver, and rebinding it to the Nvidia drivers. The reason why is that I figured that it would be easier to deal with, since I don&rsquo;t have to deal with trying to unbind the Nividia driver when something is currently using it. A quick search online tells me that echoing the PCI numbers into the right file will tell the kernel to unbind the drivers.<sup>[30]</sup>  But I need to know the right PCI numbers as the <code>01:00.0</code> wasn&rsquo;t a directory in <code>/sys/bus/pci/devices</code>.</p>
+<p><img src="Pasted%20image%2020260613212122.png" alt="">
+<em>The PCI devices listed on my device.</em></p>
+<p>That&rsquo;s when I remember that Virt Manager&rsquo;s hardware tab had a longer number for the PCI devices. And sure enough, those numbers were in the <code>/sys/bus/pci/devices</code>.  With the correct numbers obtained, I quickly wrote the following bash script for testing if this works.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span>gpu<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0000:01:00.0&#34;</span>
+</span></span><span style="display:flex;"><span>aud<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0000:01:00.1&#34;</span>
+</span></span><span style="display:flex;"><span>echo $gpu &gt; /sys/bus/pci/devices/$gpu/driver/unbind
+</span></span><span style="display:flex;"><span>echo $aud &gt; /sys/bus/pci/devices/$aud/driver/unbind
+</span></span></code></pre></div><p>And sure enough, the GPU was no longer bind to anything. Now I just need to bind it to the Nvidia GPU. To do that, I would just need to throw the PCI number to the driver&rsquo;s <code>bind</code> file. For me, those drivers are the <code>nvidia</code> for the GPU, and <code>snd_hda_intel</code> for the GPU&rsquo;s audio.  Now obviously, those drivers will be different for your system. Which is why running <code>lspi -nnk</code> will tell you what drivers your device normally use when not using VFIO.</p>
+<p><img src="Pasted%20image%2020260613213603.png" alt="">
+<em>The output of <code>lspci</code> after unbinding VFIO. Notice how the results are missing the <code>Kernel driver in use:</code> line.</em></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo $gpu &gt; /sys/bus/pci/drivers/nvidia/bind
+</span></span><span style="display:flex;"><span>echo $aud &gt; /sys/bus/pci/drivers/snd_hda_intel/bind
+</span></span></code></pre></div><p>And sure enough, the GPU is back to being normal. A quick <code>nvidia-smi</code> command confirms that. Incase you don&rsquo;t know what <code>nvidia-smi</code> is, it is a command that lets you monitor the nvidia&rsquo;s GPU.<sup>[31]</sup></p>
+<p><img src="Pasted%20image%2020260613212953.png" alt="">
+<em>The GPU being back to normal after rebinding the drivers back to it.</em></p>
+<h2 id="nvidia-drivers---vfio-drivers">Nvidia Drivers -&gt; VFIO Drivers</h2>
+<p>Now that was the easy part. Nothing was using the GPU when the VFIO drivers was loaded. However, with the Nvidia drivers, anything can be using the GPU. In my Laptop&rsquo;s idle state, there are two applications that&rsquo;s currently using my GPU, Steam and <a href="https://github.com/niri-wm/niri">Niri</a>. Now Steam would be easy to kill. Niri, on the other hand, isn&rsquo;t. The reason why is that it&rsquo;s the window manager I am currently using. So killing it would lead me to not have a way to spawn and controls windows onto my machine.</p>
+<p><img src="Pasted%20image%2020260614091139.png" alt="">
+<em>The two processes that is currently using my GPU.</em></p>
+<p>But what if I don&rsquo;t have to kill Niri? The only reason why I would have to kill Niri is to not make it use the GPU. But what if I can tell Niri to never use the GPU? So after looking through the Niri Wiki, I found two debug config options that might help me out with that, <a href="https://github.com/niri-wm/niri/wiki/Configuration:-Debug-Options#render-drm-device">render-drm-device</a> and <a href="https://github.com/niri-wm/niri/wiki/Configuration:-Debug-Options#ignore-drm-device">ignore-drm-device</a>. From what I am seeing, I can use <code>ignore-drm-device</code> to make it ignore my GPU, and <code>render-drm-device</code> to force it to use my IGPU only. The problem is that those value seems to only take a value from the <code>/dev/dri/</code> directory. Which doesn&rsquo;t seem that big of an issue, except that there are four options there, and I don&rsquo;t know which one is which.</p>
+<p><img src="Pasted%20image%2020260614092319.png" alt="">
+<em>The items in my <code>/dev/dri</code> directory.</em></p>
+<p>I can probably ignore the <code>card</code> values, since the example usage of those config options are using the <code>renderD</code> option. But I still don&rsquo;t have any easy way of knowing which one is which. That&rsquo;s where I found out that <code>ls -l /sys/class/drm/renderD*/device/driver</code> will tell me which drivers is what each device is using.<sup>[32]</sup> From there, I am able to tell that the <code>renderD128</code> is my Nvidia GPU, and my <code>renderD129</code> is my Intel IGPU. From there, I added a section that has the <code>render-drm-device</code> and <code>ignore-drm-device</code>. That section is in a seprate file, and imported into the main config. The reason why I did it like that is to make it easier for me to cancel the effect with <a href="https://www.gnu.org/software/sed/manual/sed.html">sed</a>.</p>
+<p><img src="Pasted%20image%2020260614093124.png" alt="">
+<em>The output of telling me what drivers the render devices are using.</em></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">debug</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Nvidia GPU
+</span></span></span><span style="display:flex;"><span>	<span style="color:#960050;background-color:#1e0010">ignore-drm-device</span> <span style="color:#f92672">&#34;/dev/dri/renderD128&#34;</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Intel IGPU
+</span></span></span><span style="display:flex;"><span>	<span style="color:#960050;background-color:#1e0010">render-drm-device</span> <span style="color:#e6db74">&#34;/dev/dri/renderD129&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>As soon as I saved the files, the second monitor went black. Now this should means that it worked perfectly. But when I checked <code>nvidia-smi</code>, it shows that Niri is still holding onto the GPU.</p>
+<p><img src="Pasted%20image%2020260614093758.png" alt="">
+<em>Niri is still holding onto the GPU, despite me telling Niri to ignore it.</em></p>
+<p>I did a quick reboot to see if this will worked fine if it config was like that from the start. And sure enough, Niri is no longer grabbing onto to it.</p>
+<p><img src="Pasted%20image%2020260614094418.png" alt="">
+<em>A reboot did pevent Niri from holding onto to the GPU.</em></p>
+<p>With nothing touching the GPU, I can now try to make it dynamically load the VFIO drivers. Now in theory, the script for unloading the Nvidia drivers, and loading the VFIO drivers should the be the same as before. I would just have to switch the drivers path for loading. But I don&rsquo;t know the driver path for VFIO. I did recently learned that the PCI drivers live at <code>/sys/bus/pci/drivers</code>, so I checked there. That&rsquo;s when I notice that there is a <code>virtio-pci</code> driver in there. Now i&rsquo;m not sure if it&rsquo;s the same one, so I&rsquo;ll give it a shot. I just copy and paste the previous script, and replace the driver name, since the paths are the same.</p>
+<p>Unfortunately for me, the <code>virtio-pci</code> driver isn&rsquo;t the same thing, as the GPU got stuck when trying to bind to it. That&rsquo;s when I remember that the reason why the <code>vfio-pci</code> isn&rsquo;t in the driver list is that I disable it from being loaded in the <code>mkinitcpio</code> file. I did this to be able to test what was using my GPU when I booted up my laptop.  However, the issue that I would like to like the Nvidia driver to be loaded before the VFIO driver, as I want the default state when booted to be using the Nvidia driver. I tried inserting <code>nvidia nvidia_modeset nvidia_uvm nvidia_drm</code> before the VFIO drivers in the <code>mknitcpio</code> file, but that seems to break the boot process of CachyOS.  I had to use Arch Linux&rsquo;s <a href="https://wiki.archlinux.org/title/Chroot">chroot</a> to modify the CachyOS&rsquo;s install on my laptop. With that I was able to revert the change, and bring it back to normal.</p>
+<p><img src="Pasted%20image%2020260614124123.png" alt="">
+<em>My CachyOS install being unable to boot properly.</em></p>
+<p>But that&rsquo;s when I had a different idea. Instead of forcing the Nvidia drivers to load before the VFIO drivers, I could instead make the VFIO drivers do nothing. So I comment out the only line in <code>/etc/modprobe.d/vfio.conf</code>, making the file blank. I then ensure that the VFIO drivers are the only modules in the <code>/etc/mkinitcpio.conf</code> file. After a quick reboot, I was able to boot into CachyOS, and the GPU was being used. Not only that, but the VFIO drivers was in the <code>/sys/bus/pci/drivers</code> directory.</p>
+<p><img src="Pasted%20image%2020260614124401.png" alt="">
+<em>The VFIO-PCI drivers was successfully loaded without taking over the GPU.</em></p>
+<p>So I modifed the script to use <code>vfio-pci</code> instead of <code>virtio-pci</code>. But before I can do that, I have to restart Niri to make it stop using the GPU. Since I was feeling lazy to reboot my PC, I just decided to use systemd instead. So after I ran <code>systemctl --user restart niri</code>, I got sent to a black screen. After a second, Niri loaded back up, but without using my GPU. With nothing touching the GPU, I ran the script.  But when I ran the script, it didn&rsquo;t work correctly. It just get stuck. From running the bash debug flags (<code>-xv</code>) on the script, I figured that the issue was that the audio driver isn&rsquo;t being unloaded.</p>
+<p>I thought that maybe something from Niri was preventing that from working, so I tried to run it from the TTY without Niri, nor <a href="https://wiki.archlinux.org/title/Greetd">Greetd</a> (login manager), running. From there, I saw the following kernel message: <code>NVRM: attempting to remove device 0000:01.00.0 with a non usage count!</code>. This is weird to me, as I ran the script when <code>nvidia-smi</code> report nothing using it. That&rsquo;s when I found out that <code>fuser -v /dev/nvidia*</code> will list the hidden processes that <code>nvidia-smi</code> doesn&rsquo;t show.<sup>[33]</sup></p>
+<p><img src="Pasted%20image%2020260614150738.png" alt="">
+<em>The command showing processes that <code>nvidia-smi</code> doesn&rsquo;t show.</em></p>
+<p>Now the <code>nvidia-powerd</code> could be a problem. I don&rsquo;t see a way to tell <code>nvidia-powerd</code> to not use the GPU, since that would defeat the purpose of the process. However, the <code>d</code> at the end of <code>powerd</code> caught my eye. That <code>d</code> might mean that <code>nvidia-powerd</code> is a daemon, and I might be able to control it with systemd. And sure enough, running <code>systemctl stop nvidia-powerd.service</code> stop <code>nvidia-powerd</code> from running.</p>
+<p><img src="Pasted%20image%2020260614151238.png" alt="">
+<em>Stopping <code>nvidia-powerd</code> made nothing use the GPU.</em></p>
+<p>Now, it should be fine to run the script in the TTY, and it worked there. I was able to successfully unload and reload the GPU multiple times without any issues. Now the only thing that is preventing the script from working in Niri is the audio device being unable to unbind. Since I can&rsquo;t (easily) play audio in the TTY, I didn&rsquo;t had to worry about that. My guess is that <a href="https://www.pipewire.org/">PipeWire</a>, which is an audio server for managing audio devices,<sup>[34]</sup> has the Nvidia audio device.  I would just need to find a way to unbind and rebind the Nvidia audio device to and from Pipewire.</p>
+<p>I figure to do that, I have to tell <a href="https://pipewire.pages.freedesktop.org/wireplumber/">WirePlumber</a>, which is the policy manager for PipeWire,<sup>[35]</sup> to ignore the Nvidia audio device. But in order to be able to do that, I would need the audio device name. To get that I would have to run <code>pactl list short</code>.<sup>[36]</sup> At the very bottom of the output, it will show me all of the ALSA cards, as they&rsquo;re the sound card drivers on Linux.<sup>[37]</sup></p>
+<p><img src="Pasted%20image%2020260615203841.png%7C383" alt="">|383]]
+<em>The ALSA cards that are on my laptop.</em></p>
+<p>From there, I would just need to grab the name in the 1st row. The reason why I know it&rsquo;s the first row is because of that fact that the <code>0000_01_00.1</code> is almost exactly the same as the <code>0000:01:00.1</code>, and it is the PCI ID of the Nvidia audio card.</p>
+<p>Now to disable it, I would need to create a file to tell WirePlumber disable it. That file will be at <code>~/.config/wireplumber/wireplumber.conf.d/51-disable-hdmi-devices.conf</code>, and have the following content:<sup>[36]</sup></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">monitor.alsa.rules</span> <span style="color:#960050;background-color:#1e0010">=</span> [
+</span></span><span style="display:flex;"><span>  {
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">matches</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">[</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">device.name</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#f92672">&#34;alsa_card.pci-0000_01_00.1&#34;</span>
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">actions</span> <span style="color:#960050;background-color:#1e0010">=</span> {
+</span></span><span style="display:flex;"><span>      <span style="color:#960050;background-color:#1e0010">update-props</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">device.disabled</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">true</span>
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#960050;background-color:#1e0010">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">]</span>
+</span></span></code></pre></div><p>From there, I would just need to restart WirePlumber via <code>systemctl --user restart wireplumber</code>. And right after I ran the script, I was able to unbind the GPU drivers and bind the VFIO drivers.</p>
+<p><img src="Pasted%20image%2020260615231016.png" alt="">
+<em>The GPU drivers being able to be unbinded from Niri without rebooting and any issues.</em></p>
+<p>I also saw that the <a href="https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Binding_vfio-pci_via_device_ID">Arch Wiki</a> has a script that does the same thing, but in a different way.<sup>[19]</sup> So I went with that script, as surely they must have a better reason for doing it with that method instead of the one I was using.  I also modified the script to make it easier on to pick what function to use:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#exit if the current user isnt root</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#66d9ef">$(</span>whoami<span style="color:#66d9ef">)</span> !<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;root&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;The script must be run as root!&#34;</span>
+</span></span><span style="display:flex;"><span>  exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#store the GPU and audio PCI IDs and vender info</span>
+</span></span><span style="display:flex;"><span>gpu<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0000:01:00.0&#34;</span>
+</span></span><span style="display:flex;"><span>aud<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0000:01:00.1&#34;</span>
+</span></span><span style="display:flex;"><span>gpu_vd<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>cat /sys/bus/pci/devices/$gpu/vendor<span style="color:#66d9ef">)</span><span style="color:#e6db74"> </span><span style="color:#66d9ef">$(</span>cat /sys/bus/pci/devices/$gpu/device<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>aud_vd<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>cat /sys/bus/pci/devices/$aud/vendor<span style="color:#66d9ef">)</span><span style="color:#e6db74"> </span><span style="color:#66d9ef">$(</span>cat /sys/bus/pci/devices/$aud/device<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> show_GPU_status <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#clean up the vender IDs</span>
+</span></span><span style="display:flex;"><span>  gpu_id<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo $gpu_vd | sed <span style="color:#e6db74">&#34;s/0x//g&#34;</span> | sed <span style="color:#e6db74">&#34;s/ /:/g&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>  aud_id<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo $aud_vd | sed <span style="color:#e6db74">&#34;s/0x//g&#34;</span> | sed <span style="color:#e6db74">&#34;s/ /:/g&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#show the current status of the GPU and the audio devices</span>
+</span></span><span style="display:flex;"><span>  lspci -nnk -d $gpu_id
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;-----------------------------&#34;</span>
+</span></span><span style="display:flex;"><span>  lspci -nnk -d $aud_id
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> bind_vfio <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#unbind the GPU &amp; audio drivers</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;Going to unbind the GPU &amp; audio&#39;s drivers.&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;</span>$gpu<span style="color:#e6db74">&#34;</span> &gt; <span style="color:#e6db74">&#34;/sys/bus/pci/devices/</span>$gpu<span style="color:#e6db74">/driver/unbind&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;</span>$aud<span style="color:#e6db74">&#34;</span> &gt; <span style="color:#e6db74">&#34;/sys/bus/pci/devices/</span>$aud<span style="color:#e6db74">/driver/unbind&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#bind the GPU &amp; audio to PCI</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;Going to bind the GPU &amp; audio&#39;s drivers to VFIO.&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;</span>$gpu_vd<span style="color:#e6db74">&#34;</span> &gt; /sys/bus/pci/drivers/vfio-pci/new_id
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;</span>$aud_vd<span style="color:#e6db74">&#34;</span> &gt; /sys/bus/pci/drivers/vfio-pci/new_id
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#show the final result of the GPU</span>
+</span></span><span style="display:flex;"><span>  show_GPU_status
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> unbind_vfio <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#remove the GPU and audio devices from VFIO</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;Going to unbind the GPU &amp; audio&#39;s VFIO drivers.&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;</span>$gpu_vd<span style="color:#e6db74">&#34;</span> &gt; <span style="color:#e6db74">&#34;/sys/bus/pci/drivers/vfio-pci/remove_id&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;</span>$aud_vd<span style="color:#e6db74">&#34;</span> &gt; <span style="color:#e6db74">&#34;/sys/bus/pci/drivers/vfio-pci/remove_id&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#remove the devices from the system, and make the kernel rescan for them</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;Removing the GPU and auidio from the system, and reimporting them.&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#ae81ff">1</span> &gt; <span style="color:#e6db74">&#34;/sys/bus/pci/devices/</span>$gpu<span style="color:#e6db74">/remove&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#ae81ff">1</span> &gt; <span style="color:#e6db74">&#34;/sys/bus/pci/devices/</span>$aud<span style="color:#e6db74">/remove&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#ae81ff">1</span> &gt; <span style="color:#e6db74">&#34;/sys/bus/pci/rescan&#34;</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#show the final result of the GPU</span>
+</span></span><span style="display:flex;"><span>  show_GPU_status
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#check if the function argument is being used</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -n $1 <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#check what user function passed</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> $1 in
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#Bind the VFIO drivers</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;bind_vfio&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        bind_vfio
+</span></span><span style="display:flex;"><span>      ;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#Unbind the VFIO drivers</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;unbind_vfio&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        unbind_vfio
+</span></span><span style="display:flex;"><span>      ;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#invalid user flag passed.</span>
+</span></span><span style="display:flex;"><span>      *<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Wrong user flag passed.&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">esac</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#list the user options</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;Do you want to bind or unbind the VFIO drivers?&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;1) Bind&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;2) Unbind&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;3) Show current GPU status&#34;</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;4) Exit&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#infinite loop to get the correct user input</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">while</span> :; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    read -p <span style="color:#e6db74">&#34;Enter in your option here: &#34;</span> choice
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#check what option the user choose</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> $choice in
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#Bind the VFIO drivers, and exit</span>
+</span></span><span style="display:flex;"><span>      1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        bind_vfio
+</span></span><span style="display:flex;"><span>        exit <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>      ;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#Unbind the VFIO drivers, and exit</span>
+</span></span><span style="display:flex;"><span>      2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        unbind_vfio
+</span></span><span style="display:flex;"><span>        exit <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>      ;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#show the GPU status</span>
+</span></span><span style="display:flex;"><span>      3<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        show_GPU_status
+</span></span><span style="display:flex;"><span>      ;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#exit</span>
+</span></span><span style="display:flex;"><span>      4<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Exiting...&#34;</span>
+</span></span><span style="display:flex;"><span>        exit <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>      ;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#invalid user option</span>
+</span></span><span style="display:flex;"><span>      *<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Wrong option try again.&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">esac</span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h2 id="scripting-the-drivers-transitions">Scripting the Drivers Transitions</h2>
+<p>Now, I would just need to automate this, as manually doing this would be a pain in the butt. But to be able to do that, I would need to get an idea of the process the scripts will take.</p>
+<p><img src="Single%20GPU%20Passthrough%20Script%20Guide.svg" alt="">
+<em>The steps that the scripts will take when starting &amp; stopping the VM.</em></p>
+<p>The good news that i don&rsquo;t have to worry about Niri that much when stopping the GPU. When the drivers are loaded, and the config file reloaded, Niri will immediately grab the GPU. But other then that, these two scripts will almost be the same thing. One will disable/stop things, while the other enable/start things.  So after a few hours of trying to manually setup the scripts, I have gotten to a point where it works for me. So this is the script for when the VM boots up.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#exit if the current user isnt root</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#66d9ef">$(</span>whoami<span style="color:#66d9ef">)</span> !<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;root&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;The script must be run as root!&#34;</span>
+</span></span><span style="display:flex;"><span>  exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the user info</span>
+</span></span><span style="display:flex;"><span>USER<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;YOUR USERNAME HERE&#34;</span>
+</span></span><span style="display:flex;"><span>USER_ID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>id -u $USER<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the wireplumber and niri config</span>
+</span></span><span style="display:flex;"><span>WIREPLUMBER<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/home/</span>$USER<span style="color:#e6db74">/.config/wireplumber/wireplumber.conf.d/51-disable-hdmi-devices.conf&#34;</span>
+</span></span><span style="display:flex;"><span>NIRI<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/home/</span>$USER<span style="color:#e6db74">/.config/niri/config.kdl&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the user&#39;s runtime session</span>
+</span></span><span style="display:flex;"><span>XDG_RUNTIME_DIR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/run/user/</span>$USER_ID<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>DBUS_SESSION_BUS_ADDRESS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;unix:path=/run/user/</span>$USER_ID<span style="color:#e6db74">/bus&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>run_as_user<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#temporary become the user to run a command (Claude wrote this)</span>
+</span></span><span style="display:flex;"><span>  su - <span style="color:#e6db74">&#34;</span>$USER<span style="color:#e6db74">&#34;</span> -c <span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    export XDG_RUNTIME_DIR=</span>$XDG_RUNTIME_DIR<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    export DBUS_SESSION_BUS_ADDRESS=</span>$DBUS_SESSION_BUS_ADDRESS<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    </span>$1<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>get_gpu_processes<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#get the list of processes name that&#39;s currently using the GPU (Claude wrote this)</span>
+</span></span><span style="display:flex;"><span>  programs<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>lsof +c <span style="color:#ae81ff">0</span> /dev/nvidia* 2&gt; /dev/null | awk <span style="color:#e6db74">&#39;NR&gt;1 {print $1}&#39;</span> | sort -u<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#use bash string substitution to format the list to be seperated by &#34;, &#34; (Claude wrote this) </span>
+</span></span><span style="display:flex;"><span>  programs<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>programs//<span style="color:#e6db74">$&#39;\n&#39;</span>/, <span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#cleanly remove Niri from the list</span>
+</span></span><span style="display:flex;"><span>  programs<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo $programs | sed <span style="color:#e6db74">&#34;s/niri//&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>  programs<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo $programs | sed <span style="color:#e6db74">&#34;s/ , / /&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#return the list</span>
+</span></span><span style="display:flex;"><span>  echo $programs
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#disable the nvidia powerd daemon</span>
+</span></span><span style="display:flex;"><span>systemctl stop nvidia-powerd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#disable wireplumber from using the GPU</span>
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#34;s/device.disabled = false/device.disabled = true/&#34;</span> $WIREPLUMBER
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## restart wireplumber </span>
+</span></span><span style="display:flex;"><span>run_as_user <span style="color:#e6db74">&#34;systemctl --user restart wireplumber&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get a list of programs that needed to be killed manually</span>
+</span></span><span style="display:flex;"><span>programs<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>get_gpu_processes<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#the ID to keep track of the current notifcation</span>
+</span></span><span style="display:flex;"><span>id<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#wait until all of the gpu process stopped</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> <span style="color:#f92672">[[</span> -n $programs <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#notify the user about the programs that is need to be kill. The notfication will stay in place, and self update</span>
+</span></span><span style="display:flex;"><span>  id<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>run_as_user <span style="color:#e6db74">&#34;notify-send -p -t 0 -u critical -r &#39;</span>$id<span style="color:#e6db74">&#39; &#39;GPU Passthrough Manual Intervention!&#39; &#39;Kill the following programs for the GPU to work: </span>$programs<span style="color:#e6db74">&#39;&#34;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#sleep a second and update the program list</span>
+</span></span><span style="display:flex;"><span>  sleep <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  programs<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>get_gpu_processes<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#notify the user that everything has been killed, and the script is moving on</span>
+</span></span><span style="display:flex;"><span>run_as_user <span style="color:#e6db74">&#34;notify-send -t 1 -u low -r &#39;</span>$id<span style="color:#e6db74">&#39; &#39;GPU Passthrough Manual Intervention!&#39; &#39;All of the programs have been killed. Now moving on.&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#disable niri from using the GPU (and startup apps)</span>
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;s|^// include &#34;no_gpu.kdl&#34;|include &#34;no_gpu.kdl&#34;|&#39;</span> $NIRI
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;s|^//include &#34;no_gpu.kdl&#34;|include &#34;no_gpu.kdl&#34;|&#39;</span> $NIRI
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;s|^include &#34;startup.kdl&#34;|//include &#34;startup.kdl&#34;|&#39;</span> $NIRI
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#temporary become the user to restart niri</span>
+</span></span><span style="display:flex;"><span>run_as_user <span style="color:#e6db74">&#34;systemctl --user restart niri&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the PCI IDs for the GPU and audio devices</span>
+</span></span><span style="display:flex;"><span>gpu<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0000:01:00.0&#34;</span>
+</span></span><span style="display:flex;"><span>aud<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0000:01:00.1&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#tell the GPU and the audio device to only use VFIO</span>
+</span></span><span style="display:flex;"><span>echo vfio-pci &gt; /sys/bus/pci/devices/$gpu/driver_override
+</span></span><span style="display:flex;"><span>echo vfio-pci &gt; /sys/bus/pci/devices/$aud/driver_override
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#unbind the driver</span>
+</span></span><span style="display:flex;"><span>echo $gpu &gt; /sys/bus/pci/devices/$gpu/driver/unbind
+</span></span><span style="display:flex;"><span>echo $aud &gt; /sys/bus/pci/devices/$aud/driver/unbind
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#tell the devices to look for what drivers to use (told to only use VFIO eariler)</span>
+</span></span><span style="display:flex;"><span>echo $gpu &gt; /sys/bus/pci/drivers_probe
+</span></span><span style="display:flex;"><span>echo $aud &gt; /sys/bus/pci/drivers_probe
+</span></span></code></pre></div><p>There are two notifiable changes that I made for this script. The first one was the GPU notification section. The reason why I would need to do that is because I can&rsquo;t have the script manually kill the items. Or to be more specific, I can do that, but then that user might lose their work. There are some work applications that you don&rsquo;t expect to use the GPU, but they are. So that&rsquo;s why I made it get a list of programs, and notify the user which ones to manually kill. The script will wait until everything that&rsquo;s using the GPU is killed.</p>
+<p>The next notifiable thing is how the GPU is disconnected from the system. The method is completely different then what was used earlier. The reason why is that I found out that I was getting an <code>echo: write error: no such device</code> error when the kernel tried to reconnect the VFIO drivers after it was already disconnected and reconnected. I couldn&rsquo;t find an answer for that online. I decided to ask Claude for help, expecting it to not work properly on the first try. But that&rsquo;s when Claude got it to work on the first shot. It suggest that I override the default driver that the device use, and have the kernel automatically assign the VFIO with it. The reason why is that apparently VFIO doesn&rsquo;t know that it&rsquo;s allowed to grab the GPU drivers after it&rsquo;s been removed. Doing it like this will make the GPU never freeze up when removing/inserting the drivers.</p>
+<p>The same thing has been done in reverse for removing the GPU. The only difference is that the <code>driver_override</code> has been set to blank, and the GPU process usage notification has been removed (it&rsquo;s isn&rsquo;t needed when re-adding the GPU).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#exit if the current user isnt root</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#66d9ef">$(</span>whoami<span style="color:#66d9ef">)</span> !<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;root&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;The script must be run as root!&#34;</span>
+</span></span><span style="display:flex;"><span>  exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the user info</span>
+</span></span><span style="display:flex;"><span>USER<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;pengmania&#34;</span>
+</span></span><span style="display:flex;"><span>USER_ID<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>id -u $USER<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the wireplumber and niri config</span>
+</span></span><span style="display:flex;"><span>WIREPLUMBER<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/home/</span>$USER<span style="color:#e6db74">/.config/wireplumber/wireplumber.conf.d/51-disable-hdmi-devices.conf&#34;</span>
+</span></span><span style="display:flex;"><span>NIRI<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/home/</span>$USER<span style="color:#e6db74">/.config/niri/config.kdl&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the user&#39;s runtime session</span>
+</span></span><span style="display:flex;"><span>XDG_RUNTIME_DIR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/run/user/</span>$USER_ID<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>DBUS_SESSION_BUS_ADDRESS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;unix:path=/run/user/</span>$USER_ID<span style="color:#e6db74">/bus&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>run_as_user<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">#temporary become the user to run a command (Claude wrote this)</span>
+</span></span><span style="display:flex;"><span>  su - <span style="color:#e6db74">&#34;</span>$USER<span style="color:#e6db74">&#34;</span> -c <span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    export XDG_RUNTIME_DIR=</span>$XDG_RUNTIME_DIR<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    export DBUS_SESSION_BUS_ADDRESS=</span>$DBUS_SESSION_BUS_ADDRESS<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    </span>$1<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get the PCI IDs for the GPU and audio devices</span>
+</span></span><span style="display:flex;"><span>gpu<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0000:01:00.0&#34;</span>
+</span></span><span style="display:flex;"><span>aud<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0000:01:00.1&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## clear the override so the kernel picks the normal driver again on next probe</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;&#34;</span> &gt; /sys/bus/pci/devices/$gpu/driver_override
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;&#34;</span> &gt; /sys/bus/pci/devices/$aud/driver_override
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## unbind from vfio-pci</span>
+</span></span><span style="display:flex;"><span>echo $gpu &gt; /sys/bus/pci/devices/$gpu/driver/unbind
+</span></span><span style="display:flex;"><span>echo $aud &gt; /sys/bus/pci/devices/$aud/driver/unbind
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## let the kernel re-probe and match against nvidia / snd_hda_intel</span>
+</span></span><span style="display:flex;"><span>echo $gpu &gt; /sys/bus/pci/drivers_probe
+</span></span><span style="display:flex;"><span>echo $aud &gt; /sys/bus/pci/drivers_probe
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#enable the nvidia powerd daemon</span>
+</span></span><span style="display:flex;"><span>systemctl start nvidia-powerd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#enable wireplumber from using the GPU</span>
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#34;s/device.disabled = true/device.disabled = false/&#34;</span> $WIREPLUMBER
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## restart wireplumber</span>
+</span></span><span style="display:flex;"><span>run_as_user <span style="color:#e6db74">&#34;systemctl --user restart wireplumber&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#disable niri from using the GPU (and startup apps)</span>
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;s|^include &#34;no_gpu.kdl&#34;|//include &#34;no_gpu.kdl&#34;|&#39;</span> $NIRI
+</span></span><span style="display:flex;"><span>sed -i <span style="color:#e6db74">&#39;s|^//include &#34;startup.kdl&#34;|include &#34;startup.kdl&#34;|&#39;</span> $NIRI
+</span></span></code></pre></div><h2 id="automating-the-script-executions">Automating the Script Executions</h2>
+<p>There is one big issue with the script is that they can&rsquo;t be executed fully inside the user session. The reason why is that the script get to the part where it restart Niri, it will kill all of the windows open in Niri, including the script window. But if the script were not run inside Niri, like for example, running it in another TTY window.</p>
+<p><img src="20260618_143951.jpg" alt=""></p>
+<p>But I can ignore that, since there is another way for the scripts to be run. I can use Libvirt hooks. Libvirt hooks are scripts that get executed whenever something happens in Libvirt.<sup>[38]</sup> To make that happened, I would have to make a bash script at <code>/etc/libvirt/hooks/qemu</code>.<sup>[38]</sup> This bash script will be executed every time something happens with a QEMU machine.<sup>[38]</sup> To test this, I made the <code>/etc/libvirt/hooks/qemu</code> file create the <code>/tmp/test.test</code> file every time something happens with QEMU. This is to ensure that the hook is working properly.</p>
+<p><img src="Pasted%20image%2020260618194728.png" alt="">
+<em>The libvirt hook test file being created.</em></p>
+<p>It&rsquo;s worth noting that the script was only executed after I restart libvirt via <code>systemctl restart libvirtd</code>. But now that I know that the QEMU hook script works, I can turn it into an actual script. Now in my opinion, I would have prefer if the libvirt hook scripts are in separate files in the specific VM&rsquo;s directory. Doing it like this does make it easier for me to manage the VMs. Now there is nothing stopping me from making the QEMU hook script from doing that. Well, except for my own brain cells, since I am too lazy to do that now, and I would rather make that a future me problem. So for now, the QEMU hook script will only run the scripts for this VM.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#store the name of the target VM and the hook path</span>
+</span></span><span style="display:flex;"><span>TARGET_VM<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;win10&#34;</span>
+</span></span><span style="display:flex;"><span>BASE_PATH<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/etc/libvirt/hooks&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#get all of the arguments passed into the hook from libvirt</span>
+</span></span><span style="display:flex;"><span>GUEST_VM<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$1<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>LIBVIRT_TASKS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$2<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>LIBVIRT_SUBTASKS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$3<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>EXTRA_ARGS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span>$4<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#check if the current machine passed through is the target one</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $GUEST_VM <span style="color:#f92672">==</span> $TARGET_VM <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#check of the VM is booting up</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $LIBVIRT_TASKS <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;prepare&#34;</span>  <span style="color:#f92672">&amp;&amp;</span> $LIBVIRT_SUBTASKS <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;begin&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#exectue the VM GPU starting script</span>
+</span></span><span style="display:flex;"><span>        eval <span style="color:#e6db74">&#34;</span>$BASE_PATH<span style="color:#e6db74">/starting_GPU_VM.sh&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#check if the VM is shutting down</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $LIBVIRT_TASKS <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;release&#34;</span>  <span style="color:#f92672">&amp;&amp;</span> $LIBVIRT_SUBTASKS <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;end&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">#execute the VM GPU stopping script</span>
+</span></span><span style="display:flex;"><span>        eval <span style="color:#e6db74">&#34;</span>$BASE_PATH<span style="color:#e6db74">/stopping_GPU_VM.sh&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>It&rsquo;s a pretty basic script that will check if the current VM is the correct one, and run the start/stop script depending on the VM state. I did copy the script over to the same directory as the QEMU hook file, just to make it more organised.  But after doing a quick restart of <code>libvirtd</code>, the GPU will automatically move around.</p>
+<p><img src="gpu%20passthrough%20clip.gif" alt="">
+<em>The automatic VM GPU passthrough demonstration.</em></p>
+<p>Now the only thing that makes this <em>almost</em> friction-less is the fact that Niri would have to restart, making all of the opened windows be forced to be closed. I don&rsquo;t know any other way to get around that, but I am happy at this point. I do want to figure out how to do it on KDE, but that&rsquo;s a future me project. For now, I am happy with way it current works.</p>
+<h2 id="github-repo-for-the-scripts">Github Repo for the Scripts</h2>
+<p><a href="https://github.com/Mr-Tinkerer/GPU-Passthrough">https://github.com/Mr-Tinkerer/GPU-Passthrough</a></p>
+<h2 id="citations">Citations</h2>
+<blockquote>
+<p>[1] ValveSoftware. “Proton/README.md at Proton_11.0 · ValveSoftware/Proton.” <em>GitHub</em>, 16 Apr. 2026, github.com/ValveSoftware/Proton/blob/proton_11.0/README.md. Accessed 8 June 2026.
+[2] Arch Linux Wiki Maintainers. “PCI Passthrough via OVMF - ArchWiki.” <em>Archlinux.org</em>, 2023, wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Prerequisites. Accessed 8 June 2026.
+[3] Wikipedia Contributors. “X86 Virtualization.” <em>Wikipedia</em>, Wikimedia Foundation, 25 Feb. 2026, en.wikipedia.org/wiki/X86_virtualization#I/O_MMU_virtualization_(AMD-Vi_and_Intel_VT-d). Accessed 8 June 2026.
+[4] Wikipedia Contributors. “Input–Output Memory Management Unit.” <em>Wikipedia</em>, Wikimedia Foundation, 15 Feb. 2025, en.wikipedia.org/wiki/Input%E2%80%93output_memory_management_unit#Virtualization. Accessed 8 June 2026.
+[5] Amazon Web Services. “Type 1 vs Type 2 Hypervisors - Difference between Hypervisor Types - AWS.” <em>Amazon Web Services, Inc.</em>, aws.amazon.com/compare/the-difference-between-type-1-and-type-2-hypervisors/. Accessed 8 June 2026.
+[6] Wikipedia Contributors. “QEMU.” <em>Wikipedia</em>, Wikimedia Foundation, 20 Feb. 2021, en.wikipedia.org/wiki/QEMU. Accessed 8 June 2026.
+[7] Wikipedia Contributors. “Kernel-Based Virtual Machine.” <em>Wikipedia</em>, Wikimedia Foundation, 7 Apr. 2021, en.wikipedia.org/wiki/Kernel-based_Virtual_Machine. Accessed 8 June 2026.
+[8] Wikipedia Contributors. “Hyper-V.” <em>Wikipedia</em>, Wikimedia Foundation, 20 Sept. 2019, en.wikipedia.org/wiki/Hyper-V. Accessed 8 June 2026.
+[9] Wikipedia Contributors. “Kernel-Based Virtual Machine.” <em>Wikipedia</em>, Wikimedia Foundation, 7 Apr. 2021, en.wikipedia.org/wiki/Kernel-based_Virtual_Machine. Accessed 8 June 2026.
+[10] The Virtual Machine Manager contributors. “Virtual Machine Manager Home.” <em>Virtual Machine Manager</em>, 2024, virt-manager.org/. Accessed 8 June 2026.
+[11] Proxmox Wiki Contributors. “Windows VirtIO Drivers - Proxmox VE.” <em>Proxmox.com</em>, 2022, pve.proxmox.com/wiki/Windows_VirtIO_Drivers. Accessed 8 June 2026.
+[12] Proxmox Wiki Contributors. “Qemu-Guest-Agent - Proxmox VE.” <em>Proxmox.com</em>, 2025, pve.proxmox.com/wiki/Qemu-guest-agent#Windows. Accessed 8 June 2026.
+[13] Fedora People. “Fedora People.” <em>Fedorapeople.org</em>, Fedora Project, 2026, fedorapeople.org. Accessed 9 June 2026.
+[14] Arch Linux Wiki Maintainers. “PCI Passthrough via OVMF - ArchWiki.” <em>Archlinux.org</em>, 2023, wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Enabling_IOMMU. Accessed 10 June 2026.
+[15] Arch Linux Wiki Maintainers. “Kernel Parameters - ArchWiki.” <em>Archlinux.org</em>, 2026, wiki.archlinux.org/title/Kernel_parameters#GRUB. Accessed 10 June 2026.
+[16] CachyOS Wiki Maintainers. “Boot Manager Configuration.” <em>CachyOS</em>, 22 May 2026, wiki.cachyos.org/configuration/boot_manager_configuration/#kernel-command-configuration. Accessed 10 June 2026.
+[17] Arch Linux Wiki Maintainers. “PCI Passthrough via OVMF - ArchWiki.” <em>Archlinux.org</em>, 2023, wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Ensuring_that_the_groups_are_valid. Accessed 10 June 2026.
+[18] Arch Linux Wiki Maintainers. “PCI Passthrough via OVMF - ArchWiki.” <em>Archlinux.org</em>, 2023, wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Isolating_the_GPU. Accessed 10 June 2026.
+[19] Arch Linux Wiki Maintainers. “PCI Passthrough via OVMF - ArchWiki.” <em>Archlinux.org</em>, 2023, wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Binding_vfio-pci_via_device_ID. Accessed 10 June 2026.
+[20] Arch Linux Wiki Maintainers. “Kernel Module - ArchWiki.” <em>Archlinux.org</em>, 2025, wiki.archlinux.org/title/Kernel_module#Using_modprobe.d. Accessed 10 June 2026.
+[21] Arch Linux Wiki Maintainers. “PCI Passthrough via OVMF - ArchWiki.” <em>Archlinux.org</em>, 2023, wiki.archlinux.org/title/PCI_passthrough_via_OVMF#mkinitcpio. Accessed 10 June 2026.
+[22] Arch Linux Wiki Maintainers. “PCI Passthrough via OVMF - ArchWiki.” <em>Archlinux.org</em>, 2023, wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Verifying_that_the_configuration_worked. Accessed 10 June 2026.
+[23] Arch Linux Wiki Maintainers. “PCI Passthrough via OVMF - ArchWiki.” <em>Archlinux.org</em>, 2023, wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Attaching_the_PCI_devices. Accessed 10 June 2026.
+[24] gnif. “Looking Glass - Home.” <em>Looking-Glass.io</em>, 2017, looking-glass.io/. Accessed 12 June 2026.
+[25] Arch Linux Wiki Maintainers. “PCI Passthrough via OVMF - ArchWiki.” <em>Archlinux.org</em>, 2023, wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Standard_shared_memory. Accessed 10 June 2026.
+[26] The QEMU Project Developers. “Device Specification for Inter-vm Shared Memory Device — QEMU Documentation.” <em>Qemu.org</em>, 2026, <a href="https://www.qemu.org/docs/master/specs/ivshmem-spec.html">www.qemu.org/docs/master/specs/ivshmem-spec.html</a>. Accessed 12 June 2026.
+[27]  Arch Linux Wiki Maintainers. “PCI Passthrough via OVMF - ArchWiki.” <em>Archlinux.org</em>, 2023, wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Calculating_the_needed_memory. Accessed 10 June 2026.
+[28]  Arch Linux Wiki Maintainers. “PCI Passthrough via OVMF - ArchWiki.” <em>Archlinux.org</em>, 2023, wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Standard_shared_memory. Accessed 10 June 2026.
+[29] Loibisch. “[Solved] RTX 3090 GPU Passthrough Just Displays a Black Screen with Qemu.” <em>Level1Techs Forums</em>, 16 Sept. 2021, forum.level1techs.com/t/solved-rtx-3090-gpu-passthrough-just-displays-a-black-screen-with-qemu/175538/3. Accessed 12 June 2026.
+[30] Omar007. “Unbind GPU While System Is Running / Kernel &amp; Hardware / Arch Linux Forums.” <em>Archlinux.org</em>, 19 Dec. 2016, bbs.archlinux.org/viewtopic.php?pid=1677243#p1677243. Accessed 14 June 2026.
+[31] Nvidia Developer. “NVIDIA System Management Interface.” <em>NVIDIA Developer</em>, developer.nvidia.com/system-management-interface. Accessed 13 June 2026.
+[32] BCMM. “How Can I Locate the Graphics Card through RenderD128 and RenderD129?” <em>Reddit.com</em>, 13 Jan. 2022, <a href="https://www.reddit.com/r/debian/comments/s1md00/comment/hsgy7sm/">www.reddit.com/r/debian/comments/s1md00/comment/hsgy7sm/</a>. Accessed 14 June 2026.
+[33] monoid. “11 GB of GPU RAM Used, and No Process Listed by Nvidia-Smi.” <em>NVIDIA Developer Forums</em>, 19 Aug. 2016, forums.developer.nvidia.com/t/11-gb-of-gpu-ram-used-and-no-process-listed-by-nvidia-smi/44459/5. Accessed 14 June 2026.
+[34] Pipewire. “PipeWire.” <em>Pipewire.org</em>, 2022, <a href="https://www.pipewire.org/">www.pipewire.org/</a>. Accessed 14 June 2026.
+[35] PipeWire Contributors. “WirePlumber — WirePlumber 0.5.14 Documentation.” <em>Freedesktop.org</em>, 2020, pipewire.pages.freedesktop.org/wireplumber/. Accessed 15 June 2026.
+[36] Garman, Scott. “ZenLinux Blog» Blog Archive» How to Disable Audio Devices in Pipewire / Wireplumber.” <em>Zenlinux.com</em>, 1 Aug. 2022, blog.zenlinux.com/2022/08/how-to-disable-audio-devices-in-pipewire-wireplumber/. Accessed 16 June 2026.
+[37] Arch Linux Wiki Maintainers. “Advanced Linux Sound Architecture - ArchWiki.” <em>Archlinux.org</em>, 2026, wiki.archlinux.org/title/Advanced_Linux_Sound_Architecture. Accessed 15 June 2026.
+[38] Libvirt Wiki Contributors. “Libvirt: Hooks for Specific System Management.” <em>Libvirt.org</em>, 2026, <a href="https://www.libvirt.org/hooks.html">www.libvirt.org/hooks.html</a>. Accessed 18 June 2026.</p>
+</blockquote>
+
+        </section>
+        <div class="post-tags">
+          
+          
+          <nav class="nav tags">
+            <ul class="tags">
+              
+              <li><a href="/tags/virtual-machines/">Virtual Machines</a></li>
+              
+              <li><a href="/tags/gaming/">Gaming</a></li>
+              
+              <li><a href="/tags/linux/">Linux</a></li>
+              
+              <li><a href="/tags/qemu/">QEMU</a></li>
+              
+              <li><a href="/tags/hardware/">Hardware</a></li>
+              
+              <li><a href="/tags/bash-script/">Bash Script</a></li>
+              
+            </ul>
+          </nav>
+          
+          
+        </div>
+      </div>
+
+      
+      
+      <div class="toc">
+        <strong>Table of contents:</strong>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#the-plan">The Plan</a></li>
+    <li><a href="#prerequisites">Prerequisites</a></li>
+    <li><a href="#prepare-for-the-vm">Prepare for the VM</a></li>
+    <li><a href="#setting-up-the-vm">Setting up the VM</a></li>
+    <li><a href="#setting-up-iommu">Setting up IOMMU</a></li>
+    <li><a href="#prepare-the-gpu-for-the-vm">Prepare the GPU for the VM</a></li>
+    <li><a href="#insert-the-gpu-into-the-vm">Insert the GPU into the VM</a></li>
+    <li><a href="#looking-into-the-glass">Looking into the Glass</a></li>
+    <li><a href="#vfio-drivers---nvidia-drivers">VFIO Drivers -&gt; Nvidia Drivers</a></li>
+    <li><a href="#nvidia-drivers---vfio-drivers">Nvidia Drivers -&gt; VFIO Drivers</a></li>
+    <li><a href="#scripting-the-drivers-transitions">Scripting the Drivers Transitions</a></li>
+    <li><a href="#automating-the-script-executions">Automating the Script Executions</a></li>
+    <li><a href="#github-repo-for-the-scripts">Github Repo for the Scripts</a></li>
+    <li><a href="#citations">Citations</a></li>
+  </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    </article>
+</main>
+<footer>
+  <div style="display:flex"></div>
+  <div class="footer-info">
+    2026  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+
+</div>
+    </body>
+</html>
