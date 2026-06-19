@@ -1,5 +1,5 @@
 ---
-date: 2026-06-08
+date: 2026-06-18T00:00:00
 title: Creating an (Almost) Friction-less Gaming VM in Linux
 slug: frictionless-gaming-vm
 description: I will be creating a windows 10 VM, and I will be giving it my GPU in order to be able to play games inside of it. In addition to that, I will make it extremely simple to connect the GPU to/from the host machine and the VM.
