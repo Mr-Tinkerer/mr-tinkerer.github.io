@@ -87,6 +87,8 @@ When I was working on the other two features, I realised that the script will co
 Now I am not sure why Bash doesn't automatically stops whenever it encounters an error. My guess is that the default shell in Unix (SH), was like that. And since Bash want's 100% compatibility with the SH shell, they have to implement that. 
 
 However, enabling this has caused an error pop up. The thing is, the regex filter to extract the content inside the Obsidian's backlink has also capture the `[[ "$choice" == "Y" || "$choice" == "y" ]]` and `[[ "$choice" == "N" || "$choice" == "n" ]]` from the script earlier. At first, I tried to make Google's Gemini to rewrite that regex statement to not include any leading/trailing white spaces, since bash requires them. But Gemini failed to generate a new one that actually works. So I then decided to make the script checks if there is a `$` inside the `[[]]`. If there is one, then that means that the `[[]]` must have been pulled from a bash conditional instead of a backlink. So it will just ignore that line. This is done via `if [[ $line != *\$* ]];`.
+
+Another error that popup is that `git add *` is throwing an error because of the fact that there are some files being ignore by `.gitignore` It's quite annoying, since i need to use the `*` glob to tell bash to use all files without manually typing all of them. The best way I can find to bypass this is by making that line always return true via `git add * || true`, as doing this prevents the git crash from erroring the script.<sup>[6]</sup> 
 ## Auto Exit on Missing Tags/Descriptions
 Just like the publication date, I can't trust myself to remember to enter in the tags, description before running the script. To prevent that, I would just have the script stop and yell at me for that. Since the script already extract the tags, I can insert a snippet that will trigger the yelling when the extracted tags is empty.
 
@@ -120,4 +122,4 @@ fi
 > [3] Panovski, Dejan. “How to Run Linux Commands in Background.” _Linuxize.com_, 1 Nov. 2019, linuxize.com/post/how-to-run-linux-commands-in-background/. Accessed 27 June 2026.
 > [4] Rosenfield, Adam, and ADTC. “Automatic Exit from Bash Shell Script on Error.” _Stack Overflow_, 20 May 2010, stackoverflow.com/a/2871034. Accessed 28 June 2026.
 > [5] GNU Foundation. “Bash Reference Manual.” _Gnu.org_, 18 May 2025, www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#The-Set-Builtin. Accessed 28 June 2026.
-> 
+> [6] Dimich. “When to Use “|| True” in Bash?” _Unix & Linux_, Stack Exchange, 8 June 2022, unix.stackexchange.com/a/716559. Accessed 28 June 2026.
