@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
 		<title>Streamlined on Mr.Tinkerer&#39;s Blogs</title>
-		<link>https://mr-tinkerer.github.io/tags/streamlined/</link>
+		<link>http://localhost:1313/tags/streamlined/</link>
 		<description>Recent content in Streamlined on Mr.Tinkerer&#39;s Blogs</description>
 		<generator>Hugo</generator>
 		<language>en-us</language>
@@ -10,15 +10,22 @@
 		
 		
 		
-			<lastBuildDate>Thu, 04 Jun 2026 00:00:00 +0000</lastBuildDate>
+			<lastBuildDate>Mon, 29 Jun 2026 00:00:00 +0000</lastBuildDate>
 		
-			<atom:link href="https://mr-tinkerer.github.io/tags/streamlined/index.xml" rel="self" type="application/rss+xml" />
+			<atom:link href="http://localhost:1313/tags/streamlined/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Improving the Blog Script</title>
+				<link>http://localhost:1313/posts/improving-the-blog-script/</link>
+				<pubDate>Mon, 29 Jun 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/posts/improving-the-blog-script/</guid>
+				<description>&lt;h2 id=&#34;the-problem&#34;&gt;The Problem&lt;/h2&gt;&#xA;&lt;p&gt;So after I created the &lt;a href=&#34;http://localhost:1313/posts/blogs-streamlined&#34;&gt;blog site&lt;/a&gt;, and publish the &lt;a href=&#34;http://localhost:1313/posts/frictionless-gaming-vm&#34;&gt;gaming VM blog&lt;/a&gt;, I realised that the blog script that I wrote has some flaws with it. The (current) problems is the following:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;The script doesn&amp;rsquo;t manually update the date&lt;/li&gt;&#xA;&lt;li&gt;The script doesn&amp;rsquo;t give me a preview of the blog before publishing.&lt;/li&gt;&#xA;&lt;li&gt;Stop when the script encounters an error.&lt;/li&gt;&#xA;&lt;li&gt;Stop when there is no description/tags.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;blogs-templates&#34;&gt;Blog&amp;rsquo;s Templates&lt;/h2&gt;&#xA;&lt;p&gt;Something else that I forgot to mention in the blog is that I used the &lt;a href=&#34;https://community.obsidian.md/plugins/templater-obsidian&#34;&gt;Obsidian&amp;rsquo;s Templater&lt;/a&gt; plugin to automatically insert the font matter with the correct info. Now I did use Claude for this, since at the time, I didn&amp;rsquo;t felt like learning Templater&amp;rsquo;s syntax. But this is what the template file looks like. Just make sure to put it in the &lt;code&gt;Templates&lt;/code&gt; folder in order for the plugin to be able to use it.&lt;/p&gt;</description>
+			</item>
 			<item>
 				<title>How I Streamline the Creation of Blogs</title>
-				<link>https://mr-tinkerer.github.io/posts/blogs-streamlined/</link>
+				<link>http://localhost:1313/posts/blogs-streamlined/</link>
 				<pubDate>Thu, 04 Jun 2026 00:00:00 +0000</pubDate>
-				<guid>https://mr-tinkerer.github.io/posts/blogs-streamlined/</guid>
-				<description>&lt;h2 id=&#34;the-issue&#34;&gt;The Issue&lt;/h2&gt;&#xA;&lt;p&gt;So I have written the two blogs (&lt;a href=&#34;https://mr-tinkerer.github.io/posts/old-laptop-into-proxmox-server&#34;&gt;The Laptop Proxmox Blog&lt;/a&gt;, and &lt;a href=&#34;https://mr-tinkerer.github.io/posts/laptop-nas&#34;&gt;Laptop NAS build&lt;/a&gt;), but I don&amp;rsquo;t have a way to share them. I have written in &lt;a href=&#34;https://www.markdownguide.org/getting-started/&#34;&gt;markdown&lt;/a&gt; file (via &lt;a href=&#34;https://obsidian.md/&#34;&gt;Obsidian&lt;/a&gt;), since it would be easy for me to write them. The problem is that you can&amp;rsquo;t just put a markdown file into a web server and expect it to work. So I would need to find a way to convert them into &lt;a href=&#34;https://en.wikipedia.org/wiki/HTML&#34;&gt;HTML&lt;/a&gt;. So after a some research, I have developed a plan.&lt;/p&gt;</description>
+				<guid>http://localhost:1313/posts/blogs-streamlined/</guid>
+				<description>&lt;h2 id=&#34;the-issue&#34;&gt;The Issue&lt;/h2&gt;&#xA;&lt;p&gt;So I have written the two blogs (&lt;a href=&#34;http://localhost:1313/posts/old-laptop-into-proxmox-server&#34;&gt;The Laptop Proxmox Blog&lt;/a&gt;, and &lt;a href=&#34;http://localhost:1313/posts/laptop-nas&#34;&gt;Laptop NAS build&lt;/a&gt;), but I don&amp;rsquo;t have a way to share them. I have written in &lt;a href=&#34;https://www.markdownguide.org/getting-started/&#34;&gt;markdown&lt;/a&gt; file (via &lt;a href=&#34;https://obsidian.md/&#34;&gt;Obsidian&lt;/a&gt;), since it would be easy for me to write them. The problem is that you can&amp;rsquo;t just put a markdown file into a web server and expect it to work. So I would need to find a way to convert them into &lt;a href=&#34;https://en.wikipedia.org/wiki/HTML&#34;&gt;HTML&lt;/a&gt;. So after a some research, I have developed a plan.&lt;/p&gt;</description>
 			</item>
 	</channel>
 </rss>

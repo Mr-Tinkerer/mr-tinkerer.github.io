@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
 		<title>Bash Script on Mr.Tinkerer&#39;s Blogs</title>
-		<link>https://mr-tinkerer.github.io/tags/bash-script/</link>
+		<link>http://localhost:1313/tags/bash-script/</link>
 		<description>Recent content in Bash Script on Mr.Tinkerer&#39;s Blogs</description>
 		<generator>Hugo</generator>
 		<language>en-us</language>
@@ -10,29 +10,36 @@
 		
 		
 		
-			<lastBuildDate>Thu, 18 Jun 2026 00:00:00 +0000</lastBuildDate>
+			<lastBuildDate>Mon, 29 Jun 2026 00:00:00 +0000</lastBuildDate>
 		
-			<atom:link href="https://mr-tinkerer.github.io/tags/bash-script/index.xml" rel="self" type="application/rss+xml" />
+			<atom:link href="http://localhost:1313/tags/bash-script/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Improving the Blog Script</title>
+				<link>http://localhost:1313/posts/improving-the-blog-script/</link>
+				<pubDate>Mon, 29 Jun 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/posts/improving-the-blog-script/</guid>
+				<description>&lt;h2 id=&#34;the-problem&#34;&gt;The Problem&lt;/h2&gt;&#xA;&lt;p&gt;So after I created the &lt;a href=&#34;http://localhost:1313/posts/blogs-streamlined&#34;&gt;blog site&lt;/a&gt;, and publish the &lt;a href=&#34;http://localhost:1313/posts/frictionless-gaming-vm&#34;&gt;gaming VM blog&lt;/a&gt;, I realised that the blog script that I wrote has some flaws with it. The (current) problems is the following:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;The script doesn&amp;rsquo;t manually update the date&lt;/li&gt;&#xA;&lt;li&gt;The script doesn&amp;rsquo;t give me a preview of the blog before publishing.&lt;/li&gt;&#xA;&lt;li&gt;Stop when the script encounters an error.&lt;/li&gt;&#xA;&lt;li&gt;Stop when there is no description/tags.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;blogs-templates&#34;&gt;Blog&amp;rsquo;s Templates&lt;/h2&gt;&#xA;&lt;p&gt;Something else that I forgot to mention in the blog is that I used the &lt;a href=&#34;https://community.obsidian.md/plugins/templater-obsidian&#34;&gt;Obsidian&amp;rsquo;s Templater&lt;/a&gt; plugin to automatically insert the font matter with the correct info. Now I did use Claude for this, since at the time, I didn&amp;rsquo;t felt like learning Templater&amp;rsquo;s syntax. But this is what the template file looks like. Just make sure to put it in the &lt;code&gt;Templates&lt;/code&gt; folder in order for the plugin to be able to use it.&lt;/p&gt;</description>
+			</item>
 			<item>
 				<title>Creating an (Almost) Friction-less Gaming VM in Linux</title>
-				<link>https://mr-tinkerer.github.io/posts/frictionless-gaming-vm/</link>
+				<link>http://localhost:1313/posts/frictionless-gaming-vm/</link>
 				<pubDate>Thu, 18 Jun 2026 00:00:00 +0000</pubDate>
-				<guid>https://mr-tinkerer.github.io/posts/frictionless-gaming-vm/</guid>
+				<guid>http://localhost:1313/posts/frictionless-gaming-vm/</guid>
 				<description>&lt;h2 id=&#34;the-plan&#34;&gt;The Plan&lt;/h2&gt;&#xA;&lt;p&gt;So I want to create a VM (Virtual Machine) that&amp;rsquo;s designed to let me able to game inside it. Not only that, but at the end, I want make giving the VM my GPU as easy as possible. Now there are many reasons why someone would want to set something like this up, but there are two for me.&lt;/p&gt;&#xA;&lt;p&gt;The first is that if I am encountering an issue with &lt;a href=&#34;https://github.com/ValveSoftware/Proton&#34;&gt;Valve&amp;rsquo;s Proton&lt;/a&gt; (which is a tool that makes it easy to run Windows game under Linux)&lt;sup&gt;[1]&lt;/sup&gt;, I want to be able to use that VM to confirm that the issue is coming from Proton, and not the game being buggy. Now I know that I could just re-import the game into my Window&amp;rsquo;s drive, and test it their. But not only that would require me to reboot my laptop to access Windows, but additional storage would be wasted, as I would have to copy the game&amp;rsquo;s files over to Windows. I could just, instead, share the game&amp;rsquo;s folder into the VM. The second reason is that there might be some times where I would want to test some software that I don&amp;rsquo;t fully trust. By putting those software into the VM, and giving the VM my GPU, I could run those software to the fullest power while still isolating it from my host system.&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>How I Streamline the Creation of Blogs</title>
-				<link>https://mr-tinkerer.github.io/posts/blogs-streamlined/</link>
+				<link>http://localhost:1313/posts/blogs-streamlined/</link>
 				<pubDate>Thu, 04 Jun 2026 00:00:00 +0000</pubDate>
-				<guid>https://mr-tinkerer.github.io/posts/blogs-streamlined/</guid>
-				<description>&lt;h2 id=&#34;the-issue&#34;&gt;The Issue&lt;/h2&gt;&#xA;&lt;p&gt;So I have written the two blogs (&lt;a href=&#34;https://mr-tinkerer.github.io/posts/old-laptop-into-proxmox-server&#34;&gt;The Laptop Proxmox Blog&lt;/a&gt;, and &lt;a href=&#34;https://mr-tinkerer.github.io/posts/laptop-nas&#34;&gt;Laptop NAS build&lt;/a&gt;), but I don&amp;rsquo;t have a way to share them. I have written in &lt;a href=&#34;https://www.markdownguide.org/getting-started/&#34;&gt;markdown&lt;/a&gt; file (via &lt;a href=&#34;https://obsidian.md/&#34;&gt;Obsidian&lt;/a&gt;), since it would be easy for me to write them. The problem is that you can&amp;rsquo;t just put a markdown file into a web server and expect it to work. So I would need to find a way to convert them into &lt;a href=&#34;https://en.wikipedia.org/wiki/HTML&#34;&gt;HTML&lt;/a&gt;. So after a some research, I have developed a plan.&lt;/p&gt;</description>
+				<guid>http://localhost:1313/posts/blogs-streamlined/</guid>
+				<description>&lt;h2 id=&#34;the-issue&#34;&gt;The Issue&lt;/h2&gt;&#xA;&lt;p&gt;So I have written the two blogs (&lt;a href=&#34;http://localhost:1313/posts/old-laptop-into-proxmox-server&#34;&gt;The Laptop Proxmox Blog&lt;/a&gt;, and &lt;a href=&#34;http://localhost:1313/posts/laptop-nas&#34;&gt;Laptop NAS build&lt;/a&gt;), but I don&amp;rsquo;t have a way to share them. I have written in &lt;a href=&#34;https://www.markdownguide.org/getting-started/&#34;&gt;markdown&lt;/a&gt; file (via &lt;a href=&#34;https://obsidian.md/&#34;&gt;Obsidian&lt;/a&gt;), since it would be easy for me to write them. The problem is that you can&amp;rsquo;t just put a markdown file into a web server and expect it to work. So I would need to find a way to convert them into &lt;a href=&#34;https://en.wikipedia.org/wiki/HTML&#34;&gt;HTML&lt;/a&gt;. So after a some research, I have developed a plan.&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Turning the Laptop into a NAS</title>
-				<link>https://mr-tinkerer.github.io/posts/laptop-nas/</link>
+				<link>http://localhost:1313/posts/laptop-nas/</link>
 				<pubDate>Mon, 18 May 2026 00:00:00 +0000</pubDate>
-				<guid>https://mr-tinkerer.github.io/posts/laptop-nas/</guid>
-				<description>&lt;h2 id=&#34;the-nas-plan&#34;&gt;The NAS Plan&lt;/h2&gt;&#xA;&lt;p&gt;So recently, I have successfully &lt;a href=&#34;https://mr-tinkerer.github.io/posts/old-laptop-into-proxmox-server&#34;&gt;turned an old laptop into a Proxmox server&lt;/a&gt;.  However, I have only got the OS installed on the laptop. No VMs, and no LXCs containers on there. So this blog will be me changing that by stetting up a NAS (Network Attached Storage).&lt;/p&gt;&#xA;&lt;p&gt;Now there are many options for me to use for the NAS software. I could go with a NAS OS that has all of the tools setup like &lt;a href=&#34;https://www.truenas.com/&#34;&gt;TrueNAS&lt;/a&gt;. Or I could install a Linux Distro and manually install &amp;amp; setup the tools. I have decided to go with &lt;a href=&#34;https://www.openmediavault.org/&#34;&gt;OpenMediaVault&lt;/a&gt; (OMV). The reason why is that I didn&amp;rsquo;t want to manually create the NAS from a linux distro (yet). However, going with something like TrueNAS wouldn&amp;rsquo;t be possible, as their minimum requirements would take up most of the resources of the laptop.&lt;/p&gt;</description>
+				<guid>http://localhost:1313/posts/laptop-nas/</guid>
+				<description>&lt;h2 id=&#34;the-nas-plan&#34;&gt;The NAS Plan&lt;/h2&gt;&#xA;&lt;p&gt;So recently, I have successfully &lt;a href=&#34;http://localhost:1313/posts/old-laptop-into-proxmox-server&#34;&gt;turned an old laptop into a Proxmox server&lt;/a&gt;.  However, I have only got the OS installed on the laptop. No VMs, and no LXCs containers on there. So this blog will be me changing that by stetting up a NAS (Network Attached Storage).&lt;/p&gt;&#xA;&lt;p&gt;Now there are many options for me to use for the NAS software. I could go with a NAS OS that has all of the tools setup like &lt;a href=&#34;https://www.truenas.com/&#34;&gt;TrueNAS&lt;/a&gt;. Or I could install a Linux Distro and manually install &amp;amp; setup the tools. I have decided to go with &lt;a href=&#34;https://www.openmediavault.org/&#34;&gt;OpenMediaVault&lt;/a&gt; (OMV). The reason why is that I didn&amp;rsquo;t want to manually create the NAS from a linux distro (yet). However, going with something like TrueNAS wouldn&amp;rsquo;t be possible, as their minimum requirements would take up most of the resources of the laptop.&lt;/p&gt;</description>
 			</item>
 	</channel>
 </rss>

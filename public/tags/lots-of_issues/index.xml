@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
 		<title>Lots Of_Issues on Mr.Tinkerer&#39;s Blogs</title>
-		<link>https://mr-tinkerer.github.io/tags/lots-of_issues/</link>
+		<link>http://localhost:1313/tags/lots-of_issues/</link>
 		<description>Recent content in Lots Of_Issues on Mr.Tinkerer&#39;s Blogs</description>
 		<generator>Hugo</generator>
 		<language>en-us</language>
@@ -12,12 +12,12 @@
 		
 			<lastBuildDate>Tue, 03 Mar 2026 00:00:00 +0000</lastBuildDate>
 		
-			<atom:link href="https://mr-tinkerer.github.io/tags/lots-of_issues/index.xml" rel="self" type="application/rss+xml" />
+			<atom:link href="http://localhost:1313/tags/lots-of_issues/index.xml" rel="self" type="application/rss+xml" />
 			<item>
 				<title>Turning an Old Laptop into a Proxmox Server</title>
-				<link>https://mr-tinkerer.github.io/posts/old-laptop-into-proxmox-server/</link>
+				<link>http://localhost:1313/posts/old-laptop-into-proxmox-server/</link>
 				<pubDate>Tue, 03 Mar 2026 00:00:00 +0000</pubDate>
-				<guid>https://mr-tinkerer.github.io/posts/old-laptop-into-proxmox-server/</guid>
+				<guid>http://localhost:1313/posts/old-laptop-into-proxmox-server/</guid>
 				<description>&lt;h2 id=&#34;the-old-laptop&#34;&gt;The Old Laptop&lt;/h2&gt;&#xA;&lt;p&gt;So I was recently talking to an classmate of mine when he mention that he has an old, semi-broken, laptop that he doesn&amp;rsquo;t know what to do with it. Being someone who recently lost their home lab due to moving, I took that opportunity to rebuild my home lab. The laptop is an Asus x555q with an an AMD A12-9720P APU with 8GB of RAM, and 256GB SATA SSD&lt;sup&gt;[1]&lt;/sup&gt;.&lt;/p&gt;</description>
 			</item>
 	</channel>

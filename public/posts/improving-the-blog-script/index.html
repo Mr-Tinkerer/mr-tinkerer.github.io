@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html><head lang="en"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Improving the Blog Script - Mr.Tinkerer&#39;s Blogs</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="The original script for automating the blog publication had some flaws appear. So I fix them in here." />
+	<meta property="og:image" content="http://localhost:1313/"/>
+	<meta property="og:url" content="http://localhost:1313/posts/improving-the-blog-script/">
+	<meta property="og:site_name" content="Mr.Tinkerer&#39;s Blogs">
+	<meta property="og:title" content="Improving the Blog Script">
+	<meta property="og:description" content="The original script for automating the blog publication had some flaws appear. So I fix them in here.">
+	<meta property="og:locale" content="en_us">
+	<meta property="og:type" content="article">
+		<meta property="article:section" content="posts">
+		<meta property="article:published_time" content="2026-06-29T00:00:00+00:00">
+		<meta property="article:modified_time" content="2026-06-29T00:00:00+00:00">
+		<meta property="article:tag" content="Bash Script">
+		<meta property="article:tag" content="Obsidian">
+		<meta property="article:tag" content="Automation">
+		<meta property="article:tag" content="Fixing">
+		<meta property="article:tag" content="Streamlined">
+		<meta property="article:tag" content="Website">
+		<meta property="og:image" content="http://localhost:1313/posts/improving-the-blog-script/cover.png">
+
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:image" content="http://localhost:1313/posts/improving-the-blog-script/cover.png">
+	<meta name="twitter:title" content="Improving the Blog Script">
+	<meta name="twitter:description" content="The original script for automating the blog publication had some flaws appear. So I fix them in here.">
+
+        <link href="http://localhost:1313/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:1313/css/main.475e92bd33b8431a5ff779310e6b247c1b8ee0f01e4acf38c4c8f786fc707e0f.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://localhost:1313/css/dark.4529c04ce20ceac5a42e37a63e092c89354fbd00e6209bd2995100d61b71e8df.css"  disabled />
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="http://localhost:1313/">Mr.Tinkerer&#39;s Blogs</a>
+	</div>
+	<nav>
+		
+		<a href="/posts/">Blogs</a>
+		
+		<a href="/search/">Search</a>
+		
+		<a href="/about/">About</a>
+		
+		<a href="/index.xml">RSS</a>
+		
+		<button id="dark-mode-toggle" class="nav-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" type="button"><svg class="feather" viewBox="0 0 24 24" fill="none" stroke="#232333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg></button>
+		<script src="http://localhost:1313/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+  <article>
+    <div class="post-container">
+      
+      <div class="post-content">
+        <div class="title">
+          <h1 class="title">Improving the Blog Script</h1>
+          <div class="meta">Posted on Jun 29, 2026</div>
+        </div>
+        
+        <section class="body">
+          <h2 id="the-problem">The Problem</h2>
+<p>So after I created the <a href="/posts/blogs-streamlined">blog site</a>, and publish the <a href="/posts/frictionless-gaming-vm">gaming VM blog</a>, I realised that the blog script that I wrote has some flaws with it. The (current) problems is the following:</p>
+<ul>
+<li>The script doesn&rsquo;t manually update the date</li>
+<li>The script doesn&rsquo;t give me a preview of the blog before publishing.</li>
+<li>Stop when the script encounters an error.</li>
+<li>Stop when there is no description/tags.</li>
+</ul>
+<h2 id="blogs-templates">Blog&rsquo;s Templates</h2>
+<p>Something else that I forgot to mention in the blog is that I used the <a href="https://community.obsidian.md/plugins/templater-obsidian">Obsidian&rsquo;s Templater</a> plugin to automatically insert the font matter with the correct info. Now I did use Claude for this, since at the time, I didn&rsquo;t felt like learning Templater&rsquo;s syntax. But this is what the template file looks like. Just make sure to put it in the <code>Templates</code> folder in order for the plugin to be able to use it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-markdown" data-lang="markdown"><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>date: 2026-06-29T00:00:00
+</span></span><span style="display:flex;"><span>title: &lt;% tp.file.title %&gt;
+</span></span><span style="display:flex;"><span>slug: &lt;% tp.file.title.toLowerCase().replace(/\s+/g, &#39;-&#39;) %&gt;
+</span></span><span style="display:flex;"><span>description:
+</span></span><span style="display:flex;"><span>tags:
+</span></span><span style="display:flex;"><span>toc: true
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## The 
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">## Citations
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">&gt; </span><span style="font-style:italic">[1] 
+</span></span></span></code></pre></div><h2 id="previewing-the-blog">Previewing the Blog.</h2>
+<p>This one was quite stupid for me to somehow miss when I wrote the blog script. regardless, it shouldn&rsquo;t be that much of an issue for me to implement. The first thing that I had to do is to get the script to auto launch the script. A quick google search told me that I would just need to run <code>xdg-open &lt;URL&gt;</code> in the terminal to make it auto launch the correct browser to the URL.<sup>[1]</sup></p>
+<p><img src="Pasted%20image%2020260627223629.png" alt="">
+<em>The command opening the URL in the correct browser from the terminal.</em></p>
+<p>After testing that the command worked, modified the script to include the command after it generates the Hugo site.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#start the server and auto open the blog posts (silences the output)</span>
+</span></span><span style="display:flex;"><span>hugo server -D --disableFastRender &gt; /dev/null &amp;
+</span></span><span style="display:flex;"><span>xdg-open <span style="color:#e6db74">&#34;http://localhost:1313/posts/&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#infinite loop for checking if the user input is valid</span>
+</span></span><span style="display:flex;"><span>valid_input<span style="color:#f92672">=</span>false
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$valid_input<span style="color:#e6db74">&#34;</span> !<span style="color:#f92672">=</span> true <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#check if the user wants to stop</span>
+</span></span><span style="display:flex;"><span>    read -p <span style="color:#e6db74">&#34;Do you want to publish the blog(s)? (Y/n): &#34;</span> choice
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#kill the blog, and continue on</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$choice<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;Y&#34;</span> <span style="color:#f92672">||</span> <span style="color:#e6db74">&#34;</span>$choice<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;y&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>        pkill hugo
+</span></span><span style="display:flex;"><span>        valid_input<span style="color:#f92672">=</span>true
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#kill the blog, and stop the script</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elif</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">&#34;</span>$choice<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;N&#34;</span> <span style="color:#f92672">||</span> <span style="color:#e6db74">&#34;</span>$choice<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;n&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>        pkill hugo
+</span></span><span style="display:flex;"><span>        exit <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#tell them about the wrong input</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>        echo <span style="color:#e6db74">&#34;Wrong input, try again.&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><p>The first two lines starts the server in the background. The reason why I added the <code>&gt; /dev/null</code> into the Hugo server command is to make the command output shut up.<sup>[2]</sup> Without that, the Hugo server command will be showed with everything else, causing confusion. The <code>&amp;</code> at the end of the command make the entire command run in the background.<sup>[3]</sup> Without it, the script will be waiting for the server to be killed before continuing. While this is normally fine, I would rather have the script get the user&rsquo;s input on what to do with the server.</p>
+<p>Then the next section of the code is just all about getting the user&rsquo;s input. The <code>while</code> loop is there to prevent the user mistyping their input crashing the script. It will go in a infinite loop of constantly getting the user&rsquo;s input, until they enter in a valid input.   If they say yes, then the loop is broken, and the script continues on. If they say no, then the script will just stop running here. Either option will kill the Hugo server running in the background.</p>
+<h2 id="auto-update-the-publishing-date">Auto Update the Publishing Date</h2>
+<p>I quickly realised that this one should be done manually, as there is no way I can trust my self to do it properly. This also shouldn&rsquo;t be that hard to do. I just need to get the current date, in the correct format, and insert it into the correct spot. This is what most of the script is all about, so it didn&rsquo;t take me that long to do. To get the current date in the correct format, I would just have to do <code>date +%Y-%m-%dT00:00:00</code>. Then, I would just have to use <code>sed</code> to update the date via the following method <code>sed -i &quot;s/^date:.*/date: $publish_date/&quot; index.md</code>.</p>
+<h2 id="auto-exit-on-error">Auto exit on Error</h2>
+<p>When I was working on the other two features, I realised that the script will continue to run when there is an error. To prevent that, I add in <code>set-eo pipefail</code> at the very top of the script.<sup>[4]</sup> The <code>set</code> command allows you to change the shell&rsquo;s options.<sup>[5]</sup> The <code>-e</code> makes it exit upon error, <code>-u</code> makes the script throw and error on undefined variables.  and <code>-o pipefail</code> makes the script exit on command pipe failures.<sup>[4]</sup></p>
+<p>Now I am not sure why Bash doesn&rsquo;t automatically stops whenever it encounters an error. My guess is that the default shell in Unix (SH), was like that. And since Bash want&rsquo;s 100% compatibility with the SH shell, they have to implement that.</p>
+<p>However, enabling this has caused an error pop up. The thing is, the regex filter to extract the content inside the Obsidian&rsquo;s backlink has also capture the <code>[[ &quot;$choice&quot; == &quot;Y&quot; || &quot;$choice&quot; == &quot;y&quot; ]]</code> and <code>[[ &quot;$choice&quot; == &quot;N&quot; || &quot;$choice&quot; == &quot;n&quot; ]]</code> from the script earlier. At first, I tried to make Google&rsquo;s Gemini to rewrite that regex statement to not include any leading/trailing white spaces, since bash requires them. But Gemini failed to generate a new one that actually works. So I then decided to make the script checks if there is a <code>$</code> inside the <code>[[]]</code>. If there is one, then that means that the <code>[[]]</code> must have been pulled from a bash conditional instead of a backlink. So it will just ignore that line. This is done via <code>if [[ $line != *\$* ]];</code>.</p>
+<h2 id="auto-exit-on-missing-tagsdescriptions">Auto Exit on Missing Tags/Descriptions</h2>
+<p>Just like the publication date, I can&rsquo;t trust myself to remember to enter in the tags, description before running the script. To prevent that, I would just have the script stop and yell at me for that. Since the script already extract the tags, I can insert a snippet that will trigger the yelling when the extracted tags is empty.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#stop the script, and delete the article folder if the tags are missing</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -z <span style="color:#e6db74">&#34;</span>$tags<span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>	echo <span style="color:#e6db74">&#34;Error, the </span>$md_article<span style="color:#e6db74"> is missing tags. Add them in and go again. Will be deleting the article folder to make it easier to re-run this script.&#34;</span>
+</span></span><span style="display:flex;"><span>	rm -r <span style="color:#e6db74">&#34;</span>$ARTICLE_PATH<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>	exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>For the description, it&rsquo;s the same story as the tags. The only difference is using <code>grep</code> and <code>awk</code> to extract the description.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#extract the description out of the file.</span>
+</span></span><span style="display:flex;"><span>desc<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>grep -e <span style="color:#e6db74">&#34;^description:.*&#34;</span> -m <span style="color:#ae81ff">1</span> index.md | awk -F <span style="color:#e6db74">&#34;:&#34;</span> <span style="color:#e6db74">&#39;{print $2}&#39;</span><span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#throws an error when the description is empty, and delete the article.</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> -z $desc <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>	echo <span style="color:#e6db74">&#34;Error, the </span>$md_article<span style="color:#e6db74"> is missing a description. Add it in and go again. Will be deleting the article folder to make it easier to re-run this script.&#34;</span>
+</span></span><span style="display:flex;"><span>	rm -r <span style="color:#e6db74">&#34;</span>$ARTICLE_PATH<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>	exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><h2 id="citations">Citations</h2>
+<blockquote>
+<p>[1] Eugene Yarmash. “Shell Script to Open a URL.” <em>Stack Overflow</em>, 1 July 2016, stackoverflow.com/questions/38147620/shell-script-to-open-a-url/38147878#38147878. Accessed 27 June 2026.
+[2] GeeksforGeeks. “What Is /Dev/Null in Linux?” <em>GeeksforGeeks</em>, 23 June 2022, <a href="https://www.geeksforgeeks.org/linux-unix/what-is-dev-null-in-linux/">www.geeksforgeeks.org/linux-unix/what-is-dev-null-in-linux/</a>. Accessed 27 June 2026.
+[3] Panovski, Dejan. “How to Run Linux Commands in Background.” <em>Linuxize.com</em>, 1 Nov. 2019, linuxize.com/post/how-to-run-linux-commands-in-background/. Accessed 27 June 2026.
+[4] Rosenfield, Adam, and ADTC. “Automatic Exit from Bash Shell Script on Error.” <em>Stack Overflow</em>, 20 May 2010, stackoverflow.com/a/2871034. Accessed 28 June 2026.
+[5] GNU Foundation. “Bash Reference Manual.” <em>Gnu.org</em>, 18 May 2025, <a href="https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#The-Set-Builtin">www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#The-Set-Builtin</a>. Accessed 28 June 2026.</p>
+</blockquote>
+
+        </section>
+        <div class="post-tags">
+          
+          
+          <nav class="nav tags">
+            <ul class="tags">
+              
+              <li><a href="/tags/bash-script/">Bash Script</a></li>
+              
+              <li><a href="/tags/obsidian/">Obsidian</a></li>
+              
+              <li><a href="/tags/automation/">Automation</a></li>
+              
+              <li><a href="/tags/fixing/">Fixing</a></li>
+              
+              <li><a href="/tags/streamlined/">Streamlined</a></li>
+              
+              <li><a href="/tags/website/">Website</a></li>
+              
+            </ul>
+          </nav>
+          
+          
+        </div>
+      </div>
+
+      
+      
+      <div class="toc">
+        <strong>Table of contents:</strong>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#the-problem">The Problem</a></li>
+    <li><a href="#blogs-templates">Blog&rsquo;s Templates</a></li>
+    <li><a href="#previewing-the-blog">Previewing the Blog.</a></li>
+    <li><a href="#auto-update-the-publishing-date">Auto Update the Publishing Date</a></li>
+    <li><a href="#auto-exit-on-error">Auto exit on Error</a></li>
+    <li><a href="#auto-exit-on-missing-tagsdescriptions">Auto Exit on Missing Tags/Descriptions</a></li>
+    <li><a href="#citations">Citations</a></li>
+  </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    </article>
+</main>
+<footer>
+  <div style="display:flex"></div>
+  <div class="footer-info">
+    2026  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+</div>
+    </body>
+</html>

@@ -2,83 +2,86 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://mr-tinkerer.github.io/tags/bash-script/</loc>
+    <loc>http://localhost:1313/tags/automation/</loc>
+    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/bash-script/</loc>
+    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/fixing/</loc>
+    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/improving-the-blog-script/</loc>
+    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/</loc>
+    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/obsidian/</loc>
+    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/</loc>
+    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/streamlined/</loc>
+    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/</loc>
+    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/website/</loc>
+    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/frictionless-gaming-vm/</loc>
     <lastmod>2026-06-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/posts/frictionless-gaming-vm/</loc>
+    <loc>http://localhost:1313/tags/gaming/</loc>
     <lastmod>2026-06-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/gaming/</loc>
+    <loc>http://localhost:1313/tags/hardware/</loc>
     <lastmod>2026-06-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/hardware/</loc>
+    <loc>http://localhost:1313/tags/linux/</loc>
     <lastmod>2026-06-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/linux/</loc>
+    <loc>http://localhost:1313/tags/qemu/</loc>
     <lastmod>2026-06-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/</loc>
+    <loc>http://localhost:1313/tags/virtual-machines/</loc>
     <lastmod>2026-06-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/posts/</loc>
-    <lastmod>2026-06-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/qemu/</loc>
-    <lastmod>2026-06-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/</loc>
-    <lastmod>2026-06-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/virtual-machines/</loc>
-    <lastmod>2026-06-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/automation/</loc>
+    <loc>http://localhost:1313/posts/blogs-streamlined/</loc>
     <lastmod>2026-06-04T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/posts/blogs-streamlined/</loc>
+    <loc>http://localhost:1313/tags/hugo/</loc>
     <lastmod>2026-06-04T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/hugo/</loc>
-    <lastmod>2026-06-04T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/obsidian/</loc>
-    <lastmod>2026-06-04T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/streamlined/</loc>
-    <lastmod>2026-06-04T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/website/</loc>
-    <lastmod>2026-06-04T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mr-tinkerer.github.io/about/</loc>
+    <loc>http://localhost:1313/about/</loc>
     <lastmod>2026-05-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/fixing/</loc>
+    <loc>http://localhost:1313/tags/laptop/</loc>
     <lastmod>2026-05-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/laptop/</loc>
+    <loc>http://localhost:1313/tags/openmediavault/</loc>
     <lastmod>2026-05-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/openmediavault/</loc>
+    <loc>http://localhost:1313/tags/server/</loc>
     <lastmod>2026-05-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/server/</loc>
+    <loc>http://localhost:1313/posts/laptop-nas/</loc>
     <lastmod>2026-05-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/posts/laptop-nas/</loc>
-    <lastmod>2026-05-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/lots-of_issues/</loc>
+    <loc>http://localhost:1313/tags/lots-of_issues/</loc>
     <lastmod>2026-03-03T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/tags/proxmox/</loc>
+    <loc>http://localhost:1313/tags/proxmox/</loc>
     <lastmod>2026-03-03T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/posts/old-laptop-into-proxmox-server/</loc>
+    <loc>http://localhost:1313/posts/old-laptop-into-proxmox-server/</loc>
     <lastmod>2026-03-03T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/categories/</loc>
+    <loc>http://localhost:1313/categories/</loc>
   </url><url>
-    <loc>https://mr-tinkerer.github.io/search/</loc>
+    <loc>http://localhost:1313/search/</loc>
   </url>
 </urlset>
