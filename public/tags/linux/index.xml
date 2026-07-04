@@ -10,9 +10,16 @@
 		
 		
 		
-			<lastBuildDate>Thu, 18 Jun 2026 00:00:00 +0000</lastBuildDate>
+			<lastBuildDate>Sat, 04 Jul 2026 00:00:00 +0000</lastBuildDate>
 		
 			<atom:link href="http://localhost:1313/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Turning an Old Laptop into a Router</title>
+				<link>http://localhost:1313/posts/turning-an-old-laptop-into-a-router/</link>
+				<pubDate>Sat, 04 Jul 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/posts/turning-an-old-laptop-into-a-router/</guid>
+				<description>&lt;h2 id=&#34;the-situation&#34;&gt;The Situation&lt;/h2&gt;&#xA;&lt;p&gt;So I wanted to rebuild my homelab with the new equipment, but I have one big issue that I need to tackle before I can do that. The place that I am staying at doesn&amp;rsquo;t have an ethernet port for me to use. I am forced to use Wi-Fi in order to be able to access the internet. That wouldn&amp;rsquo;t be that big of an issue (other then the latency and reliability issues), except for two thing. The first one being that most server software doesn&amp;rsquo;t come with Wi-Fi drivers out of the box. That wouldn&amp;rsquo;t be that big of an issue, as I can manually download the package and install them. The second reason is that the place I am staying at is using an enterprise network (WPA2-EAP), which means that I would have to provide it my username and password in order to be able to connect to it. One of those issues wouldn&amp;rsquo;t be that bad alone, but having two of them would be even more of an issue.&lt;/p&gt;</description>
+			</item>
 			<item>
 				<title>Creating an (Almost) Friction-less Gaming VM in Linux</title>
 				<link>http://localhost:1313/posts/frictionless-gaming-vm/</link>

@@ -2,6 +2,39 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>http://localhost:1313/tags/hardware/</loc>
+    <lastmod>2026-07-04T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/linux/</loc>
+    <lastmod>2026-07-04T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/lots-of_issues/</loc>
+    <lastmod>2026-07-04T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/</loc>
+    <lastmod>2026-07-04T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/networking/</loc>
+    <lastmod>2026-07-04T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/openwrt/</loc>
+    <lastmod>2026-07-04T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/</loc>
+    <lastmod>2026-07-04T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/routing/</loc>
+    <lastmod>2026-07-04T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/server/</loc>
+    <lastmod>2026-07-04T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/</loc>
+    <lastmod>2026-07-04T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/posts/turning-an-old-laptop-into-a-router/</loc>
+    <lastmod>2026-07-04T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>http://localhost:1313/tags/automation/</loc>
     <lastmod>2026-06-29T00:00:00+00:00</lastmod>
   </url><url>
@@ -14,19 +47,10 @@
     <loc>http://localhost:1313/posts/improving-the-blog-script/</loc>
     <lastmod>2026-06-29T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/</loc>
-    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/tags/obsidian/</loc>
     <lastmod>2026-06-29T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/</loc>
-    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/tags/streamlined/</loc>
-    <lastmod>2026-06-29T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/</loc>
     <lastmod>2026-06-29T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/website/</loc>
@@ -36,12 +60,6 @@
     <lastmod>2026-06-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/gaming/</loc>
-    <lastmod>2026-06-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/hardware/</loc>
-    <lastmod>2026-06-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/linux/</loc>
     <lastmod>2026-06-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/qemu/</loc>
@@ -65,14 +83,8 @@
     <loc>http://localhost:1313/tags/openmediavault/</loc>
     <lastmod>2026-05-18T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/server/</loc>
-    <lastmod>2026-05-18T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/posts/laptop-nas/</loc>
     <lastmod>2026-05-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/lots-of_issues/</loc>
-    <lastmod>2026-03-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/proxmox/</loc>
     <lastmod>2026-03-03T00:00:00+00:00</lastmod>
