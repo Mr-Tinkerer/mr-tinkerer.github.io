@@ -1,5 +1,5 @@
 ---
-date: 2026-07-04T00:00:00
+date: 2026-07-08T00:00:00
 title: Turning an Old Laptop into a Router
 slug: turning-an-old-laptop-into-a-router
 description: I wanted to rebuild my home lab. But the problem is that the place I am staying at only allows me to use Wi-Fi. Instead of manually connecting every single machine to the Wi-Fi, I will have the old laptop be the middleman for that. If only if it was that easy to setup.
@@ -11,6 +11,7 @@ tags:
   - Server
   - Routing
   - OpenWrt
+  - HomeLab
 toc: true
 ---
 ## The Situation
