@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html><head lang="en"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Building the Home Lab Hardware - Mr.Tinkerer&#39;s Blogs</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="I will be using old hardware that I got from my school, and other places, to build a new home lab. But things don&#39;t go as smoothly as I planned." />
+	<meta property="og:image" content="http://localhost:1313/"/>
+	<meta property="og:url" content="http://localhost:1313/posts/building-the-home-lab-hardware/">
+	<meta property="og:site_name" content="Mr.Tinkerer&#39;s Blogs">
+	<meta property="og:title" content="Building the Home Lab Hardware">
+	<meta property="og:description" content="I will be using old hardware that I got from my school, and other places, to build a new home lab. But things don&#39;t go as smoothly as I planned.">
+	<meta property="og:locale" content="en_us">
+	<meta property="og:type" content="article">
+		<meta property="article:section" content="posts">
+		<meta property="article:published_time" content="2026-07-20T00:00:00+00:00">
+		<meta property="article:modified_time" content="2026-07-20T00:00:00+00:00">
+		<meta property="article:tag" content="HomeLab">
+		<meta property="article:tag" content="Hardware">
+		<meta property="article:tag" content="Lots Of_Issues">
+		<meta property="article:tag" content="PC">
+		<meta property="article:tag" content="PC Parts">
+		<meta property="article:tag" content="Fixing">
+
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="Building the Home Lab Hardware">
+	<meta name="twitter:description" content="I will be using old hardware that I got from my school, and other places, to build a new home lab. But things don&#39;t go as smoothly as I planned.">
+
+        <link href="http://localhost:1313/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:1313/css/main.475e92bd33b8431a5ff779310e6b247c1b8ee0f01e4acf38c4c8f786fc707e0f.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://localhost:1313/css/dark.4529c04ce20ceac5a42e37a63e092c89354fbd00e6209bd2995100d61b71e8df.css"  disabled />
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="http://localhost:1313/">Mr.Tinkerer&#39;s Blogs</a>
+	</div>
+	<nav>
+		
+		<a href="/posts/">Blogs</a>
+		
+		<a href="/search/">Search</a>
+		
+		<a href="/about/">About</a>
+		
+		<a href="/index.xml">RSS</a>
+		
+		<button id="dark-mode-toggle" class="nav-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" type="button"><svg class="feather" viewBox="0 0 24 24" fill="none" stroke="#232333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg></button>
+		<script src="http://localhost:1313/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+  <article>
+    <div class="post-container">
+      
+      <div class="post-content">
+        <div class="title">
+          <h1 class="title">Building the Home Lab Hardware</h1>
+          <div class="meta">Posted on Jul 20, 2026</div>
+        </div>
+        
+        <section class="body">
+          <h2 id="the-plan">The Plan</h2>
+<p>So I have recently heard that my college was giving away old and retired PCs for free. At first, I didn&rsquo;t believe this. But after talking to the head IT guy, he told me that the school isn&rsquo;t allow to sell or recycle the PCs for a certain period of time. And since the PCs are sitting the tech &ldquo;graveyard&rdquo;, he decided to let students take them away for free. So after looking around the &ldquo;graveyard&rdquo;, I took away two PCs. A Dell Optiplex 5060, and a Dell Vostro 260s.</p>
+<p><img src="Pasted%20image%2020260708230238.png" alt="">
+<em>THe Dell Optiplex 5060 and the Dell Vostro 260s standing next to each other.</em></p>
+<p>The reason for grabbing two PCs is that the Optiplex PC has a better processor, and support DDR4 RAM. But it has a proprietary motherboard, preventing me from taking it out of that case. So this PC will be mainly used as a Proxmox hypervisor for the homelab.</p>
+<p>The Vostro PC is an much older PC that supports only DDR3 RAM. But the motherboard is a normal ATX board, allowing me to take it out. The reason why I care about that is that I can put the motherboard into a bigger case to be able to insert more mechanical hard drives into it. So for this reason, the Vostro will be the NAS for the homelab.</p>
+<p>After deciding that, I then sketch a diagram of what I plan to put in the homelab. Note that the diagram also includes the [[Turning an Old Laptop into a Router|router laptop]] that I already done the basic setup with it.</p>
+<p><img src="homelab.svg" alt="">
+<em>The services layout diagram for the homelab.</em></p>
+<p>Also this isn&rsquo;t the final version of the homelab, but just the services I will want to mess with as of this moment. I also won&rsquo;t go into too much detail for the individual services now, but I will once I get into them. But what I will quickly explain is the grouping of the services into one VMs. The reason why is to make it easy to make it easy for the services to talk to each other, and to quickly turn them on/off when needed for management.</p>
+<h2 id="the-optiplex-unboxing">The Optiplex unboxing</h2>
+<p>The dell one was the one I was more inserted in setting up first, so I opened that baby right up.</p>
+<p><img src="Pasted%20image%2020260708232628.png" alt="">
+<em>The dell Optiplex 5060 opened.</em></p>
+<p>The first thing that I notice is the big hard drive taking up 1/4 of the PC. So I took it out to take a closer look at it. I notice that it is a Seagate 500GB drive.</p>
+<p><img src="Pasted%20image%2020260708232744.png" alt="">
+<em>The Seagate 500GB hard drive in the cage.</em></p>
+<p>I then took the hard drive out of the cage. My plan is to take the 2.5&quot; SSD drive in the [[Turning an Old Laptop into a Proxmox Server|Laptop Proxmox Server]], which I stopped using because the laptop would randomly freeze on me, and insert it into the Optiplex. The only problem with that is that the SSD is too small to fit into the cage.</p>
+<p><img src="20260705_190518.jpg" alt="">
+<em>The SSD being too small to fit into the cage.</em></p>
+<p>But I will deal with that later. I then moved on to the rest of the Optiplex. I went to go check the RAM specs of the machine. But that&rsquo;s when I notice that the machine is missing RAM sticks.</p>
+<p><img src="Pasted%20image%2020260708233545.png" alt="">
+<em>The Optiplex PC having no RAM sticks in there.</em></p>
+<p>That&rsquo;s when I remember that the head IT guy told me that If the PC has any DDR4 RAM in there, or a SATA SSD or NVME SSD, then I would have to take it out before taking the machine. This is only the policy because of the current RAM apocalypse going on (Thanks Sam Altman).</p>
+<p>So without any way of booting up the machine, I put all of the peices back in there, and put the machine away for now. When I get some used DDR4 RAM, then I would able to work on this machine.</p>
+<h2 id="the-vostro-260s-unboxing">The Vostro 260s Unboxing</h2>
+<p>After swapping the Optiplex machine with the Vostro machine, I open that baby up.</p>
+<p><img src="Pasted%20image%2020260708234304.png" alt="">
+<em>The insides of the Dell Vostro 260s machine.</em></p>
+<p>Just like the Optiplex machine, The first thing that catched my eye is the hard drive. After taking it out for a closer look, I notice that it is the same hard drive that was found in the Optiplex machine (Seagate 500GB).</p>
+<p><img src="Pasted%20image%2020260708234458.png" alt="">
+<em>The Seagate 500GB found in the Vostro machine.</em></p>
+<p>However, unlike the Optiplex, the Vostro came with RAM inside of it. The reason why is that the RAM stick are DDR3, which the head IT guy doesn&rsquo;t care if I take them. So after taking them apart for a closer look, I realised that they are both 4GB sticks. But they are two different brands, so hopefully mixing the RAM sticks doesn&rsquo;t cause any issues.</p>
+<p><img src="Pasted%20image%2020260708235104.png" alt="">
+<em>The DDR3 RAM sticks found inside the Vostro 260s.</em></p>
+<p>From there, I worked on unplugging all of the cables from the motherboard. After I did that, I then unscrewed the motherboard&rsquo;s screws until I was able to take out the motherboard.</p>
+<p><img src="Pasted%20image%2020260708235242.png" alt="">
+<em>The motherboard taken out of the Vostro 260s.</em></p>
+<h2 id="the-vostros-transplant">The Vostro&rsquo;s Transplant</h2>
+<p>With the Vostro&rsquo;s motherboard taken out, I can put into a better case. And what a better case means in this scenario is being able to hold multiple hard drive. If I wasn&rsquo;t planning on using it as a NAS, then the original case would have been good enough. But besides that, I was able to also take a case that the IT guy wasn&rsquo;t using. I have no idea what the exact model of the case is. Just that it is a Ciara tech case.</p>
+<p><img src="Pasted%20image%2020260713102022.png" alt="">
+<em>The Ciara case that I grabbed.</em></p>
+<p>Opening the case shows not only that there is a spot for the hard drive bays, but that I already installed a power supply into the case. And of course, I grabbed the power supply from the IT guy, and installed it over there.</p>
+<p><img src="Pasted%20image%2020260713102722.png" alt="">
+<em>The power supply being pre-installed into the case. There is also a section in the bottom right of the case for the hard drive bays.</em></p>
+<p>Taking a closer look at the power supply shows that is a non modular, 80+, 400w power supply from Power Man. IT was a generic power supply that I grabbed from the used pile, so hopefully it doesn&rsquo;t blow up on me <em>(finger crossed)</em>.
+<img src="Pasted%20image%2020260713102818.png" alt="">
+<em>The power supply that is installed into the case.</em></p>
+<p>I then screw the motherboard into the case. It wasn&rsquo;t that bad to get in in there, except for the fact that I forgot the IO shield. So I had to take out the motherboard, push the IO shield out of the Vostro, pushed it into the Ciara case, and reinstalled the motherboard.</p>
+<p><img src="Pasted%20image%2020260713104100.png" alt="">
+<em>The motherboard being installed into the Ciara case.</em></p>
+<p>I then installed the RAM into the motherboard.</p>
+<p><img src="Pasted%20image%2020260713104304.png" alt="">
+<em>The RAM installed into the motherboard.</em></p>
+<p>I then attempted to attached the hard drive into the case. But the problem is that the case is missing the sleds to hold the hard drives. Meaning that I can&rsquo;t (easily) attached the hard drive into the server.</p>
+<p><img src="Pasted%20image%2020260713104536.png" alt="">
+<em>The hard drives being unable to attached the PC case.</em></p>
+<p>Finally, the last thing I would need to do is attached the cables to the motherboard. So I started to plug the cables into their right spot. But then I hit a pretty big wall. The power supply cable for the CPU is unable to reach the socket plug on the motherboard. And since the CPU needs power for the computer to work, I would unable to continue without swapping out the power supply.</p>
+<p><img src="Pasted%20image%2020260713105006.png" alt="">
+<em>The power supply CPU pin being stretched out to as far as it can go, which is about halfway through the motherboard.</em></p>
+<p>So for me to continue one with the hardware, I would need the following items:</p>
+<ul>
+<li>the DDR4 RAM for the Dell Optiplex 5060</li>
+<li>A PC power supply where the CPU pin can reach the CPU socket at the very top of the case.</li>
+<li>Hard drive sleds to be able to hold the hard drive inside the case.</li>
+</ul>
+<h2 id="got-some-ram">Got some RAM</h2>
+<p>So some time has passed since the initial build. But in that time frame, I found a deal for some 2x8GB DDR4 2400MHz ECC RAM for about $60 bucks. This was the cheapest deal that I can find for used RAM on Ebay and Facebook Marketplace. Not only that, but it was also ECC RAM, which I have never used before. Now I have never messed with ECC RAM before. So when I saw that the cheapest DDR4 ram was ECC RAM, I took the bullet and bought the RAM.</p>
+<p><img src="Pasted%20image%2020260713105852.png" alt="">
+<em>The 2 8GB ECC RAM sticks that I&rsquo;ve obtained.</em></p>
+<p>So I then plugged it into the Dell Optiplex. Also it looks a bit weird that the RAM sticks has to chips on the back side, making the back of the RAM look &ldquo;naked&rdquo;.</p>
+<p><img src="Pasted%20image%2020260713110118.png" alt="">
+<em>The ECC DDR4 RAM installed into the Dell Optiplex. Notice how the back has no chips, making it look werid.</em></p>
+<p>But perverted ideas aside, I plug the power supply into the PC, and turned it on. That&rsquo;s when the PC yelled at me by beeping at me 3 times. I immediately recognised this as a BIOS error code, so something must be wrong with this PC. A quick online searched told me that the PC is having issues with the RAM.</p>
+<p>At first, I thought that the Facebook Marketplace listing I bought said that it was broken RAM, and I missed that part. But going back to the list showed that he said that he took it out of a working server. SO then I thought that he lied about that, and that he sold me broken RAM. Now mind you that this is my first time using Facebook Marketplace, so I don&rsquo;t really have an exception of how transactions work on there.</p>
+<p>But as I was scrolling through my direct messages with the seller, he asked me if I knew that this was ECC RAM. When he sent that message at me first, I thought it was weird for him to emphasize that point. But now seeing that message while the PC beeps at me made me think that ECC RAM doesn&rsquo;t work on any CPU/Motherboard. And a quick online search has confirm that thought. So I just bought paperweight.</p>
+<p>Luckily for me, I stumbled across a Facebook Marketplace listing where a guy was selling the exact same RAM kit, but without any ECC. Not only that, but I manage to trade my ECC RAM for his non-ECC RAM.</p>
+<p><img src="Pasted%20image%2020260713111352.png" alt=""><em>The 2 GB DDR4 2400MHz RAM kit that I traded my ECC RAM with.</em></p>
+<p>Plugging those RAM sticks into the PC caused it to not beep at me. But a new problem has appeared. I have no way to get the output of the PC. The thing is, the PC only had a Display Port, or a VGA output. My monitor only has a HDMI cable, preventing me from seeing the output of the PC.</p>
+<p>Since I would only need to see the output to install Proxmox onto it, I would need to just borrow a adapter for a short time. So like the MVP the IT guys have been, I was able to borrow a adapter. But the only adapters that they had for Display Port was to DVI-D. As annoying that was, I was able to combine it with a DVI-D to HDMI adapter to fix it.</p>
+<p><img src="Pasted%20image%2020260713112647.png" alt=""><em>The adapter combine together to make the it work.</em></p>
+<p>And with that, the PC was able to be booted.</p>
+<p><img src="20260708_144347.jpg" alt="">
+<em>The PC booting up properly.</em></p>
+<h2 id="duct-tape--screws">Duct Tape &gt; Screws</h2>
+<p>So now the only problem left with the Dell Optiplex is that I had no way to mount the SSD drive down. The current method is just leaving it flopping around in the case. And while SSD are less acceptable to vibrations, it still bother me that it just hanging in the case. Plus, any sudden movement to the case might cause the SSD to be forcefully plugged out of the cables, or collide with the other parts inside the case.</p>
+<p>So I bought some duct tape to tape the SSD down. I took the hard drive bay out of the PC to make it easier for me to tape it down. After putting tape on all corners of the SDD, I was able to keep it mounted down there.</p>
+<p><img src="Pasted%20image%2020260713113620.png" alt="">
+<em>The SSD being mounted down by duct tape.</em></p>
+<p>After that, I put the hard drive bay back into the PC, and plug in the Ventoy USB installer, and the Ethernet cable connected to the [[Turning an Old Laptop into a Router|laptop router]]. After that, I booted the PC into the Proxmox installer.</p>
+<p><img src="Pasted%20image%2020260713113747.png" alt="">
+<em>The Proxmox installer on the Dell Optiplex PC.</em></p>
+<p>After that, I just installed it without anything going wrong. The only interesting about the installation process was deciding what file system to use. I can cross out ZFS and BTRFS, since the only options for them is in a RAID configuration, and I can&rsquo;t really do RAID with only one drive. Then the only options were XFS and EXT4. Since XFS is really only good on large files, I can cross that out since the VMs will be small. So that only leaves me with EXT4.</p>
+<p>But after that, I was to install Proxmox, and access it through the Web UI.</p>
+<p><img src="Pasted%20image%2020260713114405.png" alt="">
+<em>Being able to access the Proxmox Web UI.</em></p>
+<p>So now the Dell Optiplex is all setup to be used.</p>
+<h2 id="fixing-the-dell-vostro-pc">Fixing the Dell Vostro PC.</h2>
+<p>So with in that time frame, I was also able to get a new power supply from the IT guy. This time is it a Antec, 850w, 80+ Bronze power supply. The CPU cable should be long enough to reach the top of the PC case. Not only that, but the power supply is semi modular, with the CPU and Motherboard cables being the only ones attached to it. So I can make the power supply only have the minimum amount of cables needed to make it less messy.</p>
+<p><img src="Pasted%20image%2020260713114717.png" alt="">
+<em>The new PC power supply.</em></p>
+<p>Not only that, but I was also able to get a different motherboard that has 6 SATA ports built in, instead of the 4 from the Vostro. It also has 4 DDR3 RAM slots instead of the 2 from Vostro, and two of them are already populated with free RAM. Now they&rsquo;re only 2GB, but free RAM is free RAM.</p>
+<p><img src="Pasted%20image%2020260713115454.png" alt="">
+<em>The new motherboard.</em></p>
+<p>At this point the Dell Vostro has became the ship of theseus PC. It is only the Dell Vostro in the name alone.</p>
+<p>I then started to unscrew the Vostro motherboard off the PC. However, I notice that one of the screws isn&rsquo;t being unscrew off properly. The screw was stuck in the able, but still being able to be spinned. I then realised that the corner that the screw was in was loose. So after pulling the motherboard off, I was able to see what the issue was. The screw was stuck in the motherboard standoff. So when I was &ldquo;unscrewing&rdquo; the screw, I was actually unscrewing the motherboard standoff.</p>
+<p><img src="Pasted%20image%2020260713120155.png" alt="">
+<em>The motherboard standoff being stuck in the motherboard.</em></p>
+<p>I then took out the older power supply. And unlike the motherboard, I was able to successfully take it out taking pieces of the case with it. With those two pieces out, I was able to screw in motherboard, or at least 3/4 of it, and the power supply into the case. Finally, I was able to connect all of the cables, including the power supply CPU cable.</p>
+<p><img src="Pasted%20image%2020260713153758.png" alt="">
+<em>The PC all setup with all of the pieces screw down and cables up.</em></p>
+<p>And with that, the NAS PC was finally able to be booted up.</p>
+<p><img src="Pasted%20image%2020260713153829.png" alt="">
+<em>The NAS PC in the POST screen.</em></p>
+<p>Now the only thing left is to get the hard drive sleds for the NAS PC to be able to use it.</p>
+<h2 id="the-hard-drive-sleds-problems">The Hard Drive Sleds Problems</h2>
+<p>The first thing that I did was borrow some hard drive sleds form the school. Since I can&rsquo;t keep them, they will be just to help me see which size works with the case. The one I got from the school is the individual sliding pieces that can be attached to the hard drive itself. So I attached one to the drive for testing.</p>
+<p><img src="Pasted%20image%2020260720205409.png" alt="">
+<em>The individual hard drive sled attached to the hard drive.</em></p>
+<p>However, this wouldn&rsquo;t work, as the sled kept popping off the case whenever I tried to slide it in. I even tried just sliding one piece to see if that works, but it didn&rsquo;t. I did forget to take a picture of this, and it&rsquo;s too late to retake it, as I already returned the sled back.</p>
+<p>I then went looking online for a new sleds. I eventually settled on <a href="https://www.amazon.ca/dp/B08B555F4M?ref=ppx_yo2ov_dt_b_fed_asin_title">these sleds from amazon.</a> However, just like the other sleds, they won&rsquo;t fit inside the case.</p>
+<p><img src="Pasted%20image%2020260720210139.png" alt=""></p>
+<p>From this, I came to the conclusion that the Ciara case must have used proprietary hard drive sleds, so I wouldn&rsquo;t be able to put hard drive into this case. However, what I should have come to a conclusion wayyy earlier then when I am writing this articles is that what I order is 2.5&quot; to 3.5&quot; adapters. But either way I returned the sleds.</p>
+<h2 id="new-case-to-fix-my-issues">New case to fix my issues.</h2>
+<p>So after doom scrolling on Facebook Marketplace for a while, I stumbled across a post where a guy was selling a old case for $5 bucks. I took a closer look, and I saw that the case had 4 hard drive slots, and a empty optical bay slot for more hard drive in the futures. So after a quick conversation with the seller, I am now the owner of that case.</p>
+<p><img src="Pasted%20image%2020260720211556.png" alt="">
+<em>The $5 PC case that I got from Facebook Marketplace.</em></p>
+<p>The best part about the case is that it came with the sleds, so I don&rsquo;t have to worry about look for the right ones later on.</p>
+<p><img src="Pasted%20image%2020260720211713.png" alt="">
+<em>The hard drive sled.</em></p>
+<p>I did try to put those sleds into the Ciara case out of curiosity to see if they will fit. And the sled were too big to fit in there.</p>
+<p><img src="Pasted%20image%2020260720212303.png" alt="">
+<em>The $5 dollar case hard drive sled not fitting into the Ciara case.</em></p>
+<p>But after looking closely at the $5 case, I saw that the owner left a 2.5&quot; SATA SSD in there. So I took it out to see what it is, and it is a Kingston SSDNow V+200 120GB. I see that 120GB SATA SSD are going around Facebook Marketplace for about $20 bucks, so that was good deal to find. I am just going to use this drive as the boot drive, since it doesn&rsquo;t need that much storage.</p>
+<p><img src="Pasted%20image%2020260720212735.png" alt="">
+<em>The Kingston 120GB drive that was found in the $5 case.</em></p>
+<p>I then loaded in the rest of the hard drives into the case. However, I quickly ran into a problem. The case has no, visible, way for me to take the back case off, prevent me from being able to plug in the hard drives. I spent a good few minutes looking around the case, and messing with random things, to find a way. But the way doesn&rsquo;t exist.</p>
+<p>So I went with a janky plan to get them plug in. The first thing that I would do is route all of the SATA data and power cables to the hard drive bays via a oval cutout. Then I would plug the data cable, and the very top of the power cable into the first hard drive only. Then I will put in the hard drive halfway into the bottom slot. The reason why I slide it half way is to allow me to reach the other cables in the back, while not dropping the drive. I can&rsquo;t put it onto the desk, as the data cable isn&rsquo;t long enough to do so.  But then, I would connect the data cable, and the second power cable in the row to the second drive, and slide it in halfway. I would repeat those steps until all 4 hard drives are plugged into the case. The last thing I would do is slide all of them in at the same time, while ensuring that the big pile of cables in the back isn&rsquo;t getting in the way of the drives.</p>
+<p>As for the SATA SSD, I would just grab the remaining cables, and plug them into the drive. Then I would tape it down to the bottom of the case. And with that, everything is inside the NAS PC.</p>
+<p><img src="Pasted%20image%2020260720213957.png" alt="">
+<em>The final result of the NAS PC.</em></p>
+<p>Of course, I would still have to boot up the PC to ensure that all of the drives are being detected properly, which they are.</p>
+<p><img src="Pasted%20image%2020260720214047.png" alt="">
+<em>All of the drives being detected in the BIOS.</em></p>
+<h2 id="installing-openmediavault">Installing OpenMediaVault</h2>
+<p>Before I can go install OpenMediaVault (OMV), I noticed an issue in the BIOS. The boot options shows that there are other OSes already installed on the drives. Since only one of them is labelled with an actual OS name (Ubuntu), I will be probably be confused in the future detecting which boot option is OMV.</p>
+<p><img src="Pasted%20image%2020260720214154.png" alt=""><em>The other OS boot options in the BIOS.</em></p>
+<p>So I then boot into Arch Linux <del>(I use Arch BTW)</del> so that I can wipe those drives. From there, I ran <code>lsblk</code> to see the drive partitions, and saw that there was 3 partitions in there that needed to be wiped. So I used <code>fdisk</code> to delete the partitions by creating a new GPT table on them.</p>
+<p><img src="Pasted%20image%2020260720220812.png" alt="">
+<em>The list of hard drive partitions.</em></p>
+<p><img src="Pasted%20image%2020260720221003.png" alt="">
+<em><code>fdisk</code> being used to create a new partition table to delete the old partitions.</em></p>
+<p>From there, I rebooted into Ventoy so I can boot into OMV. The weird thing is that I had a weird issue where the Ventoy was stuck on a graphical glitch after selecting OMV . It did boot normally after a few minutes, so I had no idea what happened there.</p>
+<p><img src="Pasted%20image%2020260720221235.png" alt="">
+<em>The weird graphical glitch that Ventoy had.</em></p>
+<p>After going through the OMV installer, OMV was up and running.</p>
+<p><img src="Pasted%20image%2020260720221715.png" alt="">
+<em>The OMV website from the NAS PC.</em></p>
+<h2 id="the-physical-cleanup">The Physical Cleanup.</h2>
+<p>From this point, I put away the monitor, and slide the NAS PC to it&rsquo;s spot. However, when I booted the PC, I wasn&rsquo;t able to access the website. I waited a few mins, ensure that the ethernet cables were connected, and double check that the PC was on, but the website wasn&rsquo;t accessible. I then grabbed the NAS PC out of it&rsquo;s spot to see what&rsquo;s happening via the monitor. That&rsquo;s when I notice that the PC was stuck in the POST screen because it was waiting for me to press a button.</p>
+<p><img src="Pasted%20image%2020260720223425.png" alt=""><em>The POST screen waiting for me to press a button.</em></p>
+<p>I did found the option to disable the wait in the BIOS. From there, the PC was able to be booted without the keyboard attached.</p>
+<p><img src="Pasted%20image%2020260720223605.png" alt="">
+<em>The NAS PC booting into OMV without waiting for a keyboard press.</em></p>
+<p>However, this setting wasn&rsquo;t permanent, as shutting the PC down for long period of time causes the BIOS settings to reset. I was able to fix this by quickly swapping the CMOS battery in the motherboard.</p>
+<p>The last thing that I did was clean up the area. The thing is that the area was a complete mess, with a spider nest of cables. It was annoying to deal with, and to look at. So I sort out the cables, and kept them tity with Velcro ties. However, the cables were dragging the switch and power bar. So I used the duct tape to ensure that they stay in place. Now I did wish I took a picture before cleaning to have a before and after pictures, but it&rsquo;s too late now.</p>
+<p><img src="Pasted%20image%2020260720224115.png" alt="">
+<em>The PCs in the homelab sitting next to the cabinet.</em></p>
+<p><img src="Pasted%20image%2020260720224105.png" alt="">
+<em>The top of the cabinet with the items duct tape down to it.</em></p>
+
+        </section>
+        <div class="post-tags">
+          
+          
+          <nav class="nav tags">
+            <ul class="tags">
+              
+              <li><a href="/tags/homelab/">HomeLab</a></li>
+              
+              <li><a href="/tags/hardware/">Hardware</a></li>
+              
+              <li><a href="/tags/lots-of_issues/">Lots of_Issues</a></li>
+              
+              <li><a href="/tags/pc/">PC</a></li>
+              
+              <li><a href="/tags/pc-parts/">PC Parts</a></li>
+              
+              <li><a href="/tags/fixing/">Fixing</a></li>
+              
+            </ul>
+          </nav>
+          
+          
+        </div>
+      </div>
+
+      
+      
+      <div class="toc">
+        <strong>Table of contents:</strong>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#the-plan">The Plan</a></li>
+    <li><a href="#the-optiplex-unboxing">The Optiplex unboxing</a></li>
+    <li><a href="#the-vostro-260s-unboxing">The Vostro 260s Unboxing</a></li>
+    <li><a href="#the-vostros-transplant">The Vostro&rsquo;s Transplant</a></li>
+    <li><a href="#got-some-ram">Got some RAM</a></li>
+    <li><a href="#duct-tape--screws">Duct Tape &gt; Screws</a></li>
+    <li><a href="#fixing-the-dell-vostro-pc">Fixing the Dell Vostro PC.</a></li>
+    <li><a href="#the-hard-drive-sleds-problems">The Hard Drive Sleds Problems</a></li>
+    <li><a href="#new-case-to-fix-my-issues">New case to fix my issues.</a></li>
+    <li><a href="#installing-openmediavault">Installing OpenMediaVault</a></li>
+    <li><a href="#the-physical-cleanup">The Physical Cleanup.</a></li>
+  </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    </article>
+</main>
+<footer>
+  <div style="display:flex"></div>
+  <div class="footer-info">
+    2026  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+</div>
+    </body>
+</html>

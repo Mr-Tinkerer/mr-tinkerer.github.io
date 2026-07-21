@@ -10,9 +10,16 @@
 		
 		
 		
-			<lastBuildDate>Mon, 29 Jun 2026 00:00:00 +0000</lastBuildDate>
+			<lastBuildDate>Mon, 20 Jul 2026 00:00:00 +0000</lastBuildDate>
 		
 			<atom:link href="http://localhost:1313/tags/fixing/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Building the Home Lab Hardware</title>
+				<link>http://localhost:1313/posts/building-the-home-lab-hardware/</link>
+				<pubDate>Mon, 20 Jul 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/posts/building-the-home-lab-hardware/</guid>
+				<description>&lt;h2 id=&#34;the-plan&#34;&gt;The Plan&lt;/h2&gt;&#xA;&lt;p&gt;So I have recently heard that my college was giving away old and retired PCs for free. At first, I didn&amp;rsquo;t believe this. But after talking to the head IT guy, he told me that the school isn&amp;rsquo;t allow to sell or recycle the PCs for a certain period of time. And since the PCs are sitting the tech &amp;ldquo;graveyard&amp;rdquo;, he decided to let students take them away for free. So after looking around the &amp;ldquo;graveyard&amp;rdquo;, I took away two PCs. A Dell Optiplex 5060, and a Dell Vostro 260s.&lt;/p&gt;</description>
+			</item>
 			<item>
 				<title>Improving the Blog Script</title>
 				<link>http://localhost:1313/posts/improving-the-blog-script/</link>
