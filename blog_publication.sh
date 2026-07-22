@@ -167,7 +167,7 @@ for md_article in "${mds_to_convert[@]}"; do
     echo "Fixed tags for $md_article"
 
     #check if the date wasn't manually added
-    if [["index.md" =~ ^date: ?$ ]]; then
+    if [[ $(grep -E "^date: ?$" index.md) ]]; then
         #get the current date in a specific format as the publish date
         publish_date=$(date +%Y-%m-%dT00:00:00)
 
