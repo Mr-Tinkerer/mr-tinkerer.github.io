@@ -312,6 +312,23 @@ wifi reload
 <p><img src="Pasted%20image%2020260704151011.png" alt="">
 <em>The speed test that I did while being connected to the laptop.</em></p>
 <p>The thing is, I accidentally did one more test. When I was messing around with the connection on my machine earlier, I forgotten that I accidentally disabled my Wi-Fi. So I&rsquo;ve spent around 5 hours using the laptop as my router, and I didn&rsquo;t even notice a difference.  So this shows how well the laptop router is doing it&rsquo;s job.</p>
+<h2 id="ssh-setup">SSH Setup</h2>
+<p>The last thing I need to do is setup SSH Keys for the laptop to make it more secure. To create the key, I ran <code>ssh-keygen -t ed25519 -f ~/.ssh/OpenWrt</code> on my device. Then I ran <code>cat ~/.ssh/OpenWrt.pub</code> to get the public key, and copied it to my clipboard.</p>
+<p>Then I went to <code>System -&gt; Administration</code> to access the admin settings. From there, I went to the <code>SSH-Keys</code> tab. Using the contents of <code>OpenWrt.pub</code> that is in the clipboard, I pasted it into the text box for adding a public SSH key. I then click <code>Add Key</code> to add the key.</p>
+<p><img src="Pasted%20image%2020260722103637.png" alt="">
+<em>The text box to paste the content of a public SSH key.</em></p>
+<p>The next step that I did is that I went to the <code>SSH Access</code> tab. From there, I set the SSH port to <code>35478</code>. The reason why is that leaving the SSH port to port <code>22</code> is to make the bot scanners not see that SSH is on port 22, making them think that SSH isn&rsquo;t running on that machine.<sup>[16]</sup> Now of course, the laptop is not being exposed to the public internet, but it is still a good habit to have. The new port number was picked because I just pressed random keys on my keyboard.</p>
+<p>Of course that is not enough, as the bots can just scan all of the ports on the machine, making them find the actual port that SSH is on. That is why I also disable <code>password authentication</code>. This disable the ability to use SSH with the user&rsquo;s password, which help prevent brute force attacks.<sup>[17]</sup> The last thing that I did is set SSH to only allow connections coming from the LAN port. After that , I saved and applied the changes.</p>
+<p><img src="Pasted%20image%2020260722112118.png" alt=""></p>
+<p>Now the last thing that I did is setup the <code>~/.ssh/config</code> file. What this file does is that it saves the ssh configuration as the hostname.<sup>[18]</sup> So I put in the following into the file.</p>
+<pre tabindex="0"><code class="language-ssh-config" data-lang="ssh-config">Host OpenWrt
+	HostName 192.168.1.1
+	user root
+	IdentityFile ~/.ssh/OpenWrt
+	Port 35478
+</code></pre><p>Now I can run <code>ssh OpenWrt</code>, and I can securly SSH without worrying about the config.</p>
+<p><img src="Pasted%20image%2020260722113606.png" alt="">
+<em>The SSH config file in action, allowing me to SSH to OpenWrt with a simple command.</em></p>
 <h2 id="citations">Citations</h2>
 <blockquote>
 <p>[1] Consumer Reports. “Acer Aspire 3 A315-24PT-R90Z Laptop &amp; Chromebook Review - Consumer Reports.” <em>Consumer Reports</em>, 2018, <a href="https://www.consumerreports.org/electronics-computers/laptops-chromebooks/acer-aspire-3-a315-24pt-r90z/m409065/">www.consumerreports.org/electronics-computers/laptops-chromebooks/acer-aspire-3-a315-24pt-r90z/m409065/</a>. Accessed 3 July 2026.
@@ -329,7 +346,9 @@ wifi reload
 [13] Alpine Wiki Contributors. “Alpine Package Keeper - Alpine Linux.” <em>Alpinelinux.org</em>, 2022, wiki.alpinelinux.org/wiki/Alpine_Package_Keeper. Accessed 4 July 2026.
 [14] TheEthyr. “How to Understand OpenWRT Codes and Numbers .” <em>Reddit.com</em>, 13 May 2021, <a href="https://www.reddit.com/r/HomeNetworking/comments/nbjhgh/comment/gxzs8dp/">www.reddit.com/r/HomeNetworking/comments/nbjhgh/comment/gxzs8dp/</a>. Accessed 4 July 2026.
 [15] Wikipedia Contributors. “List of WLAN Channels.” <em>Wikipedia</em>, Wikimedia Foundation, 24 Oct. 2019, en.wikipedia.org/wiki/List_of_WLAN_channels. Accessed 4 July 2026.
-<a href="https://fast.com/">https://fast.com/</a></p>
+[16] Scott Pack. (2013, March 9). <em>Should I change the default SSH port on linux servers?</em> Information Security Stack Exchange. <a href="https://security.stackexchange.com/a/32311">https://security.stackexchange.com/a/32311</a>
+[17] ctz. (2026, April 17). <em>Here’s why you should disable SSH password login on every VPS</em>. Medium. <a href="https://medium.com/@ctzisme/heres-why-you-should-disable-ssh-password-login-on-every-vps-7b083d659a7f">https://medium.com/@ctzisme/heres-why-you-should-disable-ssh-password-login-on-every-vps-7b083d659a7f</a>
+[18] Teleport. “SSH Client Config Files and How to Use Them.” GoTeleport, 6 Jan. 2022. <a href="https://goteleport.com/blog/ssh-client-config-file-example/">https://goteleport.com/blog/ssh-client-config-file-example/</a></p>
 </blockquote>
 
         </section>
@@ -380,6 +399,7 @@ wifi reload
     <li><a href="#connecting-to-the-wi-fi-shouldnt-be-that-hard-right">Connecting to the Wi-Fi Shouldn&rsquo;t Be that Hard, Right?</a></li>
     <li><a href="#setting-up-a-custom-ap">Setting up A Custom AP</a></li>
     <li><a href="#testing-the-router-in-action">Testing the Router in Action</a></li>
+    <li><a href="#ssh-setup">SSH Setup</a></li>
     <li><a href="#citations">Citations</a></li>
   </ul>
 </nav>

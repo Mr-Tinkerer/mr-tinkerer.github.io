@@ -385,6 +385,35 @@ The last thing that I wanted to test was the speed difference using the laptop, 
 
 The thing is, I accidentally did one more test. When I was messing around with the connection on my machine earlier, I forgotten that I accidentally disabled my Wi-Fi. So I've spent around 5 hours using the laptop as my router, and I didn't even notice a difference.  So this shows how well the laptop router is doing it's job. 
 
+## SSH Setup
+The last thing I need to do is setup SSH Keys for the laptop to make it more secure. To create the key, I ran `ssh-keygen -t ed25519 -f ~/.ssh/OpenWrt` on my device. Then I ran `cat ~/.ssh/OpenWrt.pub` to get the public key, and copied it to my clipboard. 
+
+Then I went to `System -> Administration` to access the admin settings. From there, I went to the `SSH-Keys` tab. Using the contents of `OpenWrt.pub` that is in the clipboard, I pasted it into the text box for adding a public SSH key. I then click `Add Key` to add the key.
+
+![](Pasted%20image%2020260722103637.png)
+*The text box to paste the content of a public SSH key.*
+
+The next step that I did is that I went to the `SSH Access` tab. From there, I set the SSH port to `35478`. The reason why is that leaving the SSH port to port `22` is to make the bot scanners not see that SSH is on port 22, making them think that SSH isn't running on that machine.<sup>[16]</sup> Now of course, the laptop is not being exposed to the public internet, but it is still a good habit to have. The new port number was picked because I just pressed random keys on my keyboard.
+
+Of course that is not enough, as the bots can just scan all of the ports on the machine, making them find the actual port that SSH is on. That is why I also disable `password authentication`. This disable the ability to use SSH with the user's password, which help prevent brute force attacks.<sup>[17]</sup> The last thing that I did is set SSH to only allow connections coming from the LAN port. After that , I saved and applied the changes.
+
+![](Pasted%20image%2020260722112118.png)
+
+Now the last thing that I did is setup the `~/.ssh/config` file. What this file does is that it saves the ssh configuration as the hostname.<sup>[18]</sup> So I put in the following into the file.
+
+```ssh-config
+Host OpenWrt
+	HostName 192.168.1.1
+	user root
+	IdentityFile ~/.ssh/OpenWrt
+	Port 35478
+```
+
+Now I can run `ssh OpenWrt`, and I can securly SSH without worrying about the config.
+
+![](Pasted%20image%2020260722113606.png)
+*The SSH config file in action, allowing me to SSH to OpenWrt with a simple command.*
+
 ## Citations
 > [1] Consumer Reports. “Acer Aspire 3 A315-24PT-R90Z Laptop & Chromebook Review - Consumer Reports.” _Consumer Reports_, 2018, www.consumerreports.org/electronics-computers/laptops-chromebooks/acer-aspire-3-a315-24pt-r90z/m409065/. Accessed 3 July 2026.
 > [2] Wikipedia Contributors. “PfSense.” _Wikipedia_, 18 Feb. 2021, en.wikipedia.org/wiki/PfSense. Accessed 3 July 2026.
@@ -401,4 +430,6 @@ The thing is, I accidentally did one more test. When I was messing around with t
 > [13] Alpine Wiki Contributors. “Alpine Package Keeper - Alpine Linux.” _Alpinelinux.org_, 2022, wiki.alpinelinux.org/wiki/Alpine_Package_Keeper. Accessed 4 July 2026.
 > [14] TheEthyr. “How to Understand OpenWRT Codes and Numbers .” _Reddit.com_, 13 May 2021, www.reddit.com/r/HomeNetworking/comments/nbjhgh/comment/gxzs8dp/. Accessed 4 July 2026.
 > [15] Wikipedia Contributors. “List of WLAN Channels.” _Wikipedia_, Wikimedia Foundation, 24 Oct. 2019, en.wikipedia.org/wiki/List_of_WLAN_channels. Accessed 4 July 2026.
-https://fast.com/
+> [16] Scott Pack. (2013, March 9). _Should I change the default SSH port on linux servers?_ Information Security Stack Exchange. https://security.stackexchange.com/a/32311
+> [17] ctz. (2026, April 17). _Here’s why you should disable SSH password login on every VPS_. Medium. https://medium.com/@ctzisme/heres-why-you-should-disable-ssh-password-login-on-every-vps-7b083d659a7f
+> [18] Teleport. “SSH Client Config Files and How to Use Them.” GoTeleport, 6 Jan. 2022. https://goteleport.com/blog/ssh-client-config-file-example/
