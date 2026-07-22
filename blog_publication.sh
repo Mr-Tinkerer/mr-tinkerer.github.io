@@ -166,15 +166,19 @@ for md_article in "${mds_to_convert[@]}"; do
     done
     echo "Fixed tags for $md_article"
 
-    #get the current date in a specific format as the publish date
-    publish_date=$(date +%Y-%m-%dT00:00:00)
+    #check if the date wasn't manually added
+    if [["index.md" =~ ^date: ?$ ]]; then
+        #get the current date in a specific format as the publish date
+        publish_date=$(date +%Y-%m-%dT00:00:00)
 
-    #replace the date in the blog with the correct one (including existing ones)
-    sed -i "s/^date:.*/date: $publish_date/" index.md
-    echo "updated the publish date"
+        #insertthe date in the blog with the correct one (including existing ones)
+        sed -i "s/^date:.*/date: $publish_date/" index.md
+        echo "updated the publish date"
 
-    #divider to seperate the blogs when reading the output
-    echo "------------------------------------------------"
+        #divider to seperate the blogs when reading the output
+        echo "------------------------------------------------"
+    fi
+
 done
 
 #generate the static site
