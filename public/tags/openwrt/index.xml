@@ -10,9 +10,16 @@
 		
 		
 		
-			<lastBuildDate>Wed, 08 Jul 2026 00:00:00 +0000</lastBuildDate>
+			<lastBuildDate>Sun, 02 Aug 2026 00:00:00 +0000</lastBuildDate>
 		
 			<atom:link href="http://localhost:1313/tags/openwrt/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Building the Networking of the Home Lab</title>
+				<link>http://localhost:1313/posts/building-the-networking-of-the-home-lab/</link>
+				<pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/posts/building-the-networking-of-the-home-lab/</guid>
+				<description>&lt;h2 id=&#34;the-plan&#34;&gt;The Plan&lt;/h2&gt;&#xA;&lt;p&gt;So after acquiring the [[Building the Home Lab Hardware|hardware for the Home Lab]], and [[Turning an Old Laptop into a Router|turning an old laptop into a basic router]], I am now ready to actually deploy services into the home lab. The first thing that I want to setup is all of the networking services that I need (so far). I did made a diagram for everything that I plan to host, so I can just focus on the networking stuff for now.&lt;/p&gt;</description>
+			</item>
 			<item>
 				<title>Turning an Old Laptop into a Router</title>
 				<link>http://localhost:1313/posts/turning-an-old-laptop-into-a-router/</link>

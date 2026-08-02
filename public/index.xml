@@ -10,9 +10,23 @@
 		
 		
 		
-			<lastBuildDate>Mon, 20 Jul 2026 00:00:00 +0000</lastBuildDate>
+			<lastBuildDate>Sun, 02 Aug 2026 00:00:00 +0000</lastBuildDate>
 		
 			<atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Building the Networking of the Home Lab</title>
+				<link>http://localhost:1313/posts/building-the-networking-of-the-home-lab/</link>
+				<pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/posts/building-the-networking-of-the-home-lab/</guid>
+				<description>&lt;h2 id=&#34;the-plan&#34;&gt;The Plan&lt;/h2&gt;&#xA;&lt;p&gt;So after acquiring the [[Building the Home Lab Hardware|hardware for the Home Lab]], and [[Turning an Old Laptop into a Router|turning an old laptop into a basic router]], I am now ready to actually deploy services into the home lab. The first thing that I want to setup is all of the networking services that I need (so far). I did made a diagram for everything that I plan to host, so I can just focus on the networking stuff for now.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Quick Little Fixes for the HomeLab&#39;s OSes</title>
+				<link>http://localhost:1313/posts/quick-little-fixes-for-the-homelabs-oses/</link>
+				<pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/posts/quick-little-fixes-for-the-homelabs-oses/</guid>
+				<description>&lt;h2 id=&#34;proxmox-quick-little-fixes&#34;&gt;Proxmox Quick Little Fixes&lt;/h2&gt;&#xA;&lt;p&gt;The fix that I need to do in Proxmox is to disable the enterprise subscriptions in Proxmox. So I headed towards &lt;code&gt;pve&lt;/code&gt; -&amp;gt; &lt;code&gt;Updates&lt;/code&gt; -&amp;gt; &lt;code&gt;Repositories&lt;/code&gt;.  From there, Proxmox was telling me that I have two enterprise repos enabled, but I dont have a subscription for it.&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;Pasted%20image%2020260725210227.png&#34; alt=&#34;&#34;&gt;&#xA;&lt;em&gt;Proxmox warning me that  I don&amp;rsquo;t have a subscription for the enterprise repos.&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;I then went to disable them by selecting the first enterprise repo on the list, which was &lt;code&gt;https://enterprise.proxmox.com/debian/ceph-squid&lt;/code&gt;, and clicking on disabled. I then did the same for &lt;code&gt;https://enterprise.proxmox.com/debian/pve&lt;/code&gt; repo.&lt;/p&gt;</description>
+			</item>
 			<item>
 				<title>Building the Home Lab Hardware</title>
 				<link>http://localhost:1313/posts/building-the-home-lab-hardware/</link>

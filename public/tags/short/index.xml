@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Short on Mr.Tinkerer&#39;s Blogs</title>
+		<link>http://localhost:1313/tags/short/</link>
+		<description>Recent content in Short on Mr.Tinkerer&#39;s Blogs</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Sun, 02 Aug 2026 00:00:00 +0000</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/tags/short/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Quick Little Fixes for the HomeLab&#39;s OSes</title>
+				<link>http://localhost:1313/posts/quick-little-fixes-for-the-homelabs-oses/</link>
+				<pubDate>Sun, 02 Aug 2026 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/posts/quick-little-fixes-for-the-homelabs-oses/</guid>
+				<description>&lt;h2 id=&#34;proxmox-quick-little-fixes&#34;&gt;Proxmox Quick Little Fixes&lt;/h2&gt;&#xA;&lt;p&gt;The fix that I need to do in Proxmox is to disable the enterprise subscriptions in Proxmox. So I headed towards &lt;code&gt;pve&lt;/code&gt; -&amp;gt; &lt;code&gt;Updates&lt;/code&gt; -&amp;gt; &lt;code&gt;Repositories&lt;/code&gt;.  From there, Proxmox was telling me that I have two enterprise repos enabled, but I dont have a subscription for it.&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;Pasted%20image%2020260725210227.png&#34; alt=&#34;&#34;&gt;&#xA;&lt;em&gt;Proxmox warning me that  I don&amp;rsquo;t have a subscription for the enterprise repos.&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;I then went to disable them by selecting the first enterprise repo on the list, which was &lt;code&gt;https://enterprise.proxmox.com/debian/ceph-squid&lt;/code&gt;, and clicking on disabled. I then did the same for &lt;code&gt;https://enterprise.proxmox.com/debian/pve&lt;/code&gt; repo.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

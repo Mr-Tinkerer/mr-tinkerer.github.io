@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html><head lang="en"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Quick Little Fixes for the HomeLab&#39;s OSes - Mr.Tinkerer&#39;s Blogs</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Just some quick little fixes that I made, but didn&#39;t really blelong in any of the existing blogs." />
+	<meta property="og:image" content="http://localhost:1313/"/>
+	<meta property="og:url" content="http://localhost:1313/posts/quick-little-fixes-for-the-homelabs-oses/">
+	<meta property="og:site_name" content="Mr.Tinkerer&#39;s Blogs">
+	<meta property="og:title" content="Quick Little Fixes for the HomeLab&#39;s OSes">
+	<meta property="og:description" content="Just some quick little fixes that I made, but didn&#39;t really blelong in any of the existing blogs.">
+	<meta property="og:locale" content="en_us">
+	<meta property="og:type" content="article">
+		<meta property="article:section" content="posts">
+		<meta property="article:published_time" content="2026-08-02T00:00:00+00:00">
+		<meta property="article:modified_time" content="2026-08-02T00:00:00+00:00">
+		<meta property="article:tag" content="Short">
+		<meta property="article:tag" content="Fixing">
+
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="Quick Little Fixes for the HomeLab&#39;s OSes">
+	<meta name="twitter:description" content="Just some quick little fixes that I made, but didn&#39;t really blelong in any of the existing blogs.">
+
+        <link href="http://localhost:1313/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:1313/css/main.475e92bd33b8431a5ff779310e6b247c1b8ee0f01e4acf38c4c8f786fc707e0f.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://localhost:1313/css/dark.4529c04ce20ceac5a42e37a63e092c89354fbd00e6209bd2995100d61b71e8df.css"  disabled />
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="http://localhost:1313/">Mr.Tinkerer&#39;s Blogs</a>
+	</div>
+	<nav>
+		
+		<a href="/posts/">Blogs</a>
+		
+		<a href="/search/">Search</a>
+		
+		<a href="/about/">About</a>
+		
+		<a href="/index.xml">RSS</a>
+		
+		<button id="dark-mode-toggle" class="nav-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" type="button"><svg class="feather" viewBox="0 0 24 24" fill="none" stroke="#232333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg></button>
+		<script src="http://localhost:1313/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+  <article>
+    <div class="post-container">
+      
+      <div class="post-content">
+        <div class="title">
+          <h1 class="title">Quick Little Fixes for the HomeLab&#39;s OSes</h1>
+          <div class="meta">Posted on Aug 2, 2026</div>
+        </div>
+        
+        <section class="body">
+          <h2 id="proxmox-quick-little-fixes">Proxmox Quick Little Fixes</h2>
+<p>The fix that I need to do in Proxmox is to disable the enterprise subscriptions in Proxmox. So I headed towards <code>pve</code> -&gt; <code>Updates</code> -&gt; <code>Repositories</code>.  From there, Proxmox was telling me that I have two enterprise repos enabled, but I dont have a subscription for it.</p>
+<p><img src="Pasted%20image%2020260725210227.png" alt="">
+<em>Proxmox warning me that  I don&rsquo;t have a subscription for the enterprise repos.</em></p>
+<p>I then went to disable them by selecting the first enterprise repo on the list, which was <code>https://enterprise.proxmox.com/debian/ceph-squid</code>, and clicking on disabled. I then did the same for <code>https://enterprise.proxmox.com/debian/pve</code> repo.</p>
+<p><img src="Pasted%20image%2020260725210505.png" alt="">
+<em>Selecting the enterprise ceph repo to disable.</em></p>
+<p>Then Proxmox was warning me that I don&rsquo;t have any Proxmox VE repos enabled. So I clicked on <code>Add</code>, and added the <code>No-Subscription</code> repo.</p>
+<p><img src="Pasted%20image%2020260725210709.png" alt="">
+<em>The repo for the users who don&rsquo;t have a subscription key.</em></p>
+<p>Then, I went to <code>pve</code> -&gt; <code>Updates</code> to update the machine. But first, I have to click on the <code>Refresh</code> button at the top. After waiting to refresh, I then clicked on the <code>Upgrade</code> button, and waited for everything to update.</p>
+<p>Next I wanted to change the Proxmox password into something more reasonable. So I clicked on the <code>root@pam</code> user in the top right, and selected <code>Password</code>. Then I changed the password.</p>
+<p><img src="1785080735088908423.png" alt="">
+<em>Changing the password for Proxmox.</em></p>
+<h2 id="openwrt-quick-little-fixes">OpenWrt Quick Little Fixes</h2>
+<p>The issue that I have with OpenWrt is that GRUB isn&rsquo;t timing out to a boot option after 5 seconds. That means that I have to manually press the enter button to make it actually boot into OpenWrt. I did tried spending some time looking around the web for the answer, but the problem is that most of the web posts are about using grub on a generic Linux Distro. Which is expected since most people aren&rsquo;t using GRUB on their old laptops.</p>
+<p>That&rsquo;s when I decided to use Google&rsquo;s Gemini to help me out here. At first, it tried to make me modify the <code>/etc/default/grub</code> file for the official way of configuring GRUB. However, that file didn&rsquo;t exist for me. So it tried <code>/etc/config/grub</code>, but that one also didn&rsquo;t exist for me. They might have exist if I was using the SquashFS filesystem, instead of the ext4 file system. So Gemini has decided to modify the direct file that GRUB boots into. So I gave Gemini the contents of <code>/etc/boot/grub.cfg</code> file, and it found the issue. The first two lines that OpenWRT has insert into the file was the problem:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>serial --unit<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span> --speed<span style="color:#f92672">=</span><span style="color:#ae81ff">115200</span> --word<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span> --parity<span style="color:#f92672">=</span>no --stop<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> --rtscts<span style="color:#f92672">=</span>off
+</span></span><span style="display:flex;"><span>terminal_input console serial; terminal_output console serial
+</span></span></code></pre></div><p>The first line was setting up the serial connection. The second line was told to use both the console input/output <strong>and the serial input/output</strong>. So because of that GRUB was waiting for the serial input/output to be available before starting the timer. However, since the laptop has no serial connection, grub was waiting forever. To fix this, I replaced those lines with the following to remove serial from the config:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>termianl_input console
+</span></span><span style="display:flex;"><span>terminal_output console
+</span></span></code></pre></div><p>After rebooting, the timer works again. I also modified <code>set timeout=&quot;5&quot;</code> to <code>set timeout=&quot;0&quot;</code>  to make GRUB skip the boot options, and go straight into the kernel.</p>
+<p>I then also went to go change the password used for OpenWRT to something more secure. So I went to <code>System</code> -&gt; <code>Administration</code> -&gt; <code>Router Password</code> section. Then I enter in a brand new password.</p>
+<p><img src="Pasted%20image%2020260726114644.png" alt="">
+<em>Entering in a brand new password for OpenWrt.</em></p>
+<p>Then, I set OpenWrt to be in the correct timezone. So I went to <code>System</code> -&gt; <code>System</code> -&gt; <code>General Settings</code> section. From there, I change the timezone to be correct for me.</p>
+<p><img src="Pasted%20image%2020260726115006.png" alt="">
+<em>OpenWrt&rsquo;s timezone being set to the correct timezone.</em></p>
+<p>I then went to <code>System</code> -&gt; <code>Software</code> to update the system packages. I clicked on the <code>Update lists...</code> button first to know what needs to be updated. Then I click on the <code>Updates</code> tab to see what need to be updated. Finally, I clicked on <code>Upgrade...</code> on all 26 packages.</p>
+<p><img src="Pasted%20image%2020260726120701.png" alt="">
+<em>Some of the packages that need to be upgraded.</em></p>
+<p>Something that was bothering me is that OpenWrt wouldn&rsquo;t ssh with the Kitty terminal, and OpenWrt only using 100MB out of the 512GB storage in the laptop.. To fix the Kitty SSH, I had to install the <code>coreutils-base64</code> into OpenWrt. To fix the storage, I will have to boot into a live Linux distro to expand it in there. From there, I just resize the <code>ext4</code> partition to take the entire disk.</p>
+<p><img src="Screenshot_20260731_013744.png" alt="">
+<em>The disk partition table before the resize.</em></p>
+<p><img src="Screenshot_20260731_014001.png" alt="">
+<em>The disk partition table before the resize.</em></p>
+<h2 id="openmediavault-quick-little-fixes">OpenMediaVault Quick Little Fixes</h2>
+<p>The first thing that I did was update the timezone by going to <code>System</code> -&gt; <code>Date &amp; Time</code>. Then I set the timezone to <code>Etc/GMT-5</code>.  I then applied the changes so it can be saved.</p>
+<p><img src="Pasted%20image%2020260726113534.png" alt="">
+<em>The timezone being changed.</em></p>
+<p>Then I went into <code>Account</code> -&gt; <code>Password</code> to change the default password. I set it to be something more reasonable.</p>
+<p><img src="Pasted%20image%2020260726122414.png" alt="">
+<em>The OMV admin&rsquo;s password being changed.</em></p>
+<p>Then I went into <code>System</code> -&gt; <code>Update Management</code> -&gt; <code>Updates</code> to update the system. From there, I pressed the Arrow button to update the entire system.</p>
+<p><img src="Pasted%20image%2020260726122530.png" alt="">
+<em>Updating OMV to the latest version.</em></p>
+
+        </section>
+        <div class="post-tags">
+          
+          
+          <nav class="nav tags">
+            <ul class="tags">
+              
+              <li><a href="/tags/short/">short</a></li>
+              
+              <li><a href="/tags/fixing/">Fixing</a></li>
+              
+            </ul>
+          </nav>
+          
+          
+        </div>
+      </div>
+
+      
+      
+      <div class="toc">
+        <strong>Table of contents:</strong>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#proxmox-quick-little-fixes">Proxmox Quick Little Fixes</a></li>
+    <li><a href="#openwrt-quick-little-fixes">OpenWrt Quick Little Fixes</a></li>
+    <li><a href="#openmediavault-quick-little-fixes">OpenMediaVault Quick Little Fixes</a></li>
+  </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    </article>
+</main>
+<footer>
+  <div style="display:flex"></div>
+  <div class="footer-info">
+    2026  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+</div>
+    </body>
+</html>
