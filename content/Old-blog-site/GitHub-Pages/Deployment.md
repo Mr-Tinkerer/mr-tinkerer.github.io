@@ -10,7 +10,7 @@ tags:
 I hosted the blog's source and the Hugo-generated static site from a dedicated [GitHub account](https://github.com/Mr-Tinkerer), using a repo-specific SSH key, at `mr-tinkerer.github.io`. I chose GitHub for free static hosting alongside the source repo (subject to [GitHub Pages' hosting limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits), e.g. a 1GB size cap).
 
 > [!note] This domain is no longer a blog
-> `mr-tinkerer.github.io` used to host the Hugo blog described throughout this bucket. It has since been repurposed to host this very wiki (this Quartz vault) instead — the deployment mechanics below are historical, describing how the *blog* was deployed there, not the wiki's current deployment.
+> `mr-tinkerer.github.io` used to host the Hugo blog described throughout this bucket. It has since been repurposed to host this very wiki (this Quartz vault) instead — the deployment mechanics below are historical, describing how the *blog* was deployed there, not the wiki's current deployment. The old repo is [archived](https://github.com/Mr-Tinkerer) for reference purposes.
 
 # First attempt: a worktree-based `site` branch, deployed from a branch
 
