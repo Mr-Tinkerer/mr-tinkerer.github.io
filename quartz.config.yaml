@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: Quartz 5
+  pageTitle: Mr.Tinkerer
   pageTitleSuffix: ""
   enableSPA: true
   enablePopovers: true
@@ -113,7 +113,7 @@ plugins:
   - source: "@quartz-themes/core"
     enabled: true
     options:
-      theme: default
+      theme: phoenix
       mode: both
   - source: "@quartz-community/remove-draft"
     enabled: true
@@ -171,7 +171,7 @@ plugins:
     enabled: true
     layout:
       position: right
-      priority: 10
+      priority: 70
   - source: "@quartz-community/search"
     enabled: true
     layout:
@@ -181,7 +181,7 @@ plugins:
       groupOptions:
         grow: true
   - source: "@quartz-community/backlinks"
-    enabled: true
+    enabled: false
     layout:
       position: right
       priority: 50
