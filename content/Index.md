@@ -4,7 +4,7 @@ description: A wiki documenting hardware, software, and homelab projects.
 tags:
   - Index
 ---
-# Domains
+# Projects
 
 - [[Failed-laptop/Index|Failed Laptop]] — an Asus X555q repurposed as server hardware, then as a NAS.
 - [[Old-blog-site/Index|Old Blog Site]] — the Hugo-based blog site's own build/publish/hosting pipeline.
