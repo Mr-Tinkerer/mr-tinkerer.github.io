@@ -27,6 +27,10 @@ A wikilink prefixed with `!`, e.g. `![[Page-name#Heading]]`, which embeds anothe
 
 `Migration Q&A.json` at the vault root — a running list of unresolved clarification questions raised while migrating content, each with an ID, type, the question itself, and context. Deleted once no questions remain. See [[Migration-process|Migration Process]].
 
+## Entry Q&A file
+
+`Entry Q&A.json` at the vault root — the running list of unresolved clarification questions raised while adding new entries after the migration. It uses the same structure as the [[#Migration Q&A file|Migration Q&A file]] (ID, type, question, context, related pages, and an answer field I fill in). It is also where flagged concerns go, such as a possible security mistake in the source material. Answered questions get folded into the affected pages and removed, and the file is deleted once no questions remain. See [[Docs-rules-overview|Documentation Rules Overview]].
+
 ## Skeleton
 
 A draft note in the vault — an outline, a dump of screenshots, or a half-written page — that hasn't yet been converted into a proper wiki entry following this vault's rules. See [[Skeleton-to-entry-conversion|Skeleton-to-Entry Conversion Workflow]].
