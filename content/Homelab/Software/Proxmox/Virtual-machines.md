@@ -15,4 +15,4 @@ I created most VMs with the same baseline settings (CPU, RAM, and disk sized per
 
 The one exception was the Windows Server 2022 VM, which I gave 4GB RAM and 32GB storage instead of the shared baseline, to match Windows's higher minimum requirements.
 
-See [[Homelab/Logical/Virtual-machines/Vm-allocation|VM allocation]] for the resulting roster of VMs, what each one runs, and why. See [[Daily-driver-laptop/Windows-Gaming-VM/Virtual-disks-reference|Virtual disks reference]] for QEMU/libvirt virtual disk concepts (image formats, thin-provisioning, disk expansion) that apply here too, since Proxmox VMs are QEMU-backed under the hood.
+See [[Homelab/Logical/Virtual-machines/Vm-allocation|VM allocation]] for the resulting roster of VMs, what each one runs, and why. See [[Libvirt-glossary/Virtual-disks-reference|Virtual disks reference]] for QEMU/libvirt virtual disk concepts (image formats, thin-provisioning, disk expansion) that apply here too, since Proxmox VMs are QEMU-backed under the hood.

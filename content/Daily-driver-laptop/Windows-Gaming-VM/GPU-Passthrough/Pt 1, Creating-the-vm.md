@@ -14,9 +14,9 @@ None — this is the first step.
 
 ## Goal
 
-Build a Windows 10 VM under [[Windows-gaming-vm-glossary#QEMU|QEMU]]/[[Windows-gaming-vm-glossary#KVM|KVM]] (managed with [[Windows-gaming-vm-glossary#libvirt|libvirt]] and [[Windows-gaming-vm-glossary#Virt Manager|Virt Manager]]) that can later be given the laptop's dedicated GPU. Reasons for this setup: confirming whether a game issue comes from [Proton](https://github.com/ValveSoftware/Proton) rather than the game itself, and running untrusted software isolated from the host while still getting full GPU performance.
+Build a Windows 10 VM under [[Libvirt-glossary#QEMU|QEMU]]/[[Libvirt-glossary#KVM|KVM]] (managed with [[Libvirt-glossary#libvirt|libvirt]] and [[Libvirt-glossary#Virt Manager|Virt Manager]]) that can later be given the laptop's dedicated GPU. Reasons for this setup: confirming whether a game issue comes from [Proton](https://github.com/ValveSoftware/Proton) rather than the game itself, and running untrusted software isolated from the host while still getting full GPU performance.
 
-I avoided Type 2 hypervisors (VirtualBox, VMware Workstation) because they compete with the host OS for hardware access, making full GPU passthrough impractical — see [[Windows-gaming-vm-glossary#Hypervisor (Type 1 vs Type 2)|Hypervisor]]. QEMU with KVM behaves like a Type 1 hypervisor since KVM lets it access hardware directly through the kernel.
+I avoided Type 2 hypervisors (VirtualBox, VMware Workstation) because they compete with the host OS for hardware access, making full GPU passthrough impractical — see [[Libvirt-glossary#Hypervisor (Type 1 vs Type 2)|Hypervisor]]. QEMU with KVM behaves like a Type 1 hypervisor since KVM lets it access hardware directly through the kernel.
 
 ## Prerequisites for GPU passthrough in general
 
@@ -46,7 +46,7 @@ When creating the local account, I'm deliberate about the username/password used
 
 ## Drivers and updates
 
-After install, re-enable that virtual NIC device in Virt Manager/libvirt and install the [[Windows-gaming-vm-glossary#VirtIO drivers|VirtIO drivers]] and [[Windows-gaming-vm-glossary#QEMU Guest Agent|QEMU Guest Agent]] from the [Fedora-maintained VirtIO driver repo](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.285-1/) — run `virtio-win-guest-tools.exe` with default options. Remove the ISO from the virtual CD drive afterward.
+After install, re-enable that virtual NIC device in Virt Manager/libvirt and install the [[Libvirt-glossary#VirtIO drivers|VirtIO drivers]] and [[Libvirt-glossary#QEMU Guest Agent|QEMU Guest Agent]] from the [Fedora-maintained VirtIO driver repo](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.285-1/) — run `virtio-win-guest-tools.exe` with default options. Remove the ISO from the virtual CD drive afterward.
 
 Let Windows install any pending updates, then take a VM snapshot of this clean, updated state before moving on to GPU passthrough setup.
 

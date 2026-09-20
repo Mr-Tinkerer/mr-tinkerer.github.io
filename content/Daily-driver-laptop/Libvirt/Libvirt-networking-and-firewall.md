@@ -23,16 +23,7 @@ This three-way independence is easy to overlook, since UFW is often assumed to b
 
 ---
 
-# 2. libvirt network modes
-| Libvirt Networking Mode | Description                                                     | Best For                         |
-| ----------------------- | --------------------------------------------------------------- | -------------------------------- |
-| **NAT**                 | Simple, default-style networking with outbound internet access  | General-purpose VMs              |
-| **Routed**              | VMs use routed IP addresses without traditional NAT             | Servers and routable VM networks |
-| **Open**                | Host bridge with minimal libvirt filtering                      | Advanced/custom networking       |
-| *Isolated**             | VMs can communicate with each other but have no external access | Testing and private networks     |
-| **SR-IOV**              | Direct NIC virtual functions for near-native performance        | High-performance workloads       |
-
-## 3. libvirt never touches `/etc/nftables.conf`
+## 2. libvirt never touches `/etc/nftables.conf`
 
 A reasonable but incorrect assumption is that libvirt should update `/etc/nftables.conf` whenever I create a new virtual network. It doesn't: that file is static and only loaded at boot or on an explicit `nft -f`. libvirt instead inserts/removes rules directly in the live kernel ruleset over netlink as networks start and stop. Those rules are visible via:
 
@@ -49,7 +40,7 @@ and never appear in `/etc/nftables.conf`, no matter how many networks I create. 
 
 ---
 
-## 4. My current approach: default-accept forward policy with targeted denies
+## 3. My current approach: default-accept forward policy with targeted denies
 
 I originally fixed both failures below (Sections 9 and 15) using the same model: default-drop the `forward` hook, then allowlist only the interfaces I knew about (`virbr*`). That model has a structural flaw I didn't see until a second forwarding-capable application showed up:
 
@@ -93,7 +84,7 @@ I confirm the custom `inet filter forward` chain shows `policy accept`, and UFW'
 
 ---
 
-## 5. Reference architecture
+## 4. Reference architecture
 
 With the wildcard fix applied, VM traffic to the outside network follows this path:
 
@@ -117,7 +108,7 @@ Two separate rule sets act on this traffic — libvirt's own dynamically-managed
 
 ---
 
-## 6. libvirt's runtime NAT table
+## 5. libvirt's runtime NAT table
 
 Inspecting the live ruleset reveals a table I never defined myself:
 
@@ -131,13 +122,13 @@ I treat this table as read-only: I don't edit it directly (libvirt may overwrite
 
 ---
 
-## 7. Why forwarding can break even when libvirt is configured correctly
+## 6. Why forwarding can break even when libvirt is configured correctly
 
 libvirt's own NAT config can be entirely correct while VM traffic still fails, because libvirt's table isn't the only one evaluated. My own `forward` chain (in `/etc/nftables.conf`) is evaluated independently — if its policy is `drop` with no matching rule for the relevant bridge, it drops the packet before libvirt's NAT rules are ever relevant, regardless of how correctly libvirt is configured. This is the same "multiple independent rule sets, same hook" mechanism that reappears with UFW in Section 9 — a correctly configured ruleset doesn't guarantee traffic is permitted if another independently-evaluated ruleset can also reject it.
 
 ---
 
-## 8. Static nftables config supporting dynamic libvirt networking
+## 7. Static nftables config supporting dynamic libvirt networking
 
 **Forward chain**, including the wildcard fix from Section 15:
 ```nft
@@ -160,7 +151,7 @@ Without this, VMs can be correctly bridged and NAT-configured yet still fail to 
 
 ---
 
-## 9. Practices I now avoid
+## 8. Practices I now avoid
 
 | Practice | Consequence |
 |---|---|
@@ -173,7 +164,7 @@ libvirt talks to the kernel exclusively over netlink rather than through config 
 
 ---
 
-## 10. Failure 2: UFW silently blocking DHCP/DNS traffic
+## 9. Failure 2: UFW silently blocking DHCP/DNS traffic
 
 **Symptom:** with the static ruleset from Section 7 already in place — including the `input` rule for UDP 53/67 from `virbr*`, and a `forward` chain permitting routed traffic both ways — enabling UFW immediately broke DHCP lease acquisition for every VM, and consequently their internet access.
 
@@ -191,7 +182,7 @@ Netfilter explicitly permits multiple independent base chains at the same hook, 
 
 ---
 
-## 11. Diagnosing the direction of the failure: input vs. forward
+## 10. Diagnosing the direction of the failure: input vs. forward
 
 My first instinct given "VMs can't reach the internet" was to suspect an outbound (`forward`/`output`) restriction — for DHCP/DNS specifically, that instinct is wrong, and understanding why matters for diagnosing this class of failure quickly.
 
@@ -217,7 +208,7 @@ sudo journalctl -k --since "-2 min" | grep -i "UFW BLOCK"
 
 ---
 
-## 12. Resolution
+## 11. Resolution
 
 Since UFW's own chain — not my `inet filter` table — was dropping the traffic, I fixed it inside UFW:
 
@@ -240,7 +231,7 @@ After restarting a VM (or forcing a DHCP renewal inside one), I look for no furt
 
 ---
 
-## 13. Consolidated architecture, including UFW
+## 12. Consolidated architecture, including UFW
 
 After Section 11's fix, two independent rule sets each separately have to permit VM traffic at every relevant hook:
 
@@ -272,7 +263,7 @@ Internet
 
 ---
 
-## 14. Hardening (superseded): replacing UFW's global routed policy with a scoped exception
+## 13. Hardening (superseded): replacing UFW's global routed policy with a scoped exception
 
 Sections 9–12 left UFW's default forward policy at `allow (routed)` — sufficient to fix Failure 2, but broader than libvirt actually needs, since it permits forwarding between *any* pair of interfaces for *any* purpose.
 
@@ -314,7 +305,7 @@ Anywhere on virbr+           ALLOW FWD   Anywhere                   # libvirt in
 
 ---
 
-## 15. Lessons learned
+## 14. Lessons learned
 
 1. libvirt manages firewall rules exclusively at runtime, via netlink — it never touches `/etc/nftables.conf`. I always check the live ruleset, not just static config.
 2. Rules referencing dynamically-created interfaces need wildcard matching (`virbr*` in nftables, `virbr+` in UFW) — hardcoded names silently fail for any interface created afterward.
@@ -325,7 +316,7 @@ Anywhere on virbr+           ALLOW FWD   Anywhere                   # libvirt in
 
 ---
 
-## 16. Failure 1: hardcoded bridge interfaces
+## 15. Failure 1: hardcoded bridge interfaces
 
 **The problem:** an early version of my `forward` chain enumerated bridges explicitly:
 ```nft

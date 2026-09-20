@@ -8,7 +8,7 @@ tags:
 ---
 # QEMU/KVM Virtual Disks Reference
 
-I put this together as my own reference for Virt-Manager (and Proxmox) virtual disks — everything that determines how a disk behaves: the bus it's attached to, the controller emulating that bus, the file format backing it, and the settings that control performance, space usage, and data safety. I used it when setting up the [[Windows-gaming-vm-glossary#VirtIO drivers|VirtIO]]-backed drives for the gaming VM (see [[Post-install-tweaks]]), and keep it here since it applies to any QEMU/KVM VM, not just that one.
+I put this together as my own reference for Virt-Manager (and Proxmox) virtual disks — everything that determines how a disk behaves: the bus it's attached to, the controller emulating that bus, the file format backing it, and the settings that control performance, space usage, and data safety. I used it when setting up the [[Libvirt-glossary#VirtIO drivers|VirtIO]]-backed drives for the gaming VM (see [[Post-install-tweaks]]), and keep it here since it applies to any QEMU/KVM VM, not just that one.
 
 ---
 
@@ -129,6 +129,8 @@ Separate from bus/controller — this is the file format storing the disk's actu
 > ```bash
 > qemu-img convert -O raw disk.qcow2 disk.raw
 > ```
+
+For external snapshots and backing chains, see [[Libvirt-external-snapshots]].
 
 ---
 
@@ -266,6 +268,8 @@ update-initramfs -u
 Generally more forgiving than Windows, since most distro installers build a broad initramfs by default.
 
 **General principle for both directions:** boot successfully on the *current* controller, stage/enable the *destination* controller's driver while still in a working state, then switch and reboot — never commit to the switch blind. Dedicated backup/restore tools (Macrium Reflect, Acronis, Clonezilla) automate this driver staging and are worth using over manual registry surgery for anything beyond a one-off.
+
+For converting VMware VMDK disks, see [[Pt 2, Converting-vmdk-to-qcow2]]
 
 ---
 

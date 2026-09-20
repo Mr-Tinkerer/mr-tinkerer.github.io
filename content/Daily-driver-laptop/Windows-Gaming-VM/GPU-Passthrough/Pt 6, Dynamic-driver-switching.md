@@ -125,7 +125,7 @@ run_as_user() {
 }
 ```
 
-Claude wrote this helper and the process-listing logic around it for me. I reuse this function as-is (not duplicated) in [[../Gigabyte-Gaming-A16-Ga6h/Battery-management|the laptop's battery-management script]], which needs to run `dms`/`notify-send` commands as the logged-in user from a root-invoked udev rule.
+Claude wrote this helper and the process-listing logic around it for me. I reuse this function as-is (not duplicated) in [[Battery-management|the laptop's battery-management script]], which needs to run `dms`/`notify-send` commands as the logged-in user from a root-invoked udev rule.
 
 ## Final scripts
 

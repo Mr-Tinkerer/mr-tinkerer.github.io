@@ -16,7 +16,7 @@ tags:
 
 ## Adding the PCI devices
 
-In [[Windows-gaming-vm-glossary#Virt Manager|Virt Manager]], open the VM's Hardware page, click **Add Hardware**, then select **PCI Host Device**. Pick the entries matching the GPU's PCI numbers noted in [[Pt 3, Isolating-the-gpu|Pt 3]] (this matters if the device name alone is ambiguous). Add every device from the same [[Windows-gaming-vm-glossary#IOMMU group|IOMMU group]] — for this laptop, both the GPU (`01:00.0`) and its audio device (`01:00.1`).
+In [[Libvirt-glossary#Virt Manager|Virt Manager]], open the VM's Hardware page, click **Add Hardware**, then select **PCI Host Device**. Pick the entries matching the GPU's PCI numbers noted in [[Pt 3, Isolating-the-gpu|Pt 3]] (this matters if the device name alone is ambiguous). Add every device from the same [[Libvirt-glossary#IOMMU group|IOMMU group]] — for this laptop, both the GPU (`01:00.0`) and its audio device (`01:00.1`).
 
 ## First boot with the GPU attached
 

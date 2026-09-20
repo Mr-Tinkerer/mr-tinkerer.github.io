@@ -9,14 +9,14 @@ tags:
 ---
 # Troubleshooting a Windows 10 VirtIO SCSI Drive
 
-When I added a secondary SCSI drive to my Windows 10 VM, it wasn't detected, showed a yellow exclamation mark (Code 28/Code 10), or rejected the [[Windows-gaming-vm-glossary#VirtIO drivers|VirtIO drivers]]. Here's how I resolved it, step by step.
+When I added a secondary SCSI drive to my Windows 10 VM, it wasn't detected, showed a yellow exclamation mark (Code 28/Code 10), or rejected the [[Libvirt-glossary#VirtIO drivers|VirtIO drivers]]. Here's how I resolved it, step by step.
 
 ## 1. Verify the SCSI controller model
 
 Windows throws a **Code 10 (Device cannot start)** error if the underlying emulated controller is misconfigured.
 
 1. Shut down the VM.
-2. In [[Windows-gaming-vm-glossary#Virt Manager|Virt Manager]], open the VM's details and select the **SCSI Controller** in the hardware panel.
+2. In [[Libvirt-glossary#Virt Manager|Virt Manager]], open the VM's details and select the **SCSI Controller** in the hardware panel.
 3. Change the **Model** dropdown from `LSI Logic` (the default) to **`VirtIO SCSI`**.
 4. Click **Apply** and start the VM.
 
