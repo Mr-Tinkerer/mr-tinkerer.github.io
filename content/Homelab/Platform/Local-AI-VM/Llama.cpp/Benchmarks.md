@@ -9,6 +9,8 @@ tags:
 
 The exhaustive benchmark tables, per-image grading notes, and raw experiment log are maintained in the infrastructure repo rather than duplicated here: [Local_AI_Model_Reference_Guide.md](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Local-AI%20VM/Notes/Local_AI_Model_Reference_Guide.md), [vision_benchmark_results.md](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Local-AI%20VM/Notes/vision_benchmark_results.md), [ctx-oom-sweep-by-model.md](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Local-AI%20VM/Notes/ctx-oom-sweep-by-model.md), [experiment-log.md](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Local-AI%20VM/Notes/experiment-log.md), [model-accuracy-test-set.md](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Local-AI%20VM/Notes/model-accuracy-test-set.md), [benchmark-results-log.md](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Local-AI%20VM/Notes/benchmark-results-log.md), and the [Benchmark Scripts](https://github.com/Mr-Tinkerer/Project-Dump/tree/main/Homelab/Local-AI%20VM/Notes/Benchmark%20Scripts) used to produce them. See also [[Homelab/Platform/Local-AI-VM/Llama.cpp/Llama-cpp-glossary|the Glossary]] for the hardware/inference concepts (SIMD, KV cache, mmap, etc.) referenced below — the repo's own `concepts-glossary.md` covers the same ground in more depth.
 
+For a GPU-accelerated comparison point, [[Daily-driver-laptop/Llama.cpp/Benchmarks|the Gigabyte laptop's benchmarks]] deliberately sweep the same model set on an RTX 5060 Laptop GPU — the two hardware setups aren't directly comparable (different RAM/VRAM ceilings, different build provenance), but the model list overlaps intentionally for a like-for-like reference.
+
 # Benchmark methodology
 
 Each benchmark script implements a different, durable measurement approach — understanding what each one actually does is what makes the numbers below meaningful, rather than just headline figures:
@@ -33,16 +35,17 @@ Grading in all cases is by hand against a rubric (correctness/quality/format-com
 
 ## Measured throughput per model (Q4_K_M, `-t 4`)
 
-| Model | Params | tg128 (t/s) | pp512 (t/s) | Max safe `-c` on this 8GB VM |
-|---|---|---|---|---|
-| DeepSeek-R1-Distill-Qwen 1.5B | 1.5B | 26.29 | 119.80 | 262,144 (both mmap modes) |
-| Gemma 2 2B | 2B | 14.99 | 75.77 | 131,072 (both mmap modes) |
-| Llama 3.2 3B | 3B | 13.12–13.76 (varies by thread count, see below) | 56.80–72.62 | 65,536 (both mmap modes) |
-| Qwen 2.5 3B | 3B | 13.83 | 56.64 | 262,144 (both mmap modes) |
-| Phi-3.5 Mini 3.8B | 3.8B | 11.38 | 34.75 | 16,384 with `--no-mmap`; 32,768 with default mmap |
-| Llama 3.1 8B | 8B | 5.80–6.09 | 23.08–29.04 | 32,768 with `--no-mmap`; 131,072 with default mmap (see mmap-ceiling caveat below) |
-| Mistral 7B | ~7B | not benchmarked for throughput | not benchmarked for throughput | 16,384 with `--no-mmap`; 32,768 with default mmap |
-| Gemma 3 4B (multimodal) | ~4B | not benchmarked as a text model | not benchmarked as a text model | 524,288 (both mmap modes) |
+| Model                         | Params | pp512 (t/s)                     | tg128 (t/s)                                     | Max safe `-c` on this 8GB VM                                                       |
+| ----------------------------- | ------ | ------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------- |
+| DeepSeek-R1-Distill-Qwen 1.5B | 1.5B   | 119.80                          | 26.29                                           | 262,144 (both mmap modes)                                                          |
+| Gemma 2 2B                    | 2B     | 75.77                           | 14.99                                           | 131,072 (both mmap modes)                                                          |
+| Llama 3.2 3B                  | 3B     | 56.80–72.62                     | 13.12–13.76 (varies by thread count, see below) | 65,536 (both mmap modes)                                                           |
+| Qwen 2.5 3B                   | 3B     | 56.64                           | 13.83                                           | 262,144 (both mmap modes)                                                          |
+| Phi-3.5 Mini 3.8B             | 3.8B   | 34.75                           | 11.38                                           | 16,384 with `--no-mmap`; 32,768 with default mmap                                  |
+| Llama 3.1 8B                  | 8B     | 23.08–29.04                     | 5.80–6.09                                       | 32,768 with `--no-mmap`; 131,072 with default mmap (see mmap-ceiling caveat below) |
+| Mistral 7B                    | ~7B    | 22.45                           | 6.18                                            | 16,384 with `--no-mmap`; 32,768 with default mmap                                  |
+
+For the same models under full GPU offload instead of CPU-only, see [[Daily-driver-laptop/Llama.cpp/Benchmarks#Full model sweep — full GPU offload (`-ngl 999`)|the Gigabyte laptop's model sweep]] — pp512/tg128 numbers there are one to two orders of magnitude higher, as expected for GPU vs. CPU inference, though a precise per-model speedup factor hasn't been calculated pending confirmation of that sweep's power profile and flash-attention state.
 
 ## Thread-count scaling (same model, `llama-bench`, pinned threads 1–6)
 
@@ -99,7 +102,7 @@ Maximum safe context size before hitting an out-of-memory condition varies enorm
 - **Bigger base models OOM at smaller context sizes** — Mistral-7B and Llama 3.1 8B hit their ceilings in the tens of thousands of tokens, while much smaller models (DeepSeek-R1-Distill-Qwen 1.5B, Qwen 2.5 3B, Gemma 3 4B) tolerated context sizes two orders of magnitude larger before OOMing, because a bigger base model leaves less RAM headroom for the KV cache before the combined footprint exceeds 8GB.
 - **Default mmap mode consistently tolerated a somewhat larger context than `--no-mmap`** before OOMing (e.g. Mistral-7B: 32,768 vs. 65,536) — consistent with mmap's lazy paging letting cold model-weight pages be dropped/reloaded under memory pressure rather than being pinned in RAM the way a fully `--no-mmap`-loaded copy is. Treated as a plausible mechanism, not a fully confirmed one.
 
-See the linked `ctx-oom-sweep-by-model.md` for the full per-model table.
+See the linked `ctx-oom-sweep-by-model.md` for the full per-model table. The Gigabyte laptop shows an analogous but distinct ceiling: rather than degrading gracefully via swap like this VM's system RAM, a VRAM-based KV cache on that GPU either fails outright at load time when oversized, or (per the `-nkvo` sweep) drags throughput down continuously as it crowds out VRAM — see [[Daily-driver-laptop/Llama.cpp/Benchmarks#`-nkvo` vs. context size — Llama 3.1 8B, `-ngl 999`|its `-nkvo` vs. context size results]].
 
 # Gotchas
 

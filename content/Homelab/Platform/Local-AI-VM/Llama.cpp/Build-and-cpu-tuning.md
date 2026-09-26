@@ -7,7 +7,7 @@ tags:
 ---
 # Why llama.cpp instead of Ollama
 
-The [[Homelab/Logical/Virtual-machines/Vm-allocation|Local AI VM]] has no GPU passthrough, so getting the most out of CPU-only inference meant using [[Homelab/Platform/Local-AI-VM/Llama.cpp/Llama-cpp-glossary#llama.cpp|llama.cpp]] directly rather than [[Homelab/Platform/Local-AI-VM/Llama.cpp/Llama-cpp-glossary#Ollama|Ollama]]'s wrapper, for direct control over threading, batch size, and the CPU instruction set it's compiled for.
+The [[Homelab/Logical/Virtual-machines/Vm-allocation|Local AI VM]] has no GPU passthrough, so getting the most out of CPU-only inference meant using [[Homelab/Platform/Local-AI-VM/Llama.cpp/Llama-cpp-glossary#llama.cpp|llama.cpp]] directly rather than [[Homelab/Platform/Local-AI-VM/Llama.cpp/Llama-cpp-glossary#Ollama|Ollama]]'s wrapper, for direct control over threading, batch size, and the CPU instruction set it's compiled for. The [[Daily-driver-laptop/Llama.cpp/Installation|Gigabyte laptop]] runs a separate llama.cpp install with GPU acceleration — its build path and tuning knobs (`-ngl`, `-nkvo`, power profiles) are different enough to live in their own bucket rather than here; see that page for the GPU-specific side of things.
 
 See [[Homelab/Platform/Local-AI-VM/Fedora/Cpu-configuration|Fedora: CPU configuration]] for how this VM's virtual CPU type and core pinning are set at the Proxmox/guest-OS level — those facts apply regardless of what's running on the VM, so I keep them with the Fedora guest OS bucket rather than here.
 
@@ -41,6 +41,8 @@ grep -i "march\|mavx" build/CMakeFiles/ggml-cpu.dir/flags.make
 ```
 
 which should show `-march=native` in both `CXX_FLAGS` and `C_FLAGS` — on a CPU with AVX2 (present since Haswell, 2013), `-march=native` always resolves to include it. The `system_info:` line printed at runtime when a model loads (`AVX2 = 1`) is the final, undeniable confirmation.
+
+This VM's build was self-compiled by design, for exactly this kind of flag-level control. The Gigabyte laptop, by contrast, uses [[Daily-driver-laptop/Llama.cpp/Installation|prebuilt CachyOS/Arch packages]] instead — a deliberately different tradeoff (convenience over guaranteed build provenance), which is also why that machine's "asserts enabled" warning (below) traces to a different cause than this VM's: an upstream packaging choice rather than a stale incremental build.
 
 # Installing to the path
 
@@ -79,12 +81,14 @@ The very first `llama-bench` run reported console warnings (`asserts enabled`, `
 
 **Fix:** after changing a significant CMake option (build type, native flags, etc.) on an existing build directory, do a full `rm -rf build` + reconfigure + rebuild rather than an incremental one, to guarantee every object file is compiled under the current, correct flags.
 
+**Not the same cause everywhere:** the same `asserts enabled, performance may be affected` warning also shows up on the [[Daily-driver-laptop/Llama.cpp/Installation#The "asserts enabled" warning — root cause confirmed|Gigabyte laptop]], but for a different, unrelated reason — that machine uses a prebuilt Arch package whose `llama-cpp` PKGBUILD explicitly sets `-DCMAKE_BUILD_TYPE=None` (a deliberate upstream packaging choice, confirmed by reading the PKGBUILD directly), not a stale incremental build like this VM's.
+
 ## Distro-packaged `llama-bench`/`llama-cli` is the wrong build for this hardware
 
-A precompiled `llama-bench` available via the distro's own package repo (separate from the self-built `./build/bin/llama-bench`) was tried as a comparison point. It reported `backend: ROCm` (AMD's GPU compute framework) and printed `ggml_cuda_init: failed to initialize ROCm: no ROCm-capable device is detected`, then produced drastically worse numbers (pp512: 5.12 t/s, tg128: 4.39 t/s) than the self-built CPU binary (~55-56 t/s pp512 / ~13 t/s tg128 at the same thread count). Passing `-ngl 0` (force zero GPU layers) did not fix it — the binary still attempted the ROCm backend regardless. This machine has no AMD GPU at all, so the distro package is fundamentally the wrong build variant here, independent of any flags — not pursued further. **All benchmark numbers for this project use the self-built binary.**
+A precompiled `llama-bench` available via the distro's own package repo (separate from the self-built `./build/bin/llama-bench`) was tried as a comparison point. It reported `backend: ROCm` (AMD's GPU compute framework) and printed `ggml_cuda_init: failed to initialize ROCm: no ROCm-capable device is detected`, then produced drastically worse numbers (pp512: 5.12 t/s, tg128: 4.39 t/s) than the self-built CPU binary (~55-56 t/s pp512 / ~13 t/s tg128 at the same thread count). Passing `-ngl 0` (force zero GPU layers) did not fix it — the binary still attempted the ROCm backend regardless. This machine has no AMD GPU at all, so the distro package is fundamentally the wrong build variant here, independent of any flags — not pursued further. **All benchmark numbers for this project use the self-built binary.** (The Gigabyte laptop's distro-packaged install is a different situation: that machine actually has the matching NVIDIA/CUDA hardware the package targets, so the same "wrong backend for this hardware" problem doesn't apply there — see [[Daily-driver-laptop/Llama.cpp/Installation|its Installation page]].)
 
 ## Compiler warnings during the build are expected and safe to ignore
 
 The build produces warnings such as `-Wdeprecated-enum-enum-conversion` and `-Wdeprecated-declarations` from llama.cpp's own upstream code (a bitwise OR between two different enum types; use of a deprecated filesystem API) — normal in a fast-moving open source project, and not something to chase down as long as the build completes and links (`Built target ...` lines print, no compiler errors). Only errors (the build stops, no binary produced) need fixing.
 
-See [[Homelab/Platform/Local-AI-VM/Llama.cpp/Benchmarks|Benchmarks]] for the resulting throughput numbers across models and thread counts, and [[Homelab/Platform/Local-AI-VM/Llama.cpp/Serving-as-a-service|Serving as a service]] for running it persistently.
+See [[Homelab/Platform/Local-AI-VM/Llama.cpp/Benchmarks|Benchmarks]] for the resulting throughput numbers across models and thread counts, and [[Homelab/Platform/Local-AI-VM/Llama.cpp/Serving-as-a-service|Serving as a service]] for running it persistently. For the GPU-accelerated build on different hardware, see [[Daily-driver-laptop/Llama.cpp/Installation|the Gigabyte laptop's Llama.cpp bucket]].
