@@ -1,5 +1,5 @@
 ---
-title: "Pt 1, Inventorying the VMware source"
+title: VMware Migration Pt 1, Inventorying the VMware Source
 description: Protecting the original VMware VM and mapping its disks, snapshots, and hardware before converting anything.
 tags:
   - libvirt
@@ -7,38 +7,36 @@ tags:
   - migration
 ---
 
-# Prerequisites
+## Overview
+
+This guide covers migrating VMware VMs to QEMU/KVM/libvirt by hand, inspecting every step. The process is the same for Windows and Linux VMs. The original VMware files are kept untouched, VMDK disks are converted to QCOW2, and useful snapshot states are preserved. Automated one-to-one migration tools aren't used.
+
+## Prerequisites
 
 None — this is the first step.
 
----
-
 ## Goal
 
-I migrate VMware VMs to QEMU/KVM/libvirt on my [[Gigabyte-gaming-a16-ga6h-overview|Gigabyte laptop]] by hand so I can inspect every step. The process is the same for Windows and Linux VMs. I keep the original VMware files untouched, convert [[Libvirt-glossary#VMDK|VMDK]] disks to [[Libvirt-glossary#QCOW2|QCOW2]], and keep the useful snapshot states. I do not use an automated one-to-one migration tool.
+VMware VMs are migrated to QEMU/KVM/libvirt on the Gigabyte laptop by hand. The original VMware files are kept untouched, VMDK disks are converted to QCOW2, and useful snapshot states are preserved.
 
----
+## Protect the Source
 
-## Protect the source
+The original VMware VM directory is backed up before anything is touched. Work is done from a copy or from the backup. While experimenting, the original VMDKs are not modified, renamed, deleted, or consolidated.
 
-I back up the original VMware VM directory before I touch anything. I work from a copy or from the backup. While I experiment, I do not modify, rename, delete, or consolidate the original VMDKs.
+## Know the Files
 
----
+A VMware VM directory can contain:
 
-## Know the files
+- **`.vmx`** — Hardware and configuration. Used as a reference when building the libvirt VM.
+- **`.vmdk` descriptor files, plus extent files** — Such as `disk-s001.vmdk` and `disk-s002.vmdk`
+- **`.vmsd`** — Snapshot names, IDs, relationships, and the disk descriptors tied to each snapshot. Helps rebuild the snapshot history. Not a libvirt snapshot database.
+- **`.vmsn`** — Snapshot state. For a running VM it holds memory state. Not a portable libvirt snapshot file. For a powered-off VM, the disk state is rebuilt from the VMDK relationships and the `.vmsd` data.
+- **`.nvram`** — EFI firmware state. Decided separately whether it needs carrying over. Not copied into the new VM by default.
+- **Lock directories and files**
 
-A VMware VM directory can contain the following. See [[Libvirt-glossary#VMware VM files|VMware VM files]] for the details.
+See the VMware VM files glossary entry for details.
 
-- `.vmx`: hardware and configuration. I use it as a reference when I build the libvirt VM in [[Pt 3, Importing-the-disk-into-libvirt]].
-- `.vmdk` descriptor files, plus extent files such as `disk-s001.vmdk` and `disk-s002.vmdk`.
-- `.vmsd`: snapshot names, IDs, relationships, and the disk descriptors tied to each snapshot. It helps me rebuild the snapshot history. It is not a libvirt snapshot database.
-- `.vmsn`: snapshot state. For a running VM it holds memory state. It is not a portable libvirt snapshot file. For a powered-off VM I rebuild the disk state from the VMDK relationships and the `.vmsd` data.
-- `.nvram`: EFI firmware state. I decide separately whether it needs carrying over. I do not copy it into the new VM by default.
-- Lock directories and files.
-
----
-
-## Split VMDKs are one disk
+## Split VMDKs Are One Disk
 
 A descriptor such as `VMNAME.vmdk` can reference many extent files:
 
@@ -49,11 +47,9 @@ VMNAME-s002.vmdk
 VMNAME-s021.vmdk
 ```
 
-Together those extents form one virtual disk. They are not separate disks or separate snapshots. I convert the descriptor in [[Pt 2, Converting-vmdk-to-qcow2]] and never the individual extents.
+Together those extents form one virtual disk. They're not separate disks or separate snapshots. The descriptor is converted, never the individual extents.
 
----
-
-## Inventory commands
+## Inventory Commands
 
 ```bash
 ls -lah
@@ -79,7 +75,9 @@ qemu-img info VMNAME-000001.vmdk
 
 If the output says `backing file: VMNAME.vmdk`, the descriptor is a child of the base disk.
 
-I need to answer these questions before I continue:
+### Questions to Answer
+
+Before continuing, these questions must be answered:
 
 - Which descriptor is the base disk?
 - Which descriptor is currently active?
@@ -89,15 +87,11 @@ I need to answer these questions before I continue:
 - Does the VM currently point at a snapshot (redo-log) descriptor?
 - Was each snapshot taken powered off or while running?
 
----
+## Snapshot-Time State Versus Current State
 
-## Snapshot-time state versus current state
+If a VM is shut down, a snapshot is taken, and never booted again, no writes happen after the snapshot. Then snapshot state, base disk state, and current state are identical.
 
-If I shut a VM down, take a snapshot, and never boot it again, no writes happen after the snapshot. Then snapshot state, base disk state, and current state are identical.
-
-If I boot and modify the VM after the snapshot, the active child holds post-snapshot changes. Converting the active descriptor then does not give me the snapshot-time state. I use the `.vmsd` data and the backing relationships to decide which disk state belongs to each snapshot. I do not infer snapshot ancestry from filenames.
-
----
+If the VM is booted and modified after the snapshot, the active child holds post-snapshot changes. Converting the active descriptor then doesn't give the snapshot-time state. The `.vmsd` data and the backing relationships are used to decide which disk state belongs to each snapshot. Snapshot ancestry isn't inferred from filenames.
 
 ## Verify
 
@@ -108,6 +102,4 @@ If I boot and modify the VM after the snapshot, the active child holds post-snap
 
 ---
 
-# Next
-
-[[Pt 2, Converting-vmdk-to-qcow2]]
+Next: [[Pt 2, Converting-vmdk-to-qcow2]]

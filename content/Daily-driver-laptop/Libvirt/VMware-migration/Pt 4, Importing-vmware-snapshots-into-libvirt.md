@@ -1,5 +1,5 @@
 ---
-title: "Pt 4, Importing VMware snapshots into libvirt"
+title: VMware Migration Pt 4, Importing VMware Snapshots into libvirt
 description: Recreating an offline VMware snapshot as a named libvirt snapshot without depending on the VMware-derived image.
 tags:
   - libvirt
@@ -8,23 +8,23 @@ tags:
   - migration
 ---
 
-# Prerequisites
+## Overview
+
+This step covers recreating an offline VMware snapshot as a named libvirt snapshot without depending on the VMware-derived image.
+
+## Prerequisites
 
 - [[Pt 1, Inventorying-the-VMware-source]]
 - [[Pt 2, Converting-vmdk-to-qcow2]]
 - [[Pt 3, Importing-the-disk-into-libvirt]]
 
----
+## Two Separate Tasks
 
-## Two separate tasks
+Keeping a VMware snapshot as a QEMU backing layer and showing it as a named snapshot in Virt Manager are separate. A working chain doesn't create a libvirt snapshot. `virsh snapshot-list VMNAME` can list nothing while the chain works. The named snapshot needs its own snapshot metadata. The disks and the metadata are verified independently.
 
-Keeping a VMware snapshot as a [[Libvirt-glossary#Backing file and backing chain|QEMU backing layer]] and showing it as a named snapshot in Virt Manager are separate. A working chain does not create a libvirt snapshot. `virsh snapshot-list VMNAME` can list nothing while the chain works. The named snapshot needs its own [[Libvirt-glossary#libvirt snapshot metadata|snapshot metadata]]. I verify the disks and the metadata independently.
+## Define the Snapshot
 
----
-
-## Define the snapshot
-
-This example is for a VMware snapshot I took while the VM was powered off, with no writes afterward. It is illustrative, not a maintained file.
+This example is for a VMware snapshot taken while the VM was powered off, with no writes afterward. It's illustrative, not a maintained file.
 
 ```xml
 <domainsnapshot>
@@ -54,19 +54,17 @@ This example is for a VMware snapshot I took while the VM was powered off, with 
 </domainsnapshot>
 ```
 
-How I fill each part:
+How each part is filled:
 
-- **`<disks>`** describes the external storage layer libvirt manages for the snapshot.
-- **`<domain>`** describes the domain definition the snapshot represents, including its disk. For an offline snapshot where the VM configuration did not change, the current inactive domain XML works. I include the full definition, not only the name and UUID.
-- **`<creationTime>`** libvirt requires it when I redefine a snapshot. I can rebuild it from VMware metadata. If the exact time does not matter, any valid timestamp works, and the displayed date will not match the original.
-- **`<state>`** is `shutoff` for a snapshot taken powered off.
-- **`<memory snapshot="no"/>`** fits a powered-off snapshot with no memory state. A running VMware snapshot's memory state in the `.vmsn` cannot be swapped into a libvirt memory snapshot.
+- **`<disks>`** — Describes the external storage layer libvirt manages for the snapshot
+- **`<domain>`** — Describes the domain definition the snapshot represents, including its disk. For an offline snapshot where the VM configuration didn't change, the current inactive domain XML works. The full definition is included, not only the name and UUID
+- **`<creationTime>`** — libvirt requires it when a snapshot is redefined. It can be rebuilt from VMware metadata. If the exact time doesn't matter, any valid timestamp works, and the displayed date won't match the original
+- **`<state>`** — Is `shutoff` for a snapshot taken powered off
+- **`<memory snapshot="no"/>`** — Fits a powered-off snapshot with no memory state. A running VMware snapshot's memory state in the `.vmsn` can't be swapped into a libvirt memory snapshot
 
----
+## Use a Distinct Layer File
 
-## Use a distinct layer file
-
-I do not register the VMware-derived child as the libvirt snapshot's external disk. Take this arrangement:
+The VMware-derived child isn't registered as the libvirt snapshot's external disk. Take this arrangement:
 
 ```text
 VMNAME-base.qcow2
@@ -75,9 +73,9 @@ VMNAME-base.qcow2
 VMNAME-vmware-snapshot.qcow2
 ```
 
-If the snapshot definition names `VMNAME-vmware-snapshot.qcow2` as its external disk, a later restore can make libvirt create a new image backed by that child. If I removed or renamed the child, the VM fails to start.
+If the snapshot definition names `VMNAME-vmware-snapshot.qcow2` as its external disk, a later restore can make libvirt create a new image backed by that child. If the child is removed or renamed, the VM fails to start.
 
-Instead, when the base equals the snapshot-time state, I put the base image in the snapshot's stored domain definition. I reserve a new, distinct filename for the layer libvirt manages, such as `VMNAME.Setup-the-Snapshot`:
+Instead, when the base equals the snapshot-time state, the base image is put in the snapshot's stored domain definition. A new, distinct filename is reserved for the layer libvirt manages, such as `VMNAME.Setup-the-Snapshot`:
 
 ```text
 VMNAME.Setup-the-Snapshot
@@ -86,7 +84,7 @@ VMNAME.Setup-the-Snapshot
 VMNAME-base.qcow2
 ```
 
-The full layout I keep:
+The full layout kept:
 
 ```text
 /path/to/libvirt/images/
@@ -100,25 +98,23 @@ The full layout I keep:
     └── backing: VMNAME-base.qcow2
 ```
 
-The VMware-derived child stays as a migration artifact. The domain still has one virtual disk. I do not attach every file at once. I keep the original conversion until the migration is fully tested.
+The VMware-derived child stays as a migration artifact. The domain still has one virtual disk. Not every file is attached at once. The original conversion is kept until the migration is fully tested.
 
----
+## Redefine and Check
 
-## Redefine and check
-
-Validate the XML:
+The XML is validated:
 
 ```bash
 virt-xml-validate snapshot.xml
 ```
 
-Redefine the snapshot:
+The snapshot is redefined:
 
 ```bash
 sudo virsh snapshot-create VMNAME snapshot.xml --redefine --current
 ```
 
-Check what libvirt recorded:
+What libvirt recorded is checked:
 
 ```bash
 sudo virsh snapshot-list VMNAME
@@ -126,22 +122,21 @@ sudo virsh snapshot-list VMNAME --tree
 sudo virsh snapshot-dumpxml VMNAME Snapshot-Name
 ```
 
-A snapshot in the list does not prove restore works.
+A snapshot in the list doesn't prove restore works.
 
----
+## Test a Real Restore
 
-## Test a real restore
-
-1. Boot the VM.
-2. Make a harmless, identifiable change in the guest.
-3. Shut the VM down.
-4. Restore the imported snapshot.
-5. Boot again.
-6. Confirm the change is gone.
+1. Boot the VM
+2. Make a harmless, identifiable change in the guest
+3. Shut the VM down
+4. Restore the imported snapshot
+5. Boot again
+6. Confirm the change is gone
 7. Inspect the resulting chain:
-   ```bash
-   qemu-img info --backing-chain /path/to/resulting-image.qcow2
-   ```
+
+```bash
+qemu-img info --backing-chain /path/to/resulting-image.qcow2
+```
 
 The chain should show the intended backing files and no corruption:
 
@@ -155,18 +150,14 @@ image: VMNAME-base.qcow2
 file format: qcow2
 ```
 
-Inspect the real files with `ls -lh` and `qemu-img check` too, not only the snapshot tree. If the chain references a file I removed on purpose, the snapshot definition is unusable and I fix it before more testing.
-
----
+The real files are inspected with `ls -lh` and `qemu-img check` too, not only the snapshot tree. If the chain references a file removed on purpose, the snapshot definition is unusable and it's fixed before more testing.
 
 ## Gotchas
 
-- Registering the VMware-derived child as the external disk makes restore create an image that depends on it. See [[Pt 4, Importing-vmware-snapshots-into-libvirt#Use a distinct layer file]].
-- The snapshot tree can look correct while restore is broken. Only the create-change-restore test catches it.
-- Do not infer snapshot ancestry from filenames. Use the `.vmsd` data, the VMDK parent and child links, the state at snapshot time, and whether writes happened afterward.
-- For several snapshots, the QEMU chain (`snapshot3` over `snapshot2` over `snapshot1` over `base`) and the libvirt snapshot tree are separate structures. I map them by hand.
-
----
+- Registering the VMware-derived child as the external disk makes restore create an image that depends on it
+- The snapshot tree can look correct while restore is broken. Only the create-change-restore test catches it
+- Snapshot ancestry isn't inferred from filenames. The `.vmsd` data, the VMDK parent and child links, the state at snapshot time, and whether writes happened afterward are used
+- For several snapshots, the QEMU chain (snapshot3 over snapshot2 over snapshot1 over base) and the libvirt snapshot tree are separate structures. They're mapped by hand
 
 ## Verify
 
@@ -179,4 +170,4 @@ Inspect the real files with `ls -lh` and `qemu-img check` too, not only the snap
 - [ ] `snapshot-list`, `--tree`, and `snapshot-dumpxml` show the expected data
 - [ ] A restore test succeeds and the post-restore chain is correct
 - [ ] Guest changes made after the snapshot disappear after restore
-- [ ] I keep the original VMware directory until every state I need is tested
+- [ ] The original VMware directory is kept until every state needed is tested

@@ -6,20 +6,25 @@ tags:
   - Automation
   - Fixing
 ---
-# Context
 
-After using the [[Script-Overview|original publish script]] for a couple of posts, I noticed four gaps:
+## Overview
 
-- No preview before publishing.
-- The publish date had to be set by hand (error-prone).
-- The script kept going after hitting an error instead of stopping.
-- The script didn't stop if a post was missing tags or a description.
+This page documents later fixes to the publish script — preview before publishing, automatic dates, error handling, and required-field checks.
 
-I addressed these as follow-up changes to the same script, now archived at [`Archives/blog_publication.sh`](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Archives/blog_publication.sh) in the Project-Dump repo, not as a separate tool.
+## Context
 
-# Preview before publishing
+After using the original publish script for a couple of posts, four gaps were noticed:
 
-I made the script start Hugo's dev server in the background and open it straight to the posts listing:
+- No preview before publishing
+- The publish date had to be set by hand (error-prone)
+- The script kept going after hitting an error instead of stopping
+- The script didn't stop if a post was missing tags or a description
+
+These were addressed as follow-up changes to the same script, now archived at [`Archives/blog_publication.sh`](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Archives/blog_publication.sh) in the Project-Dump repo, not as a separate tool.
+
+## Preview Before Publishing
+
+The script was modified to start Hugo's dev server in the background and open it straight to the posts listing:
 
 ```bash
 hugo server -D --disableFastRender > /dev/null &
@@ -28,26 +33,25 @@ xdg-open "http://localhost:1313/posts/"
 
 `> /dev/null` silences the server's console output so it doesn't clutter the terminal, and the trailing `&` backgrounds the server so the script can continue instead of blocking on it.
 
-![[blog-script-xdg-open-preview-browser-launch.png]]
-*`xdg-open` launching the default browser straight to the local preview URL from the terminal — confirms the command opens the correct target rather than failing silently or opening the wrong app.*
+See [xdg-open preview browser launch](Images/blog-script-xdg-open-preview-browser-launch.png) for `xdg-open` launching the default browser straight to the local preview URL from the terminal — confirming the command opens the correct target rather than failing silently or opening the wrong app.
 
-I then had the script loop on a yes/no prompt asking whether to publish; either answer kills the background Hugo server, and answering "no" exits the script without publishing.
+The script then loops on a yes/no prompt asking whether to publish; either answer kills the background Hugo server, and answering "no" exits the script without publishing.
 
-# Auto-updating the publish date
+## Auto-Updating the Publish Date
 
-I now have the current date (`date +%Y-%m-%dT00:00:00`) inserted into each post's front matter automatically via `sed -i "s/^date:.*/date: $publish_date/" index.md`, removing a manual step I didn't trust myself to remember.
+The current date (`date +%Y-%m-%dT00:00:00`) is now inserted into each post's front matter automatically via `sed -i "s/^date:.*/date: $publish_date/" index.md`, removing a manual step that wasn't trusted to be remembered.
 
-# Auto-exit on error
+## Auto-Exit on Error
 
-I added `set -euo pipefail` (see [[Publish-script-glossary#`set -euo pipefail`|glossary]]) to the top of the script so it stops instead of continuing past a failure.
+`set -euo pipefail` was added to the top of the script so it stops instead of continuing past a failure.
 
-Turning this on surfaced a real collision: the backlink-extraction regex from [[Script-Overview#Resolving cross-post links via a slug lookup file|the slug-lookup step]] was also matching unrelated `[[ ]]` Bash conditionals elsewhere in the script (e.g. `[[ "$choice" == "Y" || "$choice" == "y" ]]`). My fix checks whether the matched `[[ ]]` content contains a `$` — if so, it's a Bash conditional, not an Obsidian backlink, and gets skipped (`if [[ $line != *\$* ]];`).
+Turning this on surfaced a real collision: the backlink-extraction regex was also matching unrelated `[[ ]]` Bash conditionals elsewhere in the script (e.g. `[[ "$choice" == "Y" || "$choice" == "y" ]]`). The fix checks whether the matched `[[ ]]` content contains a `$` — if so, it's a Bash conditional, not an Obsidian backlink, and gets skipped (`if [[ $line != *\$* ]];`).
 
-A second issue: `git add *` was erroring because some files are excluded by `.gitignore`. Rather than enumerate every file explicitly, I changed the line to `git add * || true` (see [[Publish-script-glossary#`|| true`|glossary]]) so that specific, expected failure doesn't abort the whole script.
+A second issue: `git add *` was erroring because some files are excluded by `.gitignore`. Rather than enumerate every file explicitly, the line was changed to `git add * || true` so that specific, expected failure doesn't abort the whole script.
 
-# Auto-exit on missing tags or description
+## Auto-Exit on Missing Tags or Description
 
-Since the script already extracts a post's tags and description while converting it, I now have it check both immediately after extraction and abort (deleting the partially-copied post folder so a re-run starts clean) if either is empty:
+Since the script already extracts a post's tags and description while converting it, it now checks both immediately after extraction and aborts (deleting the partially-copied post folder so a re-run starts clean) if either is empty:
 
 ```bash
 if [[ -z "$tags" ]]; then
@@ -59,6 +63,6 @@ fi
 
 The description check works the same way, using `grep`/`awk` to pull `description:` out of the front matter first.
 
-# Related
+## Related
 
-- [[Script-Overview]] — the base script these changes were made to.
+- [[Script-Overview]] — the base script these changes were made to

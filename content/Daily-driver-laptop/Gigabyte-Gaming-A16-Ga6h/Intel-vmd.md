@@ -1,16 +1,17 @@
 ---
 title: Intel VMD
-description: What Intel VMD is on this laptop's CPU, why it causes a Windows "no drives found" install error, and how I safely disabled it after installing Windows with it enabled.
+description: What Intel VMD is on this laptop's CPU, why it causes a Windows "no drives found" install error, and how it was safely disabled after installing Windows with it enabled.
 tags:
   - Hardware
   - Windows
   - BIOS
 ---
+
 # Intel VMD
 
 ## What is Intel VMD?
 
-**Intel VMD (Volume Management Device)** is a hardware-based technology embedded directly inside my CPU (11th Gen and newer Intel chips have it).
+**Intel VMD (Volume Management Device)** is a hardware-based technology embedded directly inside this laptop's CPU (11th Gen and newer Intel chips have it).
 
 Traditionally, NVMe SSDs connect directly to the CPU's PCIe lanes for maximum speed. However, this direct connection makes tasks like hot-swapping drives or handling drive failures risky, often leading to system crashes.
 
@@ -18,21 +19,21 @@ Intel VMD acts as a **hardware intermediary layer** between the CPU and the NVMe
 
 ### Key benefits
 
-- **Isolated error handling:** intercepts drive glitches or failures so they don't crash the entire operating system.
-- **Hot-plugging:** allows NVMe drives to be safely plugged in or removed while the system is running (crucial for servers).
-- **Bootable NVMe RAID:** consolidates multiple NVMe drives under one controller so they can be configured in RAID arrays and booted from.
+- **Isolated error handling:** intercepts drive glitches or failures so they don't crash the entire operating system
+- **Hot-plugging:** allows NVMe drives to be safely plugged in or removed while the system is running (crucial for servers)
+- **Bootable NVMe RAID:** consolidates multiple NVMe drives under one controller so they can be configured in RAID arrays and booted from
 
 ### The "no drives found" Windows gotcha
 
-Because VMD acts as a middleman, standard Windows installation media often can't "see" past it. When installing Windows on a VMD-enabled system, I got a **"We couldn't find any drives"** error. This requires either loading the *Intel Rapid Storage Technology (IRST)* driver during setup or disabling VMD in the BIOS first.
+Because VMD acts as a middleman, standard Windows installation media often can't "see" past it. When installing Windows on a VMD-enabled system, it gets a **"We couldn't find any drives"** error. This requires either loading the *Intel Rapid Storage Technology (IRST)* driver during setup or disabling VMD in the BIOS first.
 
 ---
 
 ## Converting an existing Windows 11 install (VMD enabled → disabled)
 
-I had installed Windows 11 while Intel VMD was enabled on this laptop. Simply turning VMD off in the BIOS afterward caused a **Blue Screen of Death (BSOD)** on boot (`INACCESSIBLE_BOOT_DEVICE`). This happens because Windows keeps trying to use the VMD storage driver instead of the standard NVMe driver.
+Windows 11 was installed while Intel VMD was enabled on this laptop. Turning VMD off in the BIOS afterward caused a **Blue Screen of Death (BSOD)** on boot (`INACCESSIBLE_BOOT_DEVICE`). This happens because Windows keeps trying to use the VMD storage driver instead of the standard NVMe driver.
 
-To safely disable VMD without losing data or reinstalling Windows, I used **Windows Safe Mode** to force Windows to swap drivers.
+To safely disable VMD without losing data or reinstalling Windows, **Windows Safe Mode** was used to force Windows to swap drivers.
 
 ### Step-by-step procedure
 

@@ -4,15 +4,20 @@ description: Installing Hugo, creating a project, and organizing posts as leaf b
 tags:
   - Hugo
 ---
-# Prerequisites
+
+## Overview
+
+This page documents installing Hugo, creating a project, and organizing posts as leaf bundles so images resolve correctly.
+
+## Prerequisites
 
 None — this is the first step.
 
 ---
 
-# Installing Hugo and creating a project
+## Installing Hugo and Creating a Project
 
-[Hugo](https://gohugo.io/) is a [[Hugo-glossary#Static site generator|static site generator]]: it takes a folder of content/templates and builds a hostable website. Following Hugo's own [quickstart guide](https://gohugo.io/getting-started/quick-start/), I created the initial project with:
+[Hugo](https://gohugo.io/) is a static site generator: it takes a folder of content/templates and builds a hostable website. Following Hugo's own quickstart guide, the initial project was created with:
 
 ```bash
 hugo new project quickstart
@@ -29,15 +34,14 @@ A freshly generated project is blank until content is added — Hugo (or the act
 
 ---
 
-# Organizing posts as leaf bundles
+## Organizing Posts as Leaf Bundles
 
-Obsidian's image embeds (`![[Some Image.png]]`) are Obsidian-specific — they resolve regardless of where the image sits in the vault, because Obsidian indexes the whole vault. Hugo does not do this; I needed to tell it where an image lives relative to the page that references it.
+Obsidian's image embeds (`![[Some Image.png]]`) are Obsidian-specific — they resolve regardless of where the image sits in the vault, because Obsidian indexes the whole vault. Hugo does not do this; telling it where an image lives relative to the page that references it was needed.
 
-My fix was Hugo's [[Hugo-glossary#Page bundle|page bundles]]: each post's markdown file and its images live together in the same folder. Since my blog posts don't have nested child posts, I treated each one as a [[Hugo-glossary#Leaf bundle|leaf bundle]] rather than a branch bundle.
+The fix was Hugo's page bundles: each post's markdown file and its images lived together in the same folder. Since blog posts don't have nested child posts, each one was treated as a leaf bundle rather than a branch bundle.
 
-![[hugo-blog-publishing-workflow-diagram.png]]
-*My overall plan: write in Obsidian, convert to generic markdown, copy the post + images into Hugo's content folder, build with Hugo, then push/reload. I drew this plan before any of the tooling existed, so it isn't reproducible after the fact.*
+See [blog publishing workflow diagram](Images/hugo-blog-publishing-workflow-diagram.png) for the overall plan: write in Obsidian, convert to generic markdown, copy the post + images into Hugo's content folder, build with Hugo, then push/reload. This plan was drawn before any of the tooling existed, so it isn't reproducible after the fact.
 
-# Next
+---
 
-Continue to [[Pt 2, Fixing-content-rendering]].
+Next: [[Pt 2, Fixing-content-rendering]].

@@ -1,21 +1,22 @@
 ---
 title: Fixing Disable-While-Typing (DWT) on Wayland
-description: How I restored touchpad disable-while-typing behavior on this laptop's keyboard/touchpad hardware under Niri/KDE on Wayland.
+description: Restoring touchpad disable-while-typing behavior on this laptop's keyboard/touchpad hardware under Niri/KDE on Wayland.
 tags:
   - Linux
   - Wayland
   - Touchpad
   - libinput
 ---
+
 # Fixing Disable-While-Typing (DWT) on This Laptop
 
-> **TL;DR:** My touchpad kept moving while I typed because libinput didn't realize my keyboard and touchpad were the same physical laptop. I fixed this by manually telling `udev` and `libinput` "these devices belong together," and the trick was making sure I'd told it about **every** keyboard event node that can actually emit a keystroke — including the input-remapper virtual one I use for a hardware macro key.
+> **TL;DR:** The touchpad kept moving while typing because libinput didn't realize the keyboard and touchpad were the same physical laptop. This was fixed by manually telling `udev` and `libinput` "these devices belong together," with the trick being making sure every keyboard event node that can actually emit a keystroke was included — including the input-remapper virtual one used for a hardware macro key.
 
 ---
 
 ## 1. What "Disable-While-Typing" actually is
 
-When I type, `libinput` (the layer that turns raw hardware signals into mouse/keyboard events for KDE or Niri) briefly mutes the touchpad — about 500ms after each keystroke — so my palms don't cause stray clicks or cursor jumps. This is DWT.
+When typing, `libinput` (the layer that turns raw hardware signals into mouse/keyboard events for KDE or Niri) briefly mutes the touchpad — about 500ms after each keystroke — so palms don't cause stray clicks or cursor jumps. This is DWT.
 
 For DWT to activate, **three conditions must all be true at the same time**, for the keyboard device that is actually sending the keystroke:
 
@@ -23,7 +24,7 @@ For DWT to activate, **three conditions must all be true at the same time**, for
 2. **Both tagged "internal."** Both devices need a tag telling libinput they're physically built into the laptop, not an external/USB/Bluetooth accessory.
 3. **No phantom external mouse.** The compositor (KWin or Niri) watches for anything tagged as an external pointer device. If it thinks a mouse is plugged in, it can disable touchpad gestures/behavior outright, DWT included.
 
-If even one of these three is wrong **for the specific device node generating my keystrokes**, DWT silently does nothing — no error, no warning, nothing in the logs. It just doesn't work.
+If even one of these three is wrong **for the specific device node generating keystrokes**, DWT silently does nothing — no error, no warning, nothing in the logs. It just doesn't work.
 
 ---
 
@@ -32,25 +33,28 @@ If even one of these three is wrong **for the specific device node generating my
 This laptop has two complications that most guides online don't cover:
 
 ### 2a. The keyboard isn't one device — it's several
+
 Running `libinput list-devices` shows *multiple* entries all named things like `GIGABYTE USB-HID Keyboard`, each with a different `/dev/input/eventN` number, but the same USB hardware ID (`usb:0414:8104`). This is normal — modern keyboard controllers split themselves into several logical interfaces (one for regular keys, one for media/volume keys, one for a "wireless radio control" toggle, etc).
 
 **The trap:** only ONE of these nodes is the one that actually emits real letter/number keystrokes at any given moment. Which one it is can depend on what's intercepting input (see below), and it can change across reboots, kernel updates, or driver changes. If a udev/libinput config only tags *some* of these nodes as "internal" and grouped, and the active one isn't among them, DWT fails completely — even though everything else looks correctly configured.
 
 ### 2b. The Microsoft Copilot key needs a remapper
-This laptop has a hardware Copilot key that doesn't send a normal keypress. At the firmware level it fires a macro — `Left Meta` + `Left Shift` + `F23` — all within milliseconds. To turn that into a clean, usable `Meta`/`Super` key, I need a remapping tool sitting in the input path to catch that macro and rewrite it.
 
-[input-remapper](https://github.com/sezanzeb/input-remapper) is the tool I currently use for this. It works by grabbing the physical keyboard's events and re-emitting them through a new *virtual* device (visible as `input-remapper keyboard` in `libinput list-devices`). The problem: libinput now sees keystrokes coming from this virtual device, not the physical one — so the virtual device also needs to be grouped and tagged correctly, on top of the physical node.
+This laptop has a hardware Copilot key that doesn't send a normal keypress. At the firmware level it fires a macro — `Left Meta` + `Left Shift` + `F23` — all within milliseconds. To turn that into a clean, usable `Meta`/`Super` key, a remapping tool sitting in the input path is needed to catch that macro and rewrite it.
+
+[input-remapper](https://github.com/sezanzeb/input-remapper) is the tool currently used for this. It works by grabbing the physical keyboard's events and re-emitting them through a new *virtual* device (visible as `input-remapper keyboard` in `libinput list-devices`). The problem: libinput now sees keystrokes coming from this virtual device, not the physical one — so the virtual device also needs to be grouped and tagged correctly, on top of the physical node.
 
 > **Note on keyd:** an earlier attempt used `keyd` instead of `input-remapper` for the same purpose. If `keyd virtual keyboard` / `keyd virtual pointer` ever show up in `libinput list-devices` while input-remapper is supposed to be the active remapper, that means keyd's daemon is still running in the background (a service left enabled after switching tools). Two remappers can both grab the keyboard and cause confusing, inconsistent behavior. Fix: `sudo systemctl disable --now keyd` and reboot, then confirm the keyd virtual devices are gone from `libinput list-devices`.
 
 ### 2c. The phantom mouse
+
 The keyboard controller also exposes a sub-device called `GIGABYTE USB-HID Keyboard Mouse` that has pointer capabilities, purely because of how the USB HID descriptor is built — there's no actual second mouse. Without intervention, KDE/Niri can see this and think "there's an external mouse plugged in," which can suppress touchpad DWT behavior compositor-wide (condition 3 above).
 
 ---
 
 ## 3. The fix
 
-I use two config files. One tells `udev` (the kernel's device manager) to group the right devices together. The other tells `libinput` directly which devices count as "internal."
+Two config files are used. One tells `udev` (the kernel's device manager) to group the right devices together. The other tells `libinput` directly which devices count as "internal."
 
 ### File 1 — `/etc/udev/rules.d/99-libinput-grouping.rules`
 
@@ -109,12 +113,14 @@ Then **reboot**. In testing, a reboot was required for the new group assignments
 
 ## 4. How to verify it's actually fixed
 
-I don't just trust that "it looks right" — I confirm using these three checks, in order.
+Three checks are used, in order.
 
 ### Check 1: Are the right devices grouped together?
+
 ```bash
 sudo libinput list-devices
 ```
+
 Find the entries for the touchpad, `AT Translated Set 2 keyboard`, `GIGABYTE USB-HID Keyboard`, and (if running) `input-remapper keyboard`. **They must all show the same `Group:` number.** If even one is different, DWT will not work for keystrokes coming from that device.
 
 Also confirm the touchpad's own line says:
@@ -123,19 +129,19 @@ Disable-w-typing:        enabled
 ```
 
 ### Check 2: Are the internal tags actually applied?
+
 ```bash
 sudo libinput quirks list /dev/input/eventN
 ```
-(replace `eventN` with the actual node — find it from the list-devices output above). I should see:
-```
-AttrKeyboardIntegration=internal
-```
-Run this for **both** the touchpad's event node and the keyboard's event node.
+
+(Replace `eventN` with the actual node — find it from the list-devices output above). `AttrKeyboardIntegration=internal` should show up. Run this for **both** the touchpad's event node and the keyboard's event node.
 
 ### Check 3: Watch raw events live (the most reliable test)
+
 ```bash
 sudo libinput debug-events
 ```
+
 With this running, type on the keyboard and immediately try to move the touchpad. Watch the output:
 
 - Look at which `eventN` the `KEYBOARD_KEY` lines are coming from. Note its group from the `DEVICE_ADDED` line near the top of the output.
@@ -165,6 +171,7 @@ If `debug-events` shows correct suppression but the cursor *still* visibly moves
 This setup is fragile in a specific way: it depends on **device names and groupings that aren't guaranteed to stay the same** across updates. Here's what to watch for:
 
 ### Kernel updates
+
 A kernel update can change how the keyboard controller's USB HID descriptor is parsed, which can change:
 - Which `eventN` number gets assigned to which sub-interface (not a problem, since these rules match by **name**, not number)
 - In rarer cases, the **name** udev assigns to a device, if the kernel's HID parsing logic changes how it labels endpoints
@@ -172,6 +179,7 @@ A kernel update can change how the keyboard controller's USB HID descriptor is p
 **If this happens:** run `libinput list-devices` after any kernel update and confirm the device names being matched on (`GIGABYTE USB-HID Keyboard`, `ELAN0A05:01 04F3:3337 Touchpad`, `AT Translated Set 2 keyboard`) still appear exactly as written. If a name changes even slightly, the udev rule silently stops matching — no error, it just stops working.
 
 ### input-remapper updates
+
 An update could change:
 - The name pattern of the virtual device it creates (currently anything containing `input-remapper` — covered by the wildcard match, so minor naming tweaks are safe)
 - How it grabs the physical device (e.g. switching which physical node it intercepts) — if this changes, the *real* keystrokes might start coming from a different physical node than before, recreating the exact bug fixed in section 3
@@ -179,6 +187,7 @@ An update could change:
 **If this happens:** re-run Check 3 (`debug-events`) above. It will immediately show which node is now live.
 
 ### libinput updates
+
 libinput periodically changes default heuristics for automatic device grouping and quirks loading. A libinput update could:
 - Change the default group assignment algorithm, potentially undoing the *effect* of group overrides if the override mechanism's syntax changes
 - Ship new built-in quirks that conflict with or shadow `/etc/libinput/local-overrides.quirks`
@@ -186,7 +195,8 @@ libinput periodically changes default heuristics for automatic device grouping a
 **If this happens:** run `libinput quirks validate` (no arguments) after any libinput update — this validates the full merged quirks database, not just this file, and will catch syntax incompatibilities. Also re-run Check 1 and Check 2 from section 4.
 
 ### Switching remappers again (input-remapper ↔ keyd ↔ something else)
-If I ever switch remapping tools again:
+
+If remapping tools are switched again:
 1. Fully disable the old one: `sudo systemctl disable --now <old-tool>`
 2. Reboot
 3. Confirm with `libinput list-devices` that the old tool's virtual devices are completely gone
@@ -194,15 +204,16 @@ If I ever switch remapping tools again:
 5. Run all three checks in section 4 again
 
 ### General rule of thumb
+
 **Any time DWT mysteriously breaks after a system update, the fix is almost always: re-run `libinput list-devices`, find what's actually emitting keystrokes via `libinput debug-events`, and confirm it shares a group with the touchpad.** The three rules in section 1 haven't changed in years — what changes is *which device* needs them applied.
 
 ---
 
 ## 7. Command reference
 
-| Command | What it tells me |
+| Command | What it tells you |
 |---|---|
-| `sudo libinput list-devices` | All input devices, their group numbers, and capabilities. My main diagnostic tool. |
+| `sudo libinput list-devices` | All input devices, their group numbers, and capabilities. Main diagnostic tool. |
 | `sudo libinput debug-events` | Live raw event stream. Type and move the touchpad while it's running to see exactly what libinput sees, in real time. The most reliable way to find the *actual* active keyboard node. |
 | `sudo libinput quirks list /dev/input/eventN` | Shows which quirks (like `AttrKeyboardIntegration=internal`) are currently active on a specific device. |
 | `libinput quirks validate` | Checks quirks file(s) for syntax errors against the full merged quirks database. Run with no arguments for the complete check. |

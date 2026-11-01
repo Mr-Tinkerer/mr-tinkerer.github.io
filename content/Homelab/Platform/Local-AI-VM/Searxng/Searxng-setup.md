@@ -1,12 +1,40 @@
 ---
 title: SearXNG Setup
-description: Running a private SearXNG instance so local LLMs can search the web without depending on a third-party search API.
+description: Running a private SearXNG instance for local LLM web search without third-party API dependency.
 tags:
   - Homelab
   - Searxng
 ---
-[SearXNG](https://github.com/searxng/searxng) runs as a [[Homelab/Logical/Containerization/Tool-choices|Podman]] container on the [[Homelab/Logical/Virtual-machines/Vm-allocation|Local AI VM]], giving [[Homelab/Platform/Local-AI-VM/Open-webui/Open-webui-setup|Open WebUI]] a private, self-hosted search backend instead of a third-party search API. Reachable at `search.uhhhhh` through [[Homelab/Software/Nginx/Reverse-proxy-setup|Nginx]] (see [search.conf](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Nginx/conf.d/search.conf)). The maintained quadlet is kept in the infrastructure repo: [searxng.container](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Local-AI%20VM/Quadlets/searxng.container).
 
-Unlike Open WebUI's `Network=host` setup, the SearXNG quadlet publishes a mapped port (`PublishPort=8888:8080` — host port 8888 to the container's internal port 8080) rather than sharing the host network namespace directly. It persists two separate volumes: `%h/searxng/config/:/etc/searxng` (SearXNG's own configuration, e.g. `settings.yml`) and `%h/searxng/data/:/var/cache/searxng` (its cache). [[Homelab/Platform/Local-AI-VM/Open-webui/Open-webui-setup|Open WebUI's]] quadlet declares a hard `Requires=`/`After=` dependency on this service, so SearXNG must be up before Open WebUI starts.
+## Overview
 
-See [[Homelab/Platform/Local-AI-VM/Open-webui/Open-webui-setup#Web search via SearXNG|Open WebUI]] for how this instance is wired into the chat front-end.
+SearXNG provides a private, self-hosted search backend for local LLMs, eliminating dependency on third-party search APIs.
+
+## Architecture
+
+SearXNG runs as a Podman container on the Local AI VM.
+
+- **Access:** `search.uhhhhh` through Nginx
+- **Configuration:** [search.conf](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Nginx/conf.d/search.conf)
+- **Quadlet:** [searxng.container](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Local-AI%20VM/Quadlets/searxng.container)
+
+## Container Configuration
+
+### Network Publishing
+
+Unlike Open WebUI's `Network=host` setup, SearXNG uses port mapping:
+
+- `PublishPort=8888:8080` — host port 8888 maps to container's internal port 8080
+
+### Volume Persistence
+
+Two separate volumes persist:
+
+- `%h/searxng/config/:/etc/searxng` — SearXNG configuration (e.g., `settings.yml`)
+- `%h/searxng/data/:/var/cache/searxng` — Cache data
+
+### Service Dependencies
+
+Open WebUI's quadlet declares `Requires=`/`After=` dependency on SearXNG, ensuring SearXNG starts before Open WebUI.
+
+See Open WebUI for integration with the chat front-end.

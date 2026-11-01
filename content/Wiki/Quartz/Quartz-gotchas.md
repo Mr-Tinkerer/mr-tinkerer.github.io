@@ -1,10 +1,12 @@
 ---
 title: Quartz Gotchas
-description: Problems I hit getting the site to render correctly after migration.
+description: Problems hit getting the site to render correctly after migration.
 tags:
   - wiki
   - quartz
 ---
+
+# Quartz Gotchas
 
 ## SVGs don't render
 

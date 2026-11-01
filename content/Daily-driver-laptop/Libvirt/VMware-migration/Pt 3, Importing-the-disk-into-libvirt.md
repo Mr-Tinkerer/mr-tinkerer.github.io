@@ -1,5 +1,5 @@
 ---
-title: "Pt 3, Importing the disk into libvirt"
+title: VMware Migration Pt 3, Importing the Disk into libvirt
 description: Creating the libvirt VM from the converted QCOW2, matching the VMware hardware conservatively, and swapping the guest tools.
 tags:
   - libvirt
@@ -9,16 +9,18 @@ tags:
   - migration
 ---
 
-# Prerequisites
+## Overview
+
+This step covers creating the libvirt VM from the converted QCOW2, matching the VMware hardware conservatively, and swapping the guest tools.
+
+## Prerequisites
 
 - [[Pt 1, Inventorying-the-VMware-source]]
 - [[Pt 2, Converting-vmdk-to-qcow2]]
 
----
+## Point the VM at the Right Image
 
-## Point the VM at the right image
-
-I create the VM in [[Libvirt-glossary#Virt Manager|Virt Manager]] using an existing disk image. For a normal active chain, I select the top image:
+The VM is created in Virt Manager using an existing disk image. For a normal active chain, the top image is selected:
 
 ```text
 VM
@@ -30,35 +32,29 @@ VMNAME-active.qcow2
 VMNAME-base.qcow2
 ```
 
-The backing file does not get attached as a second disk. QEMU follows the [[Libvirt-glossary#Backing file and backing chain|backing chain]] internally. The domain has one virtual disk.
+The backing file doesn't get attached as a second disk. QEMU follows the backing chain internally. The domain has one virtual disk.
 
-Putting both files in a libvirt storage pool only makes them storage volumes. It does not create libvirt snapshots. I cover that in [[Pt 4, Importing-vmware-snapshots-into-libvirt]].
+Putting both files in a libvirt storage pool only makes them storage volumes. It doesn't create libvirt snapshots. That's covered in Pt 4.
 
----
+## Match the Hardware Conservatively
 
-## Match the hardware conservatively
+For an existing VM, compatibility over optimization is chosen at first. From the `.vmx`, these are recorded:
 
-For an existing VM, I choose compatibility over optimization at first. From the `.vmx` I record:
-
-- firmware type (EFI or BIOS)
+- Firmware type (EFI or BIOS)
 - vCPU count and RAM
-- disk controller and network adapter type
-- MAC addresses, if I need to keep them
+- Disk controller and network adapter type
+- MAC addresses, if keeping them
 - CD/DVD device and any other device the guest depends on
 
-I do not switch the storage controller to VirtIO on a guest that lacks the drivers. I start with a widely supported emulated controller and network adapter, and I move storage and network devices to VirtIO one at a time after the guest boots. The controller options, including the VMware PVSCSI bridge, are in [[Virtual-disks-reference#3. SCSI controllers]].
+The storage controller isn't switched to VirtIO on a guest lacking the drivers. A widely supported emulated controller and network adapter are used first, then storage and network devices are moved to VirtIO one at a time after the guest boots. The controller options, including the VMware PVSCSI bridge, are in the Virtual Disks Reference.
 
-For UEFI guests I also check OVMF firmware, Secure Boot needs, NVRAM variables, and machine type. My notes on firmware and chipset are in [[Libvirt-Information#VM Firmware]] and [[Libvirt-Information#Chipset]]. Windows can detect changed virtual hardware as new devices. I change one major hardware characteristic at a time so I can tell what broke.
+For UEFI guests, OVMF firmware, Secure Boot needs, NVRAM variables, and machine type are also checked. Notes on firmware and chipset are in the Libvirt Information pages. Windows can detect changed virtual hardware as new devices. One major hardware characteristic is changed at a time so what broke can be told.
 
----
+## Swap the Guest Tools
 
-## Swap the guest tools
+The process is the same for Windows and Linux guests. Only the guest tools differ. VMware Tools is uninstalled and the VirtIO drivers (`virtio-win` on Windows) are installed.
 
-The process is the same for Windows and Linux guests. Only the guest tools differ. I uninstall VMware Tools and install the [[Libvirt-glossary#VirtIO drivers|VirtIO drivers]] (`virtio-win` on Windows).
-
-The driver installation follows the same bootstrap as a physical-to-virtual move. I boot on SATA first, stage the drivers, then switch the bus. The steps are in [[Virtual-disks-reference#11. Physical ⇄ virtual migration (P2V / V2P)]]. If Windows still reports a missing storage driver afterward, see [[Scsi-drive-troubleshooting]].
-
----
+The driver installation follows the same bootstrap as a physical-to-virtual move. The guest boots on SATA first, stages the drivers, then switches the bus. The steps are in the Physical ⇄ Virtual migration page. If Windows still reports a missing storage driver afterward, the SCSI drive troubleshooting page is consulted.
 
 ## Verify
 
@@ -71,6 +67,4 @@ The driver installation follows the same bootstrap as a physical-to-virtual move
 
 ---
 
-# Next
-
-[[Pt 4, Importing-vmware-snapshots-into-libvirt]]
+Next: [[Pt 4, Importing-vmware-snapshots-into-libvirt]]

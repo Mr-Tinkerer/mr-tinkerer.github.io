@@ -6,11 +6,13 @@ tags:
   - github-pages
 ---
 
-Since the wiki replaced the old blog rather than living alongside it, I archived the old blog site's repo and renamed it, then created a fresh [GitHub Pages repo](https://github.com/Mr-Tinkerer/mr-tinkerer.github.io) for the wiki.
+# Wiki GitHub Pages Repository Setup
+
+Since the wiki replaced the old blog rather than living alongside it, the old blog site's repo was archived and renamed, then a fresh [GitHub Pages repo](https://github.com/Mr-Tinkerer/mr-tinkerer.github.io) was created for the wiki.
 
 ## Setting the source to GitHub Actions
 
-Under the repo's **Settings → Pages**, the **Source** dropdown offers two options: **Deploy from a branch** (the classic Pages experience, what the old blog used — see [[Old-blog-site/GitHub-Pages/Deployment|Deployment]]) or **GitHub Actions** (best when a framework needs a build step first). I picked **GitHub Actions**, since Quartz needs to build the site before it can be published.
+Under the repo's **Settings → Pages**, the **Source** dropdown offers two options: **Deploy from a branch** (the classic Pages experience, what the old blog used — see [[Old-blog-site/GitHub-Pages/Deployment|Deployment]]) or **GitHub Actions** (best when a framework needs a build step first). **GitHub Actions** was picked, since Quartz needs to build the site before it can be published.
 
 After saving and adding the [[Github-pages-deployment-workflow|deployment workflow]], the Pages settings confirmed the source and showed the default domain with HTTPS enforced:
 

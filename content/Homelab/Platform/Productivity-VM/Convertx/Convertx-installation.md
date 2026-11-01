@@ -1,12 +1,28 @@
 ---
 title: ConvertX Installation
-description: Running ConvertX as a Podman container on the Productivity VM.
+description: Running ConvertX as a Podman container on the Productivity VM for file conversion.
 tags:
   - Homelab
   - Convertx
 ---
-[ConvertX](https://github.com/C4illin/ConvertX) is a self-hosted file conversion tool, run as a [[Homelab/Logical/Containerization/Tool-choices|Podman]] quadlet-managed container on the [[Homelab/Logical/Virtual-machines/Vm-allocation|Productivity VM]], reachable at `convertx.uhhhhh` through [[Homelab/Software/Nginx/Reverse-proxy-setup|Nginx]] (see [convertx.conf](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Nginx/conf.d/convertx.conf)). The maintained quadlet is kept in the infrastructure repo: [convertx.container](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Productivity%20VM/convertx/convertx.container), [convertx.network](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Productivity%20VM/convertx/convertx.network).
 
-# Configuration
+## Overview
 
-I configured ConvertX with `ACCOUNT_REGISTRATION=false` and `ALLOW_UNAUTHENTICATED=true` — it runs without login, relying on the home lab's network/[[Homelab/Software/Nginx/Ssl-certificates|HTTPS]] boundary rather than its own auth. I set `AUTO_DELETE_EVERY_N_HOURS=1` to clear uploaded/converted files an hour after they're created.
+ConvertX provides self-hosted file conversion capabilities, running as a Podman quadlet-managed container on the Productivity VM.
+
+- **Access:** `convertx.uhhhhh` through Nginx
+- **Configuration:** [convertx.conf](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Nginx/conf.d/convertx.conf)
+- **Quadlet:** [convertx.container](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Productivity%20VM/convertx/convertx.container), [convertx.network](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Productivity%20VM/convertx/convertx.network)
+
+## Configuration
+
+### Authentication Settings
+
+- `ACCOUNT_REGISTRATION=false` — Disabled user registration
+- `ALLOW_UNAUTHENTICATED=true` — Allows unauthenticated access
+
+ConvertX relies on the home lab's network/HTTPS boundary rather than its own authentication.
+
+### File Cleanup
+
+`AUTO_DELETE_EVERY_N_HOURS=1` — Uploaded and converted files are deleted one hour after creation.

@@ -5,9 +5,10 @@ tags:
   - Homelab
   - Debian
 ---
+
 ## Networking
 
-The Debian installer didn't give me any IP configuration step, so it came up using DHCP by default. I set a static IP instead by editing `/etc/network/interfaces`:
+The Debian installer didn't give an IP configuration step, so it came up using DHCP by default. A static IP was set instead by editing `/etc/network/interfaces`:
 
 ```
 # The primary network interface

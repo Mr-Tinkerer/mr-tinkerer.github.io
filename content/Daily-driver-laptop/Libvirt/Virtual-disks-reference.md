@@ -1,14 +1,15 @@
 ---
 title: QEMU/KVM Virtual Disks Reference
-description: My reference for everything that determines how a QEMU/KVM virtual disk behaves — bus type, controller, file format, and performance/safety settings.
+description: Reference for everything that determines how a QEMU/KVM virtual disk behaves — bus type, controller, file format, and performance/safety settings.
 tags:
   - Virtual_Machines
   - QEMU
   - Storage
 ---
+
 # QEMU/KVM Virtual Disks Reference
 
-I put this together as my own reference for Virt-Manager (and Proxmox) virtual disks — everything that determines how a disk behaves: the bus it's attached to, the controller emulating that bus, the file format backing it, and the settings that control performance, space usage, and data safety. I used it when setting up the [[Libvirt-glossary#VirtIO drivers|VirtIO]]-backed drives for the gaming VM (see [[Post-install-tweaks]]), and keep it here since it applies to any QEMU/KVM VM, not just that one.
+This reference covers everything that determines how a Virt-Manager (and Proxmox) virtual disk behaves: the bus it's attached to, the controller emulating that bus, the file format backing it, and the settings that control performance, space usage, and data safety. It was created as a reference for setting up the VirtIO-backed drives for the gaming VM (see [[Post-install-tweaks]]), and it applies to any QEMU/KVM VM, not just that one.
 
 ---
 
@@ -94,7 +95,7 @@ Paravirtualization *should* consistently outperform SATA emulation, since VirtIO
 | Moderate everyday VM usage, SSD-backed | Noticeable but modest, usually favoring VirtIO/SCSI |
 | Heavy random I/O, high queue depth, NVMe-backed, or many VMs sharing a host | Large gap in VirtIO/SCSI's favor — sometimes 1.5–2.5x+ |
 
-**Bottom line:** I default to VirtIO SCSI (Single, with IOThread) since it costs nothing once drivers are installed, but I don't expect a fixed guaranteed percentage improvement — benchmark the actual workload with `fio` if it matters.
+**Bottom line:** VirtIO SCSI (Single, with IOThread) is the default since it costs nothing once drivers are installed, but a fixed guaranteed percentage improvement isn't expected — benchmark the actual workload with `fio` if it matters.
 
 ---
 
@@ -136,12 +137,13 @@ For external snapshots and backing chains, see [[Libvirt-external-snapshots]].
 
 ## 7. Discard / TRIM
 
-**The problem:** when I delete files inside a VM, the guest marks that space free, but the host-side disk file (e.g. a `.qcow2`) doesn't automatically shrink, since the host has no idea those blocks were freed.
+**The problem:** when files are deleted inside a VM, the guest marks that space free, but the host-side disk file (e.g. a `.qcow2`) doesn't automatically shrink, since the host has no idea those blocks were freed.
 
 **The fix — Discard mode `unmap`:**
 ```
 [Guest OS deletes file] ──> [Sends TRIM command] ──> [QEMU unmap] ──> [Host reclaims space]
 ```
+
 When the guest issues TRIM, `unmap` passes it through to the host, which punches holes in the backing file (or issues real TRIM to the underlying SSD). It isn't the default because reclaiming space can cause temporary latency spikes, and multiple VMs aggressively reclaiming/reallocating space on a nearly-full host drive could exhaust it and crash every VM at once.
 
 **Version requirements** (this trips people up more than it looks):
@@ -154,7 +156,7 @@ When the guest issues TRIM, `unmap` passes it through to the host, which punches
 | Windows viostor/vioscsi driver | Any `virtio-win` build after ~June 2019 |
 | SATA/AHCI (ATA TRIM) | Stable since roughly QEMU 1.1–1.4; needs `discard=unmap` on the drive |
 
-**Practical takeaway:** if I'm on VirtIO Block and TRIM matters, I double-check the VM is on `q35` — an `i440fx` VM silently fails to reclaim space no matter how new QEMU is. VirtIO SCSI sidesteps this entirely, one more reason it's the safer default.
+**Practical takeaway:** If on VirtIO Block and TRIM matters, double-check the VM is on `q35` — an `i440fx` VM silently fails to reclaim space no matter how new QEMU is. VirtIO SCSI sidesteps this entirely, one more reason it's the safer default.
 
 **Windows caveat:** even with modern drivers, running "Optimize" on a VirtIO SCSI disk has reportedly caused excessive CPU load and *rewritten* data instead of cleanly trimming it in some cases — worth testing the actual setup rather than assuming drivers alone guarantee efficient reclamation.
 
@@ -162,7 +164,7 @@ When the guest issues TRIM, `unmap` passes it through to the host, which punches
 
 **Triggering it:** Windows — *Defragment and Optimize Drives* → **Optimize** (or `schtasks`/Task Scheduler running `defrag /O C:` weekly). Linux — `sudo fstrim -av` manually, or `sudo systemctl enable --now fstrim.timer` for weekly automation.
 
-> ⚠️ I avoid continuous trimming (the `-o discard` mount flag on Linux) — it causes constant micro-stutters. Scheduled weekly TRIM is the better trade-off.
+> ⚠️ Continuous trimming (the `-o discard` mount flag on Linux) is avoided — it causes constant micro-stutters. Scheduled weekly TRIM is the better trade-off.
 
 ---
 
@@ -204,7 +206,7 @@ Cache mode controls how data travels between the guest, the host's RAM (page cac
 
 ## 10. Reclaiming space from the host
 
-If a `.qcow2` file has grown bloated from deleted-but-never-trimmed files, I can shrink it directly from the host. The VM **must** be fully shut down first, or the disk can be corrupted.
+If a `.qcow2` file has grown bloated from deleted-but-never-trimmed files, it can be shrunk directly from the host. The VM **must** be fully shut down first, or the disk can be corrupted.
 
 **Method A — `virt-sparsify` (preferred):**
 ```bash
@@ -241,6 +243,7 @@ sudo dd if=/path/to/disk.raw of=/dev/sdX bs=4M status=progress conv=fsync
 # qcow2 must be converted to raw first — not directly dd-able
 qemu-img convert -O raw disk.qcow2 disk.raw
 ```
+
 Caveats: target the whole disk (`/dev/sdX`), not a partition; make sure the source is quiescent (VM shut down / disk unmounted) before imaging; resize the partition/filesystem afterward if the destination size differs.
 
 **P2V (Windows):** attach the imaged disk as **SATA** first (Windows' inbox `storahci.sys` AHCI driver is boot-start by default on any stock install) so it boots cleanly; install the `virtio-win` driver package while still on SATA, staging it into the driver store; shut down, switch to **VirtIO SCSI Single**, reboot. (`virt-v2v` can inject the driver offline and skip the SATA bootstrap step.)
@@ -253,6 +256,7 @@ update-initramfs -u
 # RHEL/Fedora (dracut)
 dracut --add-drivers "virtio_blk virtio_scsi" --force
 ```
+
 Then switch to VirtIO SCSI Single and reboot.
 
 **V2P (Windows):** the same risk in reverse — on a stock install, only the driver for the controller actually used at install time is boot-start; e.g. `storahci` (SATA) is `BOOT_START` while `stornvme` (NVMe) sits at `DEMAND_START` even if NVMe was never used. Before converting: flip the destination driver to boot-start while still bootable under the old config (`sc config stornvme start= boot` for a SATA→NVMe move; the same idea for VirtIO→standard hardware). If already imaged and unbootable, boot from install media/WinPE, load the offline `SYSTEM` hive, and change the relevant service's `Start` value from `3` to `0`. If the target has real hardware RAID (LSI MegaRAID/PERC/Smart Array), that's a genuine third-party driver — inject it into the offline image via DISM `/Add-Driver`, same idea as staging `virtio-win` in the P2V direction.
@@ -265,6 +269,7 @@ dracut --no-hostonly --regenerate-all
 echo -e "ahci\nnvme" >> /etc/initramfs-tools/modules
 update-initramfs -u
 ```
+
 Generally more forgiving than Windows, since most distro installers build a broad initramfs by default.
 
 **General principle for both directions:** boot successfully on the *current* controller, stage/enable the *destination* controller's driver while still in a working state, then switch and reboot — never commit to the switch blind. Dedicated backup/restore tools (Macrium Reflect, Acronis, Clonezilla) automate this driver staging and are worth using over manual registry surgery for anything beyond a one-off.

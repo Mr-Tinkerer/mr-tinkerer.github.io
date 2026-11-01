@@ -1,23 +1,32 @@
 ---
-title: DHCP plan
-description: The DHCP pool range within the home lab's addressing plan, and the Limit-vs-End mistake made while setting it.
+title: DHCP Plan
+description: The DHCP pool range within the home lab's addressing plan and the Limit-vs-End configuration mistake.
 tags:
   - Homelab
   - Networking
   - Home-network
 ---
-Within the [[Homelab/Logical/Home-network/Addressing-plan|`10.10.0.0/28`]] network, I have DHCP hand out a small range of addresses at `10.10.0.6` - `10.10.0.10/28`, leaving the lower addresses free for static assignments (router, Proxmox host, NAS).
 
-# The Limit/End mix-up
+## Overview
 
-OpenWrt's DHCP server config has a `Limit` field that is a **count** of addresses from `Start`, not an absolute end address. I misread it as an end address, which let a lease land outside the intended pool:
+This page documents the DHCP pool configuration within the `10.10.0.0/28` network and a configuration error that affected the pool boundaries.
 
-![[omv-dhcp-lease-outside-intended-range.png]]
-*A DHCP-assigned address that was technically in-network but outside the pool actually intended.*
+## DHCP Pool Configuration
 
-Correcting `Limit` to the right count fixed the pool boundary going forward:
+The DHCP server hands out addresses in the range `10.10.0.6` - `10.10.0.10`, leaving lower addresses free for static assignments (router, Proxmox host, NAS).
 
-![[corrected-dhcp-limit-vs-end-fields.png]]
-*The corrected DHCP range after fixing the `Limit`/`End` misunderstanding.*
+## Limit/End Configuration Error
 
-See [[Homelab/Software/OpenWrt/Dhcp-and-dns-configuration#DHCP server range|DHCP and DNS configuration]] for where this is actually configured, including the device that first surfaced the `Limit`-vs-end-address mixup.
+### Problem Description
+
+OpenWrt's DHCP server configuration contains a `Limit` field that specifies the **count** of addresses from `Start`, not an absolute end address.
+
+### Configuration Error
+
+The `Limit` field was misinterpreted as an end address, causing a DHCP lease to land outside the intended pool.
+
+### Resolution
+
+Correcting the `Limit` value to the proper count fixed the pool boundary issue for subsequent leases.
+
+See [[Homelab/Software/OpenWrt/Dhcp-and-dns-configuration#DHCP server range|DHCP and DNS configuration]] for the actual configuration location, including the device that first surfaced the `Limit`-vs-end-address misunderstanding.

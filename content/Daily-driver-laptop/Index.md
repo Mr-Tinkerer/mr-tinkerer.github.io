@@ -4,11 +4,12 @@ description: The user's actual daily-driver laptop — a Gigabyte Gaming A16 run
 tags:
   - Laptop
 ---
+
 # Daily Driver Laptop
 
-This domain covers the laptop I actually use day to day (not the separate failed/broken Asus laptop documented elsewhere in this vault): its hardware, the Windows gaming VM I set up on it with GPU passthrough, the libvirt setup that runs my VMs, and how I consume backup storage from my home NAS on it.
+This domain covers the daily-driver laptop (not the separate failed/broken Asus laptop documented elsewhere in this vault): its hardware, the Windows gaming VM set up on it with GPU passthrough, the libvirt setup that runs VMs, and how backup storage is consumed from the home NAS on it.
 
-I don't yet have enough Hardware entries (only one) alongside my Software/Logical entries to trigger the Hardware/Software/Logical bucket split (§3) — buckets stay flat at the domain root.
+At this point, there aren't enough Hardware entries (only one) alongside Software/Logical entries to trigger the Hardware/Software/Logical bucket split (§3) — buckets stay flat at the domain root.
 
 # Gigabyte-Gaming-A16-Ga6h
 
@@ -38,7 +39,7 @@ A Windows 10 VM with GPU passthrough (VFIO), set up so playing games or running 
 
 # Libvirt
 
-The libvirt and QEMU/KVM setup that runs all of my VMs on this laptop: network modes, firmware and chipset options, the host firewall interaction, virtual disk settings, VirtIO SCSI and SPICE display troubleshooting, external snapshots and their recovery, and converting VMware VMs to libvirt.
+The libvirt and QEMU/KVM setup that runs all VMs on this laptop: network modes, firmware and chipset options, the host firewall interaction, virtual disk settings, VirtIO SCSI and SPICE display troubleshooting, external snapshots and their recovery, and converting VMware VMs to libvirt.
 
 - [[Libvirt/Libvirt-glossary|Glossary]]
 - [[Libvirt/Libvirt-Information|Libvirt information]]

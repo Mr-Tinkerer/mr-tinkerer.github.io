@@ -5,9 +5,11 @@ tags:
   - Virtual_Machines
   - QEMU
 ---
+
 # Pt 1, Creating the VM
 
 # Prerequisites
+
 None — this is the first step.
 
 ---
@@ -16,7 +18,7 @@ None — this is the first step.
 
 Build a Windows 10 VM under [[Libvirt-glossary#QEMU|QEMU]]/[[Libvirt-glossary#KVM|KVM]] (managed with [[Libvirt-glossary#libvirt|libvirt]] and [[Libvirt-glossary#Virt Manager|Virt Manager]]) that can later be given the laptop's dedicated GPU. Reasons for this setup: confirming whether a game issue comes from [Proton](https://github.com/ValveSoftware/Proton) rather than the game itself, and running untrusted software isolated from the host while still getting full GPU performance.
 
-I avoided Type 2 hypervisors (VirtualBox, VMware Workstation) because they compete with the host OS for hardware access, making full GPU passthrough impractical — see [[Libvirt-glossary#Hypervisor (Type 1 vs Type 2)|Hypervisor]]. QEMU with KVM behaves like a Type 1 hypervisor since KVM lets it access hardware directly through the kernel.
+Type 2 hypervisors (VirtualBox, VMware Workstation) are avoided because they compete with the host OS for hardware access, making full GPU passthrough impractical — see [[Libvirt-glossary#Hypervisor (Type 1 vs Type 2)|Hypervisor]]. QEMU with KVM behaves like a Type 1 hypervisor since KVM lets it access hardware directly through the kernel.
 
 ## Prerequisites for GPU passthrough in general
 
@@ -25,11 +27,11 @@ I avoided Type 2 hypervisors (VirtualBox, VMware Workstation) because they compe
 - A way to see the VM's video output — either a second monitor (one on each GPU) or a way to swap a single monitor's cable between them.
 - Any modern Linux distro (the tooling used here doesn't support Windows or macOS as the host).
 
-I did this on the [[Gigabyte-gaming-a16-ga6h-overview|Gigabyte Gaming A16 Ga6h]] laptop running CachyOS.
+This was done on the [[Gigabyte-gaming-a16-ga6h-overview|Gigabyte Gaming A16 Ga6h]] laptop running CachyOS.
 
 ## Getting the ISO and picking a Windows version
 
-I deliberately used Windows 10 Home over Windows 11: it avoids Windows 11's stricter install requirements and mandatory Microsoft-account sign-in, and since this VM will almost never touch the network, Windows 10's eventual end of support isn't a real concern to me. Microsoft still hosts the [Windows 10 ISO](https://www.microsoft.com/en-ca/software-download/windows10iso) directly.
+Windows 10 Home was used over Windows 11: it avoids Windows 11's stricter install requirements and mandatory Microsoft-account sign-in, and since this VM will almost never touch the network, Windows 10's eventual end of support isn't a real concern. Microsoft still hosts the [Windows 10 ISO](https://www.microsoft.com/en-ca/software-download/windows10iso) directly.
 
 ## VM configuration
 
@@ -42,7 +44,7 @@ I deliberately used Windows 10 Home over Windows 11: it avoids Windows 11's stri
 
 Standard Windows 10 install: no license key, Windows 10 Home edition, use the entire (virtual) drive. During the offline setup screens, choose **I don't have internet** to skip network/Microsoft-account setup.
 
-When creating the local account, I'm deliberate about the username/password used — a weak placeholder credential for a VM that stays offline is a different risk profile than the same credential on a networked machine, but it's still worth choosing consciously rather than by habit. I used a deliberate placeholder credential just to get past the setup screen, and changed it immediately afterward.
+When creating the local account, a deliberate placeholder username/password is used — a weak credential for a VM that stays offline is a different risk profile than the same credential on a networked machine, but it's still worth choosing consciously rather than by habit. A deliberate placeholder credential is used just to get past the setup screen, and it's changed immediately afterward.
 
 ## Drivers and updates
 

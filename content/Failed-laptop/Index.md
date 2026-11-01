@@ -4,11 +4,18 @@ description: An Asus X555q laptop repurposed as a home server, and the hardware/
 tags:
   - Failed-laptop
 ---
-I was given an Asus X555q laptop that was semi-broken, and I tried turning it into usable home server hardware — first as a Proxmox hypervisor, then later revisited as NAS hardware.
 
-# Asus-X555q
+## Overview
 
-The laptop itself: a broken internal Wi-Fi card, a WPA2 Enterprise dorm network with no static IPs, and the Proxmox install I built around both constraints.
+This page documents an Asus X555q laptop that was repurposed as home server hardware, including the hardware and network problems encountered along the way.
+
+## History
+
+An Asus X555q laptop was received in semi-broken condition and was converted to usable home server hardware — first as a Proxmox hypervisor, then revisited as NAS hardware.
+
+## Asus-X555q
+
+The laptop itself: a broken internal Wi-Fi card, a WPA2 Enterprise dorm network with no static IPs, and the Proxmox install built around both constraints.
 
 - [[Asus-X555q/Asus-x555q-glossary|Glossary]]
 - [[Asus-X555q/Wifi-card-replacement|Diagnosing and Replacing the Wi-Fi Card]]

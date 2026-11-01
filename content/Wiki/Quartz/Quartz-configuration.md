@@ -1,10 +1,12 @@
 ---
 title: Quartz Configuration
-description: The quartz.config.yaml changes I made — site title, sidebar plugin layout, and the Phoenix theme.
+description: The quartz.config.yaml changes — site title, sidebar plugin layout, and the Phoenix theme.
 tags:
   - wiki
   - quartz
 ---
+
+# Quartz Configuration
 
 All of this lives in `quartz.config.yaml`.
 
@@ -33,7 +35,7 @@ layout:
 
 ## Phoenix theme
 
-I switched from Quartz's default theme to the [Phoenix theme](https://quartz-themes.github.io/phoenix/):
+Quartz's default theme was switched to the [Phoenix theme](https://quartz-themes.github.io/phoenix/):
 
 ```bash
 npm install @quartz-themes/core @quartz-themes/phoenix
@@ -82,4 +84,4 @@ configuration:
       priority: 50
 ```
 
-Separately, I also had to manually fix broken backlinks left over from migration — see [[Quartz-gotchas#Broken backlinks after migration|Gotchas]].
+Separately, broken backlinks left over from migration had to be manually fixed — see [[Quartz-gotchas#Broken backlinks after migration|Gotchas]].

@@ -1,5 +1,5 @@
 ---
-title: "Pt 2, Converting VMDK to QCOW2"
+title: VMware Migration Pt 2, Converting VMDK to QCOW2
 description: Converting the VMware base disk to QCOW2, building a native backing chain, and validating the images.
 tags:
   - libvirt
@@ -8,48 +8,46 @@ tags:
   - migration
 ---
 
-# Prerequisites
+## Overview
+
+This step covers converting the VMware base disk to QCOW2, building a native backing chain, and validating the images.
+
+## Prerequisites
 
 - [[Pt 1, Inventorying-the-VMware-source]]
 
----
+## Convert the Base Descriptor
 
-## Convert the base descriptor
-
-I convert the descriptor. QEMU reads the extent layout through it.
+The descriptor is converted. QEMU reads the extent layout through it.
 
 ```bash
 qemu-img convert -p -f vmdk -O qcow2 VMNAME.vmdk VMNAME-base.qcow2
 ```
 
-Then I check the result:
+Then the result is checked:
 
 ```bash
 qemu-img check VMNAME-base.qcow2
 ```
 
----
+## Converting a Child Does Not Make a Chain
 
-## Converting a child does not make a chain
-
-A plain conversion of a snapshot descriptor makes a standalone [[Libvirt-glossary#QCOW2|QCOW2]]:
+A plain conversion of a snapshot descriptor makes a standalone QCOW2:
 
 ```bash
 qemu-img convert -p -f vmdk -O qcow2 VMNAME-000001.vmdk VMNAME-child.qcow2
 ```
 
-It holds the guest-visible contents of that VMDK chain. It does not create a [[Libvirt-glossary#Backing file and backing chain|backing file]] link to the converted base. I can end up with two large images holding duplicated data:
+It holds the guest-visible contents of that VMDK chain. It doesn't create a backing file link to the converted base. Two large images holding duplicated data can end up:
 
 ```text
 base.qcow2              19.1 GiB
 child.qcow2             19.1 GiB
 ```
 
----
+## Build a Native Backing Chain
 
-## Build a native backing chain
-
-When I want a real chain, I create the child explicitly after converting the base:
+When a real chain is wanted, the child is created explicitly after converting the base:
 
 ```bash
 qemu-img create -f qcow2 -F qcow2 -b VMNAME-base.qcow2 VMNAME-snapshot.qcow2
@@ -63,7 +61,7 @@ VMNAME-snapshot.qcow2
 VMNAME-base.qcow2
 ```
 
-The child starts with only QCOW2 metadata and stores future changes. I inspect it:
+The child starts with only QCOW2 metadata and stores future changes. It's inspected:
 
 ```bash
 qemu-img info --backing-chain VMNAME-snapshot.qcow2
@@ -71,9 +69,7 @@ qemu-img info --backing-chain VMNAME-snapshot.qcow2
 
 The output must show `backing file: VMNAME-base.qcow2` and `backing file format: qcow2`.
 
----
-
-## Validate every converted image
+## Validate Every Converted Image
 
 ```bash
 qemu-img check VMNAME-base.qcow2
@@ -86,11 +82,9 @@ To compare two independently converted states:
 qemu-img compare VMNAME-base.qcow2 VMNAME-other-state.qcow2
 ```
 
-`Images are identical.` means the guest-visible contents match. This is useful for a VMware snapshot I took while the VM was powered off and never booted again.
+"Images are identical" means the guest-visible contents match. This is useful for a VMware snapshot taken while the VM was powered off and never booted again.
 
----
-
-## Keep the chain together
+## Keep the Chain Together
 
 A child with a relative backing reference needs its parent beside it:
 
@@ -100,27 +94,23 @@ A child with a relative backing reference needs its parent beside it:
 └── VMNAME-snapshot.qcow2
 ```
 
-Moving only the child breaks the reference until I repair it. After moving files, I verify again:
+Moving only the child breaks the reference until it's repaired. After moving files, verification is done again:
 
 ```bash
 qemu-img info --backing-chain /var/lib/libvirt/images/VMNAME-snapshot.qcow2
 ```
 
-For repairing a moved backing file, see the rebase entry in [[Libvirt-external-snapshot-recovery#Gotchas]].
-
----
+For repairing a moved backing file, see the rebase entry in the external snapshot recovery gotchas.
 
 ## Verify
 
-- [ ] I converted the base descriptor, not individual extents
+- [ ] The base descriptor was converted, not individual extents
 - [ ] The base passes `qemu-img check`
 - [ ] `qemu-img info --backing-chain` shows the intended relationships
 - [ ] Parent and child files with relative references sit together
-- [ ] I did not flatten anything by accident
-- [ ] I kept the original VMware-derived conversion until the whole migration is done
+- [ ] Nothing was flattened by accident
+- [ ] The original VMware-derived conversion was kept until the whole migration is done
 
 ---
 
-# Next
-
-[[Pt 3, Importing-the-disk-into-libvirt]]
+Next: [[Pt 3, Importing-the-disk-into-libvirt]]

@@ -5,18 +5,20 @@ tags:
   - wiki
 ---
 
-This domain documents the wiki site you're reading right now: how I turned this Obsidian vault into a published site with [Quartz](https://quartz.jzhao.xyz/), how it's hosted, and the rules I wrote (with AI help) for how content gets organized in it.
+## Overview
 
-# Quartz
+This domain documents the wiki site being read right now: how an Obsidian vault was turned into a published site with Quartz, how it's hosted, and the rules written (with AI help) for how content gets organized in it.
 
-The static site generator that turns this vault into the published site, plus its configuration and the theme I'm using.
+## Quartz
+
+The static site generator that turns this vault into the published site, plus its configuration and the theme being used.
 
 - [[Quartz-glossary|Glossary]]
 - [[Quartz-installation|Installation]]
 - [[Quartz-configuration|Configuration]]
 - [[Quartz-gotchas|Gotchas]]
 
-# GitHub Pages
+## GitHub Pages
 
 How this wiki's repository and GitHub Actions deployment are set up.
 
@@ -24,9 +26,9 @@ How this wiki's repository and GitHub Actions deployment are set up.
 - [[Github-pages-repository-setup|Repository Setup]]
 - [[Github-pages-deployment-workflow|Deployment Workflow]]
 
-# Documentation Rules
+## Documentation Rules
 
-The conventions this vault follows for how content gets organized, and how I use AI tooling to migrate old posts into it.
+The conventions this vault follows for how content gets organized, and how AI tooling is used to migrate old posts into it.
 
 - [[Documentation-rules-glossary|Glossary]]
 - [[Docs-rules-overview|Rules Overview]]

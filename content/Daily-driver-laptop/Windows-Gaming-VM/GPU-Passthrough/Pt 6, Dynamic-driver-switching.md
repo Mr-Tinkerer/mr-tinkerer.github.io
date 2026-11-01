@@ -6,9 +6,11 @@ tags:
   - VFIO
   - Bash_Script
 ---
+
 # Pt 6, Dynamic Driver Switching
 
 # Prerequisites
+
 - [[Pt 1, Creating-the-vm|Pt 1, Creating the VM]]
 - [[Pt 2, Enabling-iommu|Pt 2, Enabling IOMMU]]
 - [[Pt 3, Isolating-the-gpu|Pt 3, Isolating the GPU]]
@@ -42,7 +44,7 @@ echo $aud > /sys/bus/pci/drivers/snd_hda_intel/bind
 
 `nvidia-smi` confirms the GPU is usable again after rebinding.
 
-The [Arch Wiki](https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Binding_vfio-pci_via_device_ID) documents a more robust variant of this, driven by vendor/device ID rather than raw unbind/bind, with `bind_vfio` / `unbind_vfio` functions and an interactive menu. I adopted that version since it's the more maintained approach; it's illustrative of the transition technique, not the final production script (see below for that).
+The [Arch Wiki](https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Binding_vfio-pci_via_device_ID) documents a more robust variant of this, driven by vendor/device ID rather than raw unbind/bind, with `bind_vfio` / `unbind_vfio` functions and an interactive menu. This version was adopted since it's the more maintained approach; it's illustrative of the transition technique, not the final production script (see below for that).
 
 ## Why unbinding from VFIO (not from NVIDIA) needed a different trick
 
@@ -87,7 +89,7 @@ Restarting WirePlumber (`systemctl --user restart wireplumber`) after toggling `
 
 ## The fix for the "no such device" error
 
-An early version of the unbind/bind approach that used `/sys/bus/pci/drivers_probe` directly to rebind VFIO after removal hit `echo: write error: no such device` on reconnect — VFIO doesn't know it's allowed to reclaim a device that was already removed and re-added. I couldn't find an answer for this online, so I asked Claude for help, not expecting it to work on the first try — but it did. The reliable fix (suggested by Claude) is to set each device's `driver_override` to `vfio-pci` *before* removing/rescanning it, rather than relying on VFIO to pick the device up on its own:
+An early version of the unbind/bind approach that used `/sys/bus/pci/drivers_probe` directly to rebind VFIO after removal hit `echo: write error: no such device` on reconnect — VFIO doesn't know it's allowed to reclaim a device that was already removed and re-added. This was resolved by setting each device's `driver_override` to `vfio-pci` *before* removing/rescanning it, rather than relying on VFIO to pick the device up on its own:
 
 ```bash
 echo vfio-pci > /sys/bus/pci/devices/$gpu/driver_override
@@ -125,7 +127,7 @@ run_as_user() {
 }
 ```
 
-Claude wrote this helper and the process-listing logic around it for me. I reuse this function as-is (not duplicated) in [[Battery-management|the laptop's battery-management script]], which needs to run `dms`/`notify-send` commands as the logged-in user from a root-invoked udev rule.
+This helper and the process-listing logic around it were created for this purpose. This function is reused as-is (not duplicated) in [[Battery-management|the laptop's battery-management script]], which needs to run `dms`/`notify-send` commands as the logged-in user from a root-invoked udev rule.
 
 ## Final scripts
 

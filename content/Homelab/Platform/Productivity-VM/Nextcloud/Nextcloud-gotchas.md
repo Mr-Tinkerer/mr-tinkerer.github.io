@@ -1,30 +1,58 @@
 ---
 title: Nextcloud Gotchas
-description: Certificate trust, security warnings, and a stray Nginx redirect hit while getting Nextcloud and Collabora working together.
+description: Certificate trust, security warnings, and Nginx redirect issues while configuring Nextcloud and Collabora with private CA.
 tags:
   - Homelab
   - Nextcloud
   - Gotchas
 ---
-# Security & setup warnings after first install
 
-Nextcloud's admin UI flagged several errors and warnings after the initial install, before HTTPS and reverse-proxy trust were configured:
+## Overview
 
-![[nextcloud-security-setup-warnings-before-fix.png]]
-*Nextcloud's "Security & setup warnings" panel flagging incorrect forwarded-for headers and insecure HTTP access, before Nginx trust and HTTPS-only were configured.*
+This page documents issues encountered during Nextcloud and Collabora configuration with private CA certificates, including security warnings, mutual certificate validation failures, and Nginx redirect errors.
 
-**Fix:** I told Nextcloud to trust the Nginx reverse proxy and its subnet (`trusted_proxies`), and to always assume HTTPS (`overwriteprotocol`). I baked these settings into the custom Nextcloud image so they survive container rebuilds.
+## Security and Setup Warnings
 
-# Collabora and Nextcloud couldn't validate each other's certificates
+### Initial Warnings
 
-Both Nextcloud and Collabora need to reach each other over HTTPS, but neither trusted the other's certificate since both use this home lab's private CA rather than a public one (see [[Homelab/Software/Nginx/Ssl-certificates|SSL certificates]]). I had Claude help me debug this, and my fix was to manually install the private CA's root certificate inside both the `nextcloud-custom` and `collabora-custom` container images, rather than disabling certificate verification.
+Nextcloud's admin UI flagged multiple errors and warnings after initial installation, before HTTPS and reverse-proxy trust were configured.
 
-Along the way, a red herring: Claude flagged that the Collabora container appeared to fail spawning a child process, which looked like a Podman-specific security restriction (its rootless/more restrictive defaults compared to Docker) — I swapped to Docker briefly to test this theory, which didn't actually fix it, since the real cause turned out to be unrelated (see below).
+See [security warnings screenshot](Images/nextcloud-security-setup-warnings-before-fix.png) for the Security & setup warnings panel showing incorrect forwarded-for headers and insecure HTTP access.
 
-# The actual cause: a stray Nginx redirect
+### Resolution
 
-The real cause of the Collabora connection failures was a copy-paste mistake in Nginx's config for the Collabora subdomain (`office.nextcloud.conf`'s HTTP→HTTPS block was redirecting to `http://` instead of `https://`) — since fixed. See [[Homelab/Software/Nginx/Reverse-proxy-setup|the Nginx bucket]] for this service's reverse-proxy config in general.
+- **Trusted Proxies:** Configure Nextcloud to trust the Nginx reverse proxy and its subnet (`trusted_proxies`)
+- **Force HTTPS:** Set `overwriteprotocol` to always assume HTTPS
 
-# Mobile app certificate trust
+These settings are baked into the custom Nextcloud image to survive container rebuilds.
 
-The Nextcloud mobile app did not work with the private CA out of the box (root cause not further investigated). See [[Homelab/Software/Nginx/Ssl-certificates#Mobile browser certificate trust|SSL certificates]] for a related mobile-browser certificate-trust issue (Waterfox), which is a Nginx/CA-level issue rather than a Nextcloud-specific one.
+## Certificate Validation Issues
+
+### Problem Description
+
+Both Nextcloud and Collabora need to reach each other over HTTPS, but neither trusted the other's certificate since both use the home lab's private CA rather than a public certificate authority.
+
+### Resolution
+
+The private CA's root certificate was manually installed inside both the `nextcloud-custom` and `collabora-custom` container images rather than disabling certificate verification.
+
+### Red Herring Investigation
+
+A Collabora container child process spawning failure appeared to indicate a Podman-specific security restriction (rootless/more restrictive defaults compared to Docker). Testing with Docker did not resolve the issue, confirming the cause was unrelated to the container runtime.
+
+## Nginx Redirect Error
+
+### Root Cause
+
+The actual cause of Collabora connection failures was a copy-paste mistake in Nginx's configuration for the Collabora subdomain:
+
+- File: `office.nextcloud.conf` HTTP→HTTPS block
+- Error: Redirecting to `http://` instead of `https://`
+
+### Resolution
+
+The redirect was corrected to use `https://` in the Nginx configuration. See the Nginx bucket for the complete reverse-proxy configuration.
+
+## Mobile App Certificate Trust
+
+The Nextcloud mobile app did not work with the private CA out of the box. Root cause was not further investigated. See the SSL certificates page for a related mobile-browser certificate-trust issue (Waterfox), which is a Nginx/CA-level issue rather than Nextcloud-specific.

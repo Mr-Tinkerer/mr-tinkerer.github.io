@@ -1,31 +1,43 @@
 ---
 title: Gigabyte Gaming A16 Ga6h Overview
-description: The physical daily-driver laptop — a Gigabyte Gaming A16 (GA6H) running CachyOS with Niri.
+description: Daily-driver laptop hardware specifications and dual-GPU layout enabling GPU passthrough.
 tags:
   - Hardware
   - Laptop
 ---
-# Overview
 
-This is my daily-driver laptop: a [Gigabyte Gaming A16 (GA6H)](https://www.gigabyte.com/Laptop/GIGABYTE-GAMING-A16-GA6H), running [CachyOS](https://cachyos.org/) with the [[Gigabyte-gaming-a16-ga6h-glossary#Niri|Niri]] window manager and [Limine](https://github.com/Limine-Bootloader/Limine) as the bootloader.
+## Overview
 
-It has a dual-GPU layout typical of gaming laptops:
-- An NVIDIA GeForce RTX 5060 Max-Q (Mobile) dedicated GPU (`10de:2d19`, plus its audio device `10de:22eb`).
-- An Intel integrated GPU I use for the host display when the dedicated GPU is passed through to a VM.
+This page documents the Gigabyte Gaming A16 (GA6H) laptop, configured as the daily driver running CachyOS with the [[Gigabyte-gaming-a16-ga6h-glossary#Niri|Niri]] window manager and Limine bootloader.
 
-This dual-GPU layout is what makes [[Windows-Gaming-VM/GPU-Passthrough/Pt 1, Creating-the-vm|GPU passthrough]] possible for me without losing the ability to use the host OS.
+### Hardware Specifications
 
----
+- **Dedicated GPU:** NVIDIA GeForce RTX 5060 Max-Q (Mobile)
+  - Device ID: `10de:2d19`
+  - GPU Audio: `10de:22eb`
+- **Integrated GPU:** Intel graphics used for host display when the dedicated GPU is passed through to a VM
 
-## Firmware / BIOS notes
+### Dual-GPU Architecture Benefits
 
-This laptop's BIOS doesn't expose a separate "IOMMU" toggle. Only [Intel Virtualization Technology (VMX)](Images/bios-virtualization-technology-option.png) is present as a peripherals-page option; I confirm IOMMU support instead from within Linux via `sudo dmesg | grep -i IOMMU` (looking for `DMAR: IOMMU enabled`).
+The dual-GPU layout enables GPU passthrough to VMs while maintaining host display functionality. This architecture supports:
 
-![[bios-virtualization-technology-option.png]]
-*The BIOS's Peripherals page — there is no dedicated IOMMU/VT-d toggle, only Intel (VMX) Virtualization Technology. This is a hardware/firmware constraint specific to this laptop's BIOS layout.*
+- Dedicated GPU passthrough for gaming VMs
+- Host display on integrated GPU
+- Seamless switching between host and VM GPU usage
 
----
+See [[Windows-Gaming-VM/GPU-Passthrough/Pt 1, Creating-the-vm|GPU passthrough setup]] for implementation details.
 
-## On-battery behavior
+## Firmware / BIOS Configuration
 
-See [[Battery-management]] for the udev-driven automation I use to adjust power profile, brightness, and display profile when I plug/unplug the laptop.
+### IOMMU Configuration
+
+The laptop's BIOS does not expose a dedicated "IOMMU" toggle. Instead:
+
+- **Intel Virtualization Technology (VMX)** — Available in the Peripherals page
+- **IOMMU verification** — Confirmed from within Linux via `sudo dmesg | grep -i IOMMU` (looking for "DMAR: IOMMU enabled")
+
+See [BIOS screenshot](Images/bios-virtualization-technology-option.png) for the Peripherals page layout.
+
+## Power Management
+
+See [[Battery-management|Battery management]] for udev-driven automation adjusting power profile, brightness, and display profile on battery/plug events.

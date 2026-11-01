@@ -7,6 +7,8 @@ tags:
   - glossary
 ---
 
+# Documentation Rules Glossary
+
 ## Domain
 
 A top-level folder in this vault representing a broad project or context — `Homelab/`, `Daily-driver-laptop/`, `Old-blog-site/`, `Wiki/`. Each domain has exactly one `Index.md` and organizes its own buckets underneath it; domains don't share buckets with each other.
@@ -29,7 +31,7 @@ A wikilink prefixed with `!`, e.g. `![[Page-name#Heading]]`, which embeds anothe
 
 ## Entry Q&A file
 
-`Entry Q&A.json` at the vault root — the running list of unresolved clarification questions raised while adding new entries after the migration. It uses the same structure as the [[#Migration Q&A file|Migration Q&A file]] (ID, type, question, context, related pages, and an answer field I fill in). It is also where flagged concerns go, such as a possible security mistake in the source material. Answered questions get folded into the affected pages and removed, and the file is deleted once no questions remain. See [[Docs-rules-overview|Documentation Rules Overview]].
+`Entry Q&A.json` at the vault root — the running list of unresolved clarification questions raised while adding new entries after the migration. It uses the same structure as the [[#Migration Q&A file|Migration Q&A file]] (ID, type, question, context, related pages, and an answer field). It is also where flagged concerns go, such as a possible security mistake in the source material. Answered questions get folded into the affected pages and removed, and the file is deleted once no questions remain. See [[Docs-rules-overview|Documentation Rules Overview]].
 
 ## Skeleton
 

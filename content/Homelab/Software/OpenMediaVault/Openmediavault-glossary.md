@@ -4,6 +4,11 @@ description: Terms used across the OpenMediaVault bucket.
 tags:
   - glossary
 ---
+
+## Overview
+
+This page documents terms used across the OpenMediaVault bucket.
+
 ## OpenMediaVault (OMV)
 
 A Debian-based NAS OS with a web management UI. See [OpenMediaVault (official site)](https://www.openmediavault.org/).
@@ -18,15 +23,15 @@ Linux's software RAID management tool, used by OMV's `openmediavault-md` plugin 
 
 ## BTRFS
 
-A copy-on-write Linux filesystem with native snapshot support. Its own multi-disk RAID modes are considered experimental, so it is commonly layered in **Single** profile on top of a separately-redundant block device (e.g. an `mdadm` RAID array) instead. See [Btrfs (Wikipedia)](https://en.wikipedia.org/wiki/Btrfs) and [[Homelab/Software/OpenMediaVault/Btrfs-reference|my deeper BTRFS reference]] for how I actually manage it day to day (allocation model, balance, scrub, quotas, subvolumes).
+A copy-on-write Linux filesystem with native snapshot support. Its own multi-disk RAID modes are considered experimental, so it is commonly layered in **Single** profile on top of a separately-redundant block device (e.g. an `mdadm` RAID array) instead. See [Btrfs (Wikipedia)](https://en.wikipedia.org/wiki/Btrfs) and [[Homelab/Software/OpenMediaVault/Btrfs-reference|deeper BTRFS reference]] for how BTRFS is managed day to day (allocation model, balance, scrub, quotas, subvolumes).
 
-## Block group
+## Block Group
 
 BTRFS's unit of pre-reserved disk space — before any data or metadata is written, BTRFS first carves the disk into block groups, then fills them. A block group that's been mostly emptied by deletions doesn't automatically shrink, which is the root cause behind most confusing BTRFS "out of space" errors. See [[Homelab/Software/OpenMediaVault/Btrfs-reference#How BTRFS allocates space|how BTRFS allocates space]] for the full explanation.
 
 ## Balance (BTRFS)
 
-The BTRFS maintenance operation that rewrites and repacks sparsely-filled block groups into fewer, fuller ones, releasing the emptied ones back to unallocated space. Despite the name, it's not primarily about spreading data across multiple devices. See [[Homelab/Software/OpenMediaVault/Btrfs-reference#Balance|Balance]] for when and how I run it.
+The BTRFS maintenance operation that rewrites and repacks sparsely-filled block groups into fewer, fuller ones, releasing the emptied ones back to unallocated space. Despite the name, it's not primarily about spreading data across multiple devices. See [[Homelab/Software/OpenMediaVault/Btrfs-reference#Balance|Balance]] for when and how BTRFS balance is run.
 
 ## Scrub (BTRFS)
 
@@ -34,8 +39,8 @@ BTRFS's background integrity checker — it reads every stored block, recomputes
 
 ## NFS
 
-Network File System — a protocol for sharing directories over a network so remote clients can mount them as if they were local. This is what I use to expose OMV's shared folders (ISOs, Documents, PC Backups, PBS, LLMs) to the rest of the home lab: each share is exported as its own NFS mount, restricted to the client IPs or subnets I want to allow, so machines can read and write to the NAS without me having to copy files around by hand. See [[Homelab/Software/OpenMediaVault/Shares|Shares]] for how I set these up, and [NFS (Wikipedia)](https://en.wikipedia.org/wiki/Network_File_System).
+Network File System — a protocol for sharing directories over a network so remote clients can mount them as if they were local. This is used to expose OMV's shared folders (ISOs, Documents, PC Backups, PBS, LLMs) to the rest of the home lab: each share is exported as its own NFS mount, restricted to the client IPs or subnets that should be allowed, so machines can read and write to the NAS without having to copy files around by hand. See [[Homelab/Software/OpenMediaVault/Shares|Shares]] for how NFS shares are set up, and [NFS (Wikipedia)](https://en.wikipedia.org/wiki/Network_File_System).
 
 ## AutoFS
 
-A Linux service that mounts filesystems (including NFS shares) on demand when they're accessed, and unmounts them after a period of inactivity, rather than keeping them mounted permanently. I use this on client machines instead of static `/etc/fstab` mounts so they aren't holding open connections to shares they aren't actively using — the tradeoff I ran into is that AutoFS doesn't show a share's root directory until something underneath it is actually accessed, which can make a freshly mounted share look empty or broken when it isn't. See [[Homelab/Software/OpenMediaVault/Shares#AutoFS|Shares]] and [Automounting (Wikipedia)](https://en.wikipedia.org/wiki/Automounting).
+A Linux service that mounts filesystems (including NFS shares) on demand when they're accessed, and unmounts them after a period of inactivity, rather than keeping them mounted permanently. This is used on client machines instead of static `/etc/fstab` mounts so they aren't holding open connections to shares they aren't actively using — the tradeoff is that AutoFS doesn't show a share's root directory until something underneath it is actually accessed, which can make a freshly mounted share look empty or broken when it isn't. See [[Homelab/Software/OpenMediaVault/Shares#AutoFS|Shares]] and [Automounting (Wikipedia)](https://en.wikipedia.org/wiki/Automounting).

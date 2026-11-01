@@ -5,9 +5,11 @@ tags:
   - Virtual_Machines
   - Bash_Script
 ---
+
 # Pt 7, Automating with Libvirt Hooks
 
 # Prerequisites
+
 - [[Pt 1, Creating-the-vm|Pt 1, Creating the VM]]
 - [[Pt 2, Enabling-iommu|Pt 2, Enabling IOMMU]]
 - [[Pt 3, Isolating-the-gpu|Pt 3, Isolating the GPU]]
@@ -23,13 +25,13 @@ Running the stop/release script from inside a Niri terminal doesn't work cleanly
 
 ## Libvirt hooks
 
-[[Windows-gaming-vm-glossary#Libvirt hook|Libvirt hooks]] let a script at `/etc/libvirt/hooks/qemu` run automatically on VM lifecycle events, independent of any user session. After I confirmed the hook fires (tested by having it `touch` a marker file and confirming it appeared after `systemctl restart libvirtd`), I wired it to the real start/stop scripts described in [[Pt 6, Dynamic-driver-switching#Final scripts|Pt 6]]: the hook checks whether the VM lifecycle event is for the `win10` VM specifically, then runs the starting script on `prepare`/`begin` (VM boot) and the stopping script on `release`/`end` (VM shutdown). The hook script itself is maintained at [qemu](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Daily%20Driver%20Laptop/GPU%20Passthrough/qemu) rather than pasted here.
+[[Windows-gaming-vm-glossary#Libvirt hook|Libvirt hooks]] let a script at `/etc/libvirt/hooks/qemu` run automatically on VM lifecycle events, independent of any user session. A hook was confirmed to fire (tested by having it `touch` a marker file and confirming it appeared after `systemctl restart libvirtd`), then it was wired to the real start/stop scripts described in [[Pt 6, Dynamic-driver-switching#Final scripts|Pt 6]]: the hook checks whether the VM lifecycle event is for the `win10` VM specifically, then runs the starting script on `prepare`/`begin` (VM boot) and the stopping script on `release`/`end` (VM shutdown). The hook script itself is maintained at [qemu](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Daily%20Driver%20Laptop/GPU%20Passthrough/qemu) rather than pasted here.
 
 Restarting `libvirtd` picks up the hook. From then on, starting/stopping the `win10` VM automatically drives the GPU between the host and the guest with no manual scripting.
 
 ## What the start script does before switching drivers
 
-Before touching drivers, the start script stops `nvidia-powerd`, disables the GPU's audio device in WirePlumber, and gets a list of processes still holding `/dev/nvidia*` (via `lsof`, filtered to exclude Niri itself since that's handled separately). If anything is still using the GPU, it sends me a persistent, self-updating desktop notification asking me to close those programs, and polls every second until the list is empty before proceeding to unbind/rebind and restart Niri with the GPU-disabling config included.
+Before touching drivers, the start script stops `nvidia-powerd`, disables the GPU's audio device in WirePlumber, and gets a list of processes still holding `/dev/nvidia*` (via `lsof`, filtered to exclude Niri itself since that's handled separately). If anything is still using the GPU, a persistent, self-updating desktop notification is sent asking programs to close, and polling every second continues until the list is empty before proceeding to unbind/rebind and restart Niri with the GPU-disabling config included.
 
 ## End-to-end result
 

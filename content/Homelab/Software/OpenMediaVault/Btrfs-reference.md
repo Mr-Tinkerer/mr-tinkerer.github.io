@@ -1,14 +1,15 @@
 ---
 title: BTRFS reference
-description: A deeper practical reference for the BTRFS filesystem I run on top of the NAS's mdadm RAID array — how it allocates space, how to read its usage output, and how I keep it healthy.
+description: A deeper practical reference for the BTRFS filesystem on top of the NAS's mdadm RAID array — how it allocates space, how to read its usage output, and how to keep it healthy.
 tags:
   - Homelab
   - OpenMediaVault
   - Storage
 ---
+
 # Why this page exists
 
-[[Homelab/Software/OpenMediaVault/Storage-pool|Storage pool]] covers the decision to run BTRFS in Single profile on top of the [[Homelab/Software/OpenMediaVault/Openmediavault-glossary#mdadm|mdadm]]-managed RAID 5 array, and [[Homelab/Software/OpenMediaVault/Openmediavault-glossary#BTRFS|the Glossary]] covers the term at a high level. This page goes deeper into how BTRFS actually manages space day to day, since understanding that is what lets me tell a genuinely full NAS apart from one that just needs a balance.
+[[Homelab/Software/OpenMediaVault/Storage-pool|Storage pool]] covers the decision to run BTRFS in Single profile on top of the [[Homelab/Software/OpenMediaVault/Openmediavault-glossary#mdadm|mdadm]]-managed RAID 5 array, and [[Homelab/Software/OpenMediaVault/Openmediavault-glossary#BTRFS|the Glossary]] covers the term at a high level. This page goes deeper into how BTRFS actually manages space day to day, since understanding that is what lets one tell a genuinely full NAS apart from one that just needs a balance.
 
 # How BTRFS allocates space
 
@@ -29,7 +30,7 @@ Block groups that have been mostly emptied (after deleting files or old snapshot
 sudo btrfs filesystem usage /srv/dev-disk-by-uuid-.../
 ```
 
-The overall section reports `Device size`, `Device allocated`, `Device unallocated`, `Used`, and two free-space figures: **Free (estimated)** assumes metadata grows proportionally to current usage, while **Free (minimum)** is the worst case — metadata expanding to fill every metadata block group before any more can be allocated. The gap between them exists because metadata uses the **DUP** profile (two copies, even on a single device), so each new metadata block group costs double the raw space. I watch **Free (minimum)** specifically and don't let it drop below roughly 20 GiB, since that's the number that actually predicts an out-of-space error.
+The overall section reports `Device size`, `Device allocated`, `Device unallocated`, `Used`, and two free-space figures: **Free (estimated)** assumes metadata grows proportionally to current usage, while **Free (minimum)** is the worst case — metadata expanding to fill every metadata block group before any more can be allocated. The gap between them exists because metadata uses the **DUP** profile (two copies, even on a single device), so each new metadata block group costs double the raw space. Monitoring **Free (minimum)** specifically is recommended, since that's the number that actually predicts an out-of-space error.
 
 The block-group section below that lists each block-group type (`Data`, `Metadata`, `System`) with its profile, allocated size, and used size — a `Metadata,DUP: Size:3.00GiB` entry showing `6.00GiB` on the underlying device is expected, not a bug: DUP writes every byte twice.
 
@@ -41,11 +42,11 @@ The block-group section below that lists each block-group type (`Data`, `Metadat
 | **DUP** | 2 (same device) | Metadata and System, by default — protects the filesystem's own structure |
 | **RAID1** | 2 (different devices) | Not used here — redundancy is already handled one layer down by `mdadm`, so BTRFS itself runs Single/DUP rather than duplicating that work |
 
-Metadata gets mirrored even on a single-device BTRFS filesystem because losing it is categorically worse than losing data: losing a data block corrupts one file, but losing metadata can make the entire filesystem unable to locate or verify *any* file. Mirroring metadata costs only a percent or two of total disk space, whereas mirroring all data would halve usable capacity — which is exactly why I rely on the RAID 5 array underneath for data redundancy instead of asking BTRFS to do it twice.
+Metadata gets mirrored even on a single-device BTRFS filesystem because losing it is categorically worse than losing data: losing a data block corrupts one file, but losing metadata can make the entire filesystem unable to locate or verify *any* file. Mirroring metadata costs only a percent or two of total disk space, whereas mirroring all data would halve usable capacity — which is exactly why RAID 5 is used underneath for data redundancy instead of asking BTRFS to do it twice.
 
 # Balance
 
-Balance's name undersells what it does — it isn't primarily about spreading data across devices, it's about **rewriting and repacking block groups** so mostly-empty ones can be released back to `Unallocated`. I run it whenever `Device allocated` looks much larger than `Used`, whenever `Unallocated` drops below ~20 GiB, or after a large deletion (a big file removed, or several snapshots cleaned up at once):
+Balance's name undersells what it does — it isn't primarily about spreading data across devices, it's about **rewriting and repacking block groups** so mostly-empty ones can be released back to `Unallocated`. It should run whenever `Device allocated` looks much larger than `Used`, whenever `Unallocated` drops below ~20 GiB, or after a large deletion (a big file removed, or several snapshots cleaned up at once):
 
 ```bash
 # Routine — only repacks block groups less than 70% full
@@ -55,29 +56,29 @@ sudo btrfs balance start -dusage=70 -musage=70 /srv/dev-disk-by-uuid-.../
 sudo btrfs balance status /srv/dev-disk-by-uuid-.../
 ```
 
-There's no fixed schedule for this NAS — I balance reactively (after a big cleanup, or if `Unallocated` looks low), not on a timer, since unnecessary balancing just adds write amplification for no benefit.
+There's no fixed schedule for this NAS — balancing reactively (after a big cleanup, or if `Unallocated` looks low), not on a timer, since unnecessary balancing just adds write amplification for no benefit.
 
 # Scrub
 
-Scrub is BTRFS's background integrity checker — it reads every data and metadata block, recomputes its checksum, and compares it against the stored one. On a DUP/RAID profile a mismatch self-heals from the good copy automatically; on a `single`-profile block (this NAS's data blocks), a mismatch is detected and reported but can't be auto-repaired — I'd need to restore that file from elsewhere. This is one of BTRFS's real advantages over a plain `mdadm` + ext4 stack: `mdadm` alone has no idea if the bytes it's mirroring are already silently corrupted (bit rot, a failing sector, an incomplete write from a power blip); BTRFS actually knows what every block *should* checksum to.
+Scrub is BTRFS's background integrity checker — it reads every data and metadata block, recomputes its checksum, and compares it against the stored one. On a DUP/RAID profile a mismatch self-heals from the good copy automatically; on a `single`-profile block (this NAS's data blocks), a mismatch is detected and reported but can't be auto-repaired — restoration from elsewhere would be needed. This is one of BTRFS's real advantages over a plain `mdadm` + ext4 stack: `mdadm` alone has no idea if the bytes it's mirroring are already silently corrupted (bit rot, a failing sector, an incomplete write from a power blip); BTRFS actually knows what every block *should* checksum to.
 
 ```bash
 sudo btrfs scrub start /srv/dev-disk-by-uuid-.../
 sudo btrfs scrub status /srv/dev-disk-by-uuid-.../
 ```
 
-I run this monthly (OMV can schedule it, or a systemd timer works just as well), since it's read-only in the normal case and just uses background I/O.
+This should run monthly (OMV can schedule it, or a systemd timer works just as well), since it's read-only in the normal case and just uses background I/O.
 
 # Quotas (qgroups)
 
-BTRFS can track and cap per-subvolume space usage via qgroups, but every quota-tracked write pays an accounting-update cost — on a filesystem with several subvolumes this can be a real (20–50%) write-performance hit, and qgroup accounting has a known history of drifting out of sync and needing a slow full rescan. For a single-NAS use case like this one, where I'm not selling storage to separate tenants, `compsize`/`btrfs filesystem du` on demand gives me the same visibility without that ongoing cost, so I leave quotas disabled:
+BTRFS can track and cap per-subvolume space usage via qgroups, but every quota-tracked write pays an accounting-update cost — on a filesystem with several subvolumes this can be a real (20–50%) write-performance hit, and qgroup accounting has a known history of drifting out of sync and needing a slow full rescan. For a single-NAS use case like this one, where separate tenants aren't being served, `compsize`/`btrfs filesystem du` on demand gives the same visibility without that ongoing cost, so quotas are left disabled:
 
 ```bash
 sudo btrfs qgroup show /srv/dev-disk-by-uuid-.../
 sudo btrfs quota disable /srv/dev-disk-by-uuid-.../
 ```
 
-# Subvolumes are how I split this pool into shares
+# Subvolumes are how to split this pool into shares
 
 A subvolume is an independently addressable filesystem tree inside one BTRFS filesystem — it looks like a normal directory but can be mounted, snapshotted, and managed on its own. This is the mechanism [[Homelab/Software/OpenMediaVault/Storage-pool|Storage pool]] relies on to split the single BTRFS filesystem on `/dev/md0` into separate shares (ISOs, Documents, PC Backups, PBS, LLMs) instead of separate partitions. A snapshot is just a subvolume created with another subvolume's contents as its starting point — because of copy-on-write, taking one is nearly instant and free until the live data and the snapshot start to diverge.
 
@@ -87,9 +88,9 @@ sudo btrfs subvolume list /srv/dev-disk-by-uuid-.../
 
 # Measuring actual usage — `du` lies on BTRFS
 
-Regular `du` is unreliable here for two reasons: it double-counts extents shared between subvolumes/snapshots (counting the same physical bytes once per reference instead of once), and it reports logical, uncompressed size rather than actual bytes on disk. For this NAS I reach for:
+Regular `du` is unreliable here for two reasons: it double-counts extents shared between subvolumes/snapshots (counting the same physical bytes once per reference instead of once), and it reports logical, uncompressed size rather than actual bytes on disk. For this NAS to reach for:
 
-| Tool | What it actually tells me |
+| Tool | What it actually tells you |
 |---|---|
 | `sudo btrfs filesystem usage <path>` | Overall filesystem health / free space |
 | `sudo compsize -x <path>` | Physical, compression-aware bytes actually on disk for a subvolume |
@@ -104,11 +105,11 @@ sudo btrfs subvolume create /srv/dev-disk-by-uuid-.../backups
 sudo chattr +C /srv/dev-disk-by-uuid-.../backups
 ```
 
-The tradeoff: nocow files lose BTRFS checksumming (no silent-corruption detection) and can't be included in snapshots — acceptable for something like PBS, which already does its own integrity verification. `+C` only affects *new* writes, so an existing directory of files has to be moved out, recreated as a nocow subvolume, and copied back in with `cp -a` (never `mv` within the same filesystem, since that can silently preserve the old CoW extents instead of writing fresh nocow ones) — I haven't needed to do this on this NAS yet, but it's the playbook if the PBS share ever needs it. I don't currently have anything on this NAS that fits this case badly enough to be worth the tradeoff, so all shares here stay CoW for now.
+The tradeoff: nocow files lose BTRFS checksumming (no silent-corruption detection) and can't be included in snapshots — acceptable for something like PBS, which already does its own integrity verification. `+C` only affects *new* writes, so an existing directory of files has to be moved out, recreated as a nocow subvolume, and copied back in with `cp -a` (never `mv` within the same filesystem, since that can silently preserve the old CoW extents instead of writing fresh nocow ones) — this hasn't been needed on this NAS yet, but it's the playbook if the PBS share ever needs it. All shares here stay CoW for now, since nothing currently fits this case badly enough to be worth the tradeoff.
 
-One important side effect: nocow doesn't prevent block-group exhaustion — it can actually make it worse, since a large nocow file occupies a concentrated run of block groups at high density, and deleting it hollows those specific block groups out all at once rather than spreading the loss thinly across many groups. Any time I delete or shrink a large file like this, a [[Homelab/Software/OpenMediaVault/Btrfs-reference#Balance|balance]] afterward is worth doing, not optional.
+One important side effect: nocow doesn't prevent block-group exhaustion — it can actually make it worse, since a large nocow file occupies a concentrated run of block groups at high density, and deleting it hollows those specific block groups out all at once rather than spreading the loss thinly across many groups. After deleting or shrinking a large file like this, a [[Homelab/Software/OpenMediaVault/Btrfs-reference#Balance|balance]] afterward is worth doing, not optional.
 
-# Routine maintenance I actually do on this NAS
+# Routine maintenance actually done on this NAS
 
 - **Monthly:** `btrfs scrub start`, then check `btrfs scrub status` once it finishes.
 - **After a large deletion or snapshot cleanup:** `btrfs balance start -dusage=70 -musage=70`.

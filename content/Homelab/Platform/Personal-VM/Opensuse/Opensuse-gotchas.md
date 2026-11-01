@@ -1,20 +1,31 @@
 ---
 title: openSUSE Gotchas
-description: openSUSE-specific defaults that tripped up getting any container reachable and writable on the Personal VM, independent of which service I was actually installing.
+description: openSUSE-specific defaults that tripped up getting any container reachable and writable on the Personal VM, independent of which service was actually installed.
 tags:
   - Homelab
   - Opensuse
 ---
-# openSUSE ships firewalld and SELinux enabled by default
 
-I hit two separate openSUSE default-security surprises while bringing up the Personal VM, both of which would apply to *any* containerized service I put on this VM, not just [[Homelab/Platform/Personal-VM/Homepage/Homepage-setup|Homepage]] (which is what actually surfaced them for me first):
+## Overview
 
-1. **[[Homelab/Platform/Personal-VM/Opensuse/Opensuse-glossary#firewalld|`firewalld`]] blocks ports by default.** openSUSE ships with `firewalld` enabled, so a freshly deployed container's port was unreachable from the LAN until I disabled it (or, more carefully, opened the specific port/service in its zone config).
-2. **[[Homelab/Platform/Personal-VM/Opensuse/Opensuse-glossary#SELinux|SELinux]] blocks container writes into mounted volumes.** openSUSE also ships SELinux enabled and enforcing by default:
+This page documents openSUSE-specific defaults that affected container accessibility and writability on the Personal VM, regardless of the specific service being installed.
 
-   ![[personal-vm-selinux-enforcing-sestatus.png]]
-   *`sestatus` showing SELinux enabled and enforcing on the Personal VM — the actual cause of a mounted config volume being unwritable, not a bug in whatever container is trying to use it.*
+## OS-Level Defaults
 
-   **Fix:** add the [[Homelab/Platform/Personal-VM/Opensuse/Opensuse-glossary#`:Z` volume relabel suffix|`:Z` SELinux relabel suffix]] to the volume mount in the Podman quadlet, which lets the container write to the mounted directory under SELinux's enforcing policy.
+Two separate openSUSE default-security surprises affected any containerized service on this VM:
 
-Both are OS-level defaults, not something caused by Homepage or by Podman — I'd hit the same two issues bringing up any container on this VM, which is why they live here rather than in a specific service's bucket.
+### firewalld
+
+openSUSE ships with `firewalld` enabled, so a freshly deployed container's port was unreachable from the LAN until it was disabled (or, more carefully, the specific port/service was opened in its zone config).
+
+### SELinux
+
+openSUSE ships SELinux enabled and enforcing by default:
+
+See [SELinux enforcing screenshot](Images/personal-vm-selinux-enforcing-sestatus.png) for `sestatus` showing SELinux enabled and enforcing on the Personal VM — the actual cause of a mounted config volume being unwritable, not a bug in whatever container was trying to use it.
+
+**Fix:** Add the `:Z` SELinux relabel suffix to the volume mount in the Podman quadlet, which lets the container write to the mounted directory under SELinux's enforcing policy.
+
+## Scope
+
+Both issues are OS-level defaults, not caused by Homepage or Podman. They would affect any container on this VM, which is why they live here rather than in a specific service's bucket.

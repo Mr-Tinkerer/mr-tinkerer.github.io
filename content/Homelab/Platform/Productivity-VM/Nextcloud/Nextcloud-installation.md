@@ -1,31 +1,61 @@
 ---
 title: Nextcloud Installation
-description: Running Nextcloud as a set of Podman quadlets on the Productivity VM.
+description: Running Nextcloud as a set of Podman quadlets on the Productivity VM for document management and file sharing.
 tags:
   - Homelab
   - Nextcloud
 ---
-# Why Podman, and why quadlets
 
-Nextcloud runs in containers on the [[Homelab/Logical/Virtual-machines/Vm-allocation|Productivity VM]] (Debian) via [[Homelab/Logical/Containerization/Containerization-glossary#Podman|Podman]] rather than Docker, using the official [Nextcloud Docker image](https://github.com/nextcloud/docker) as a base with local modifications. See [[Homelab/Logical/Containerization/Tool-choices|Tool-choice philosophy]] for why I chose Podman/Quadlet for every containerized service in this domain, not just Nextcloud.
+## Overview
 
-# Stack layout
+This guide covers Nextcloud installation and configuration on the Productivity VM, including container setup, network configuration, and storage integration.
 
-The stack is four containers on one Podman network (`nextcloud-net`):
+## Architecture
 
-- **`nextcloud`** — the app itself, built from a locally customized image (`nextcloud-custom`).
-- **`mariadb`** — the database backend.
-- **`redis`** — caching/locking backend.
-- **`collabora`** — Nextcloud Office, a separate container (see [[Homelab/Platform/Productivity-VM/Nextcloud/Collabora-office|Collabora Office]]).
+Nextcloud runs as Podman containers on the Productivity VM (Debian), following the Podman over Docker architecture decision.
 
-The maintained quadlet files are kept in the infrastructure repo rather than pasted here: [nextcloud.container](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Productivity%20VM/nextcloud/quadlets/nextcloud.container), [mariadb.container](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Productivity%20VM/nextcloud/quadlets/mariadb.container), [redis.container](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Productivity%20VM/nextcloud/quadlets/redis.container), [collabora.container](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Productivity%20VM/nextcloud/quadlets/collabora.container), [nextcloud.network](https://github.com/Mr-Tinkerer/Project-Dump/blob/main/Homelab/Productivity%20VM/nextcloud/quadlets/nextcloud.network).
+The official Nextcloud Docker image serves as the base with local modifications. See the Tool-choice philosophy page for the rationale behind Podman/Quadlet across all containerized services.
 
-# Domain, DNS, and HTTPS
+### Container Stack
 
-Nextcloud is reachable at `nextcloud.uhhhhh`, with a DNS record under [[Homelab/Logical/Home-network/Dns-naming-scheme|the home lab's custom DNS]] and HTTPS via [[Homelab/Software/Nginx/Ssl-certificates|Nginx's private CA]]. The domain and expected trusted proxies had to be explicitly configured in Nextcloud's own settings (`trusted_domains`, `trusted_proxies`) so it would accept requests forwarded by Nginx and correctly detect HTTPS — see [[Homelab/Platform/Productivity-VM/Nextcloud/Nextcloud-gotchas|Gotchas]] for the specific errors this produced before it was fixed.
+The stack consists of four containers on a single Podman network (`nextcloud-net`):
 
-# Storage
+- **`nextcloud`** — The application itself, built from a locally customized image (`nextcloud-custom`)
+- **`mariadb`** — Database backend
+- **`redis`** — Caching and locking backend
+- **`collabora`** — Nextcloud Office, a separate container
 
-The [[Homelab/Software/OpenMediaVault/Shares|Documents share]] from the NAS is mounted on the Productivity VM host and bind-mounted into the `nextcloud` container, so files placed there are exposed through Nextcloud without duplicating storage.
+### Quadlet Configuration
 
-See [[Homelab/Platform/Productivity-VM/Nextcloud/Collabora-office|Collabora Office]] for the document-editing add-on, and [[Homelab/Platform/Productivity-VM/Nextcloud/Nextcloud-gotchas|Gotchas]] for the certificate-trust and redirect issues hit along the way.
+Maintained quadlet files are stored in the infrastructure repository rather than pasted inline:
+
+- nextcloud.container
+- mariadb.container
+- redis.container
+- collabora.container
+- nextcloud.network
+
+## Network Configuration
+
+### Access
+
+Nextcloud is reachable at `nextcloud.uhhhhh` with a DNS record under the home lab's custom DNS.
+
+### HTTPS
+
+HTTPS is provided via Nginx's private CA.
+
+### Trusted Proxies
+
+The domain and expected trusted proxies must be explicitly configured in Nextcloud settings (`trusted_domains`, `trusted_proxies`) to accept requests forwarded by Nginx and correctly detect HTTPS. See the Gotchas page for specific errors before resolution.
+
+## Storage
+
+### NAS Integration
+
+The Documents share from the NAS is mounted on the Productivity VM host and bind-mounted into the `nextcloud` container. Files placed in the NAS share are exposed through Nextcloud without duplicating storage.
+
+## Additional Resources
+
+- [[Homelab/Platform/Productivity-VM/Nextcloud/Collabora-office|Collabora Office]] — Document editing add-on
+- [[Homelab/Platform/Productivity-VM/Nextcloud/Nextcloud-gotchas|Gotchas]] — Certificate trust and redirect issues

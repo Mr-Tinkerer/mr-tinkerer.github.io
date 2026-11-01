@@ -1,27 +1,28 @@
 ---
 title: Gaming VM Post-Install Tweaks
-description: CPU pinning, faster VirtIO drives, and Looking Glass port/hotkey tweaks I applied to the Windows gaming VM after install.
+description: CPU pinning, faster VirtIO drives, and Looking Glass port/hotkey tweaks applied to the Windows gaming VM after install.
 tags:
   - Virtual_Machines
   - QEMU
   - Performance
 ---
+
 # Gaming VM Post-Install Tweaks
 
-A few tweaks I applied to the VM after the base install, on top of the [[GPU-Passthrough/Pt 1, Creating-the-vm|GPU passthrough setup]], to get better and more predictable performance.
+A few tweaks were applied to the VM after the base install, on top of the [[GPU-Passthrough/Pt 1, Creating-the-vm|GPU passthrough setup]], to get better and more predictable performance.
 
 ## CPU pinning
 
-I pin the VM's vCPUs to specific host cores so it has full, exclusive control over them instead of competing with the host scheduler for whichever core happens to be free.
+The VM's vCPUs are pinned to specific host cores so it has full, exclusive control over them instead of competing with the host scheduler for whichever core happens to be free.
 
 1. List the host's CPU topology:
    ```bash
    lscpu -e
    ```
-   On my [[Gigabyte-gaming-a16-ga6h-overview|Gigabyte Gaming A16]]'s 13th Gen Intel Core i7-13620H, cores 0–5 are the performance cores (with hyperthreading) and 6–9 are the efficiency cores.
-2. I pin cores 0–11 (all performance-core threads) to the VM.
-3. In the VM's CPU configuration, I enable `host-passthrough` and manually set the topology to match: 1 socket, 6 cores, 2 threads.
-4. Then I add the pinning itself directly in the VM's raw XML:
+   On the [[Gigabyte-gaming-a16-ga6h-overview|Gigabyte Gaming A16]]'s 13th Gen Intel Core i7-13620H, cores 0–5 are the performance cores (with hyperthreading) and 6–9 are the efficiency cores.
+2. Cores 0–11 (all performance-core threads) are pinned to the VM.
+3. In the VM's CPU configuration, `host-passthrough` is enabled and the topology is manually set to match: 1 socket, 6 cores, 2 threads.
+4. The pinning itself is added directly in the VM's raw XML:
    ```xml
    <vcpu placement="static">12</vcpu>
    <cputune>
@@ -42,11 +43,11 @@ I pin the VM's vCPUs to specific host cores so it has full, exclusive control ov
 
 ## Faster drives
 
-- I set the drive's **Discard mode** to `unmap` for SSD TRIM support — see [[Virtual-disks-reference#7. Discard / TRIM|the virtual disks reference]] for why this matters and its caveats.
-- I set the drive's bus type to **VirtIO** for better performance over SATA/IDE. This requires the [[Libvirt-glossary#VirtIO drivers|VirtIO drivers]] to be installed in the Windows guest before the drive is detected, plus the VirtIO Serial Controller hardware added to the VM. Installing from the VirtIO ISO during Windows setup only gets the SCSI driver in; the rest still needs installing from inside the already-installed OS.
+- The drive's **Discard mode** is set to `unmap` for SSD TRIM support — see [[Virtual-disks-reference#7. Discard / TRIM|the virtual disks reference]] for why this matters and its caveats.
+- The drive's bus type is set to **VirtIO** for better performance over SATA/IDE. This requires the [[Libvirt-glossary#VirtIO drivers|VirtIO drivers]] to be installed in the Windows guest before the drive is detected, plus the VirtIO Serial Controller hardware added to the VM. Installing from the VirtIO ISO during Windows setup only gets the SCSI driver in; the rest still needs installing from inside the already-installed OS.
 
 ## Looking Glass port and hotkey
 
-- I set the VM's SPICE port to `6769` instead of leaving it on the default, so another VM on the same host can't accidentally hijack [[Windows-gaming-vm-glossary#Looking Glass|Looking Glass]]'s connection.
-- I changed Looking Glass's menu/hotkey from the default Scroll Lock to backslash, since this laptop's keyboard has no Scroll Lock key.
-- The flags I use to launch the client: `-m KEY_BACKSLASH -p 6769`.
+- The VM's SPICE port is set to `6769` instead of leaving it on the default, so another VM on the same host can't accidentally hijack [[Windows-gaming-vm-glossary#Looking Glass|Looking Glass]]'s connection.
+- Looking Glass's menu/hotkey is changed from the default Scroll Lock to backslash, since this laptop's keyboard has no Scroll Lock key.
+- The flags used to launch the client: `-m KEY_BACKSLASH -p 6769`.

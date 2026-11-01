@@ -5,9 +5,11 @@ tags:
   - Virtual_Machines
   - Looking_Glass
 ---
+
 # Pt 5, Setting up Looking Glass
 
 # Prerequisites
+
 - [[Pt 1, Creating-the-vm|Pt 1, Creating the VM]]
 - [[Pt 2, Enabling-iommu|Pt 2, Enabling IOMMU]]
 - [[Pt 3, Isolating-the-gpu|Pt 3, Isolating the GPU]]
@@ -36,7 +38,7 @@ Enable XML editing in Virt Manager (**Edit → Preferences → General → Enabl
 
 ```xml
 <shmem name='looking-glass'>
-  <model type='ivshmem-plain'/>
+  <model type='ivshmem-plain'/ >
   <size unit='M'>32</size>
 </shmem>
 ```
@@ -67,7 +69,7 @@ If the display stays blank with CPU usage pinned at a constant value, try disabl
 
 ## Removing the physical-monitor requirement
 
-The GPU still needs *something* to think is plugged in. Two options: a physical HDMI/DP dummy plug, or a virtual display driver. I used the [Virtual Display Driver](https://github.com/VirtualDrivers/Virtual-Display-Driver) project for this: install the latest release inside the guest, run `VDD Control.exe`, click **Install Driver** (confirm the driver-install prompt). Once the virtual display shows up under **Device Manager → Display Adapters**, the physical monitor can be unplugged and Looking Glass keeps working.
+The GPU still needs something to think is plugged in. Two options: a physical HDMI/DP dummy plug, or a virtual display driver. The [Virtual Display Driver](https://github.com/VirtualDrivers/Virtual-Display-Driver) project was used for this: install the latest release inside the guest, run `VDD Control.exe`, click **Install Driver** (confirm the driver-install prompt). Once the virtual display shows up under **Device Manager → Display Adapters**, the physical monitor can be unplugged and Looking Glass keeps working.
 
 Custom resolutions (e.g. for a 16:10 panel, where the driver only ships 16:9 presets) can be added to `C:\VirtualDisplayDriver\vdd_settings.xml`:
 

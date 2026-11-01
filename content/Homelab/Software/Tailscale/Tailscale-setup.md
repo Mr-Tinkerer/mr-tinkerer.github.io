@@ -1,38 +1,42 @@
 ---
 title: Tailscale Setup
-description: Joining the router, a laptop, and a phone to a Tailscale mesh, and fixing the interface/firewall config needed for OpenWrt to actually respond.
+description: Joining the router, laptop, and phone to a Tailscale mesh, and fixing the interface/firewall config needed for OpenWrt to actually respond.
 tags:
   - Homelab
   - Tailscale
   - Networking
 ---
-# Why
 
-I use [[Homelab/Software/Tailscale/Tailscale-glossary#Tailscale|Tailscale]] to reach home lab services from outside the building without asking the building's IT department to open any inbound ports.
+## Overview
 
-# Client setup
+This page covers joining the router, laptop, and phone to a Tailscale mesh, and fixing the interface/firewall configuration needed for OpenWrt to respond.
 
-- **Phone / laptop:** I installed the Tailscale app/package and signed in — done.
-- **OpenWrt:** OpenWrt doesn't ship Tailscale by default, but has an [official Tailscale guide](https://openwrt.org/docs/guide-user/services/vpn/tailscale/start). I installed it via `apk update && apk add tailscale`, then ran `tailscale up` and authenticated via the URL it printed.
+## Motivation
+
+Tailscale provides access to home lab services from outside the building without asking the building's IT department to open any inbound ports.
+
+## Client Setup
+
+- **Phone / laptop:** Install the Tailscale app/package and sign in
+- **OpenWrt:** Install Tailscale via `apk update && apk add tailscale`, then run `tailscale up` and authenticate via the printed URL
 
 All three devices appeared in the Tailscale dashboard, but pinging the router over Tailscale initially returned `Destination Port Unreachable`.
 
-# Fixing OpenWrt's Tailscale networking
+## Fixing OpenWrt's Tailscale Networking
 
-I was still missing two pieces, both from the official guide:
+Two pieces were missing from the official guide:
 
-1. A new **interface** (`Network → Interfaces → Add new interface`) named `tailscale`, protocol `Unmanaged`, device `tailscale0`.
-2. A new **firewall zone** (`Network → Firewall → Zones → Add`) covering that interface, with `Input: ACCEPT`, `Output: ACCEPT`, `Forward: reject`, `Masquerading: on`, `MSS Clamping: on`, and forwarding allowed to/from the `LAN` zone.
+1. **New interface:** `Network → Interfaces → Add new interface` named `tailscale`, protocol `Unmanaged`, device `tailscale0`
+2. **New firewall zone:** Covering that interface, with `Input: ACCEPT`, `Output: ACCEPT`, `Forward: reject`, `Masquerading: on`, `MSS Clamping: on`, and forwarding allowed to/from the `LAN` zone
 
-After saving, connectivity still didn't work until I restarted the Tailscale service itself — after that, I could reach the router over Tailscale from my phone while switching from Wi-Fi to mobile data:
+After saving, connectivity still didn't work until the Tailscale service itself was restarted. After that, the router became reachable over Tailscale from a phone while switching from Wi-Fi to mobile data.
 
-![[tailscale-ping-openwrt-switching-wifi-to-mobile-data.jpg]]
-*Successful pings to the router over Tailscale while the phone switches from the building's Wi-Fi to mobile data.*
+See [successful ping screenshot](Images/tailscale-ping-openwrt-switching-wifi-to-mobile-data.jpg) for successful pings to the router over Tailscale while the phone switches from the building's Wi-Fi to mobile data.
 
-# Reaching the rest of the LAN, not just the router
+## Reaching the Rest of the LAN
 
-Being able to reach only the router over Tailscale isn't very useful to me — [[Homelab/Software/OpenMediaVault/Openmediavault-installation|OMV]] and [[Homelab/Software/Proxmox/Proxmox-installation|Proxmox]] aren't on the mesh themselves. See [[Homelab/Software/Tailscale/Mesh-and-subnet-routing|Mesh and subnet routing]] for how I advertise the whole LAN subnet instead of joining every device individually.
+Being able to reach only the router over Tailscale isn't useful — OpenMediaVault and Proxmox aren't on the mesh themselves. See [[Homelab/Software/Tailscale/Mesh-and-subnet-routing|Mesh and subnet routing]] for how the whole LAN subnet is advertised instead of joining every device individually.
 
-# Account note
+## Account Note
 
-Tailscale requires SSO (no plain email/password signup), meaning my account security here depends entirely on whatever identity provider I used for that SSO login.
+Tailscale requires SSO (no plain email/password signup), meaning account security depends entirely on whatever identity provider was used for that SSO login.

@@ -1,34 +1,61 @@
 ---
 title: Quartz Installation
-description: Getting Quartz cloned, initialized, and its plugins installed.
+description: Getting Quartz cloned, initialized, and plugins installed.
 tags:
   - wiki
   - quartz
 ---
 
-I installed [[Quartz-glossary#Quartz|Quartz]] with the following commands:
+## Overview
+
+This guide covers Quartz installation and initialization, including plugin setup and configuration.
+
+## Prerequisites
+
+* Git installed and configured
+* Node.js and npm installed
+* Access to the Quartz GitHub repository
+
+## Installation Steps
+
+### Clone and Initialize
+
+Clone the Quartz repository and install dependencies:
 
 ```bash
 git clone https://github.com/jackyzha0/quartz.git
 cd quartz
 npm i
+```
+
+### Configuration
+
+Run the Quartz creation wizard:
+
+```bash
 npx quartz create
 ```
 
-`npx quartz create` asks a few setup questions. I answered:
+Answer the following setup questions:
 
 - **Template:** `obsidian`
-- **Content strategy:** empty folder (I'm populating it with my own vault, not Quartz's sample content)
+- **Content strategy:** empty folder (populating with own vault rather than sample content)
 - **Base URL:** `mr-tinkerer.github.io`
 
-Once the site was initialized, I refreshed and installed [[Quartz-glossary#Plugin (Quartz)|plugins]]:
+### Plugin Installation
+
+Install and update plugins to their latest versions:
 
 ```bash
 npx quartz plugin install --latest
 npx quartz plugin install --from-config
 ```
 
-- `--latest` bumps every installed plugin to its latest version.
-- `--from-config` installs whatever plugins are listed in `quartz.config.yaml` but not yet present locally.
+- `--latest` bumps every installed plugin to its latest version
+- `--from-config` installs plugins listed in `quartz.config.yaml` that are not yet present locally
 
-See [[Quartz-configuration|Configuration]] for what I changed after this initial install.
+## Verification
+
+Verify installation by running the Quartz development server and confirming the site loads successfully.
+
+See [[Wiki/Quartz/Quartz-configuration|Configuration]] for post-installation modifications.
