@@ -34,9 +34,10 @@ Software that runs directly on its own dedicated physical hardware rather than a
 
 Each entry is one VM running on the Proxmox hypervisor, bundling its guest OS's own bucket with one bucket per service it hosts — see the Platform-buckets convention for why this domain groups VM-hosted software this way instead of one flat list. The Monitoring VM and Arrrrgh VM aren't listed here yet — see Virtual machines for their roster entries; each has only a guest OS installed so far, with no services configured.
 
-- **Productivity VM** (Debian) — Nextcloud (Glossary · Gotchas), Stirling PDF (Glossary), and ConvertX (Glossary)
-- **Personal VM** (openSUSE) — Homepage, the dashboard linking every home lab service together. (Glossary)
-- **Local AI VM** (Fedora) — Llama.cpp for CPU-only local LLM inference (Glossary), Open WebUI as its chat front-end (Glossary), and SearXNG as its private search backend (Glossary)
+- **Productivity VM** (Debian) — See [[Homelab/Platform/Productivity-VM/Index|Productivity VM Index]] for overview and service details
+- **Personal VM** (openSUSE) — See [[Homelab/Platform/Personal-VM/Index|Personal VM Index]] for overview and service details
+- **Local AI VM** (Fedora) — See [[Homelab/Platform/Local-AI-VM/Index|Local AI VM Index]] for overview and service details
+- **Arrrrgh VM** (Windows Server) — See [[Homelab/Platform/Arrrrgh-VM/Index|Arrrrgh VM Index]] for overview and service details
 
 ## Logical
 

@@ -61,3 +61,4 @@ How this laptop consumes storage from the home NAS: mounting its share on demand
 
 - [[NAS-Backup/Nas-backup-glossary|Glossary]]
 - [[NAS-Backup/Automated-document-backup|Automated document backup]]
+- [[Daily-driver-laptop/Software/Hermes/Hermes Desktop Installation and Configuration|Hermes]] — Hermes Agent desktop installation and configuration. (Glossary)

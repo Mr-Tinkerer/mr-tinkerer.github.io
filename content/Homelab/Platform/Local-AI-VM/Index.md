@@ -11,13 +11,19 @@ tags:
 
 This page documents the Local-AI VM, its role in the home lab, and the AI services it hosts.
 
+---
+
 ## Local-AI VM Role and Purpose
 
 The Local-AI VM provides a dedicated Fedora-based platform for local AI inference and related services. It runs on Proxmox as a LXC container optimized for CPU-based machine learning workloads without GPU passthrough.
 
+---
+
 ## Guest OS
 
 The VM runs Fedora as its guest operating system, configured with CPU pinning and virtual CPU type optimization for inference workloads. See [[Homelab/Platform/Local-AI-VM/Fedora|Fedora]] for OS-level details, including CPU configuration and system tuning.
+
+---
 
 ## Hosted Services
 
@@ -29,9 +35,9 @@ Local LLM inference engine serving various large language models with CPU-optimi
 
 ### Open-WebUI
 
-Web-based interface for interacting with local LLMs, providing chat interfaces and model management.
+Read-only instance of Open-WebUI that syncs chat history from the primary Daily Driver Laptop instance. This VM serves as a backup read-only copy for accessing chat logs when the laptop is unavailable.
 
-- [[Homelab/Platform/Local-AI-VM/Open-webui|Open-WebUI]]
+- [[Homelab/Platform/Local-AI-VM/Open-webui|Open-WebUI (Read-Only Instance)]]
 
 ### SearXNG
 
@@ -39,17 +45,23 @@ Privacy-focused metasearch engine that aggregates results from multiple search p
 
 - [[Homelab/Platform/Local-AI-VM/Searxng|SearXNG]]
 
+---
+
 ## Service Dependencies
 
 All services run as Podman containers on Fedora, following the Podman over Docker architecture. Services communicate via a shared Podman network.
 
 Llama.cpp serves as the primary inference engine, with Open-WebUI providing the user interface and SearXNG offering search capabilities. The inference workload determines resource allocation priorities.
 
+---
+
 ## Performance Considerations
 
 The VM is configured for CPU-only inference, with llama.cpp compiled with native CPU instruction set optimization (AVX2, FMA). See [[Homelab/Platform/Local-AI-VM/Llama.cpp/Build-and-cpu-tuning|Llama.cpp Build and CPU tuning]] for build details and performance verification.
 
 Resource allocation is tuned for inference workloads, prioritizing CPU threads over GPU capabilities. The [[Homelab/Logical/Virtual-machines/Vm-allocation|VM allocation roster]] documents resource distribution across all VMs.
+
+---
 
 ## Future Expansion
 
