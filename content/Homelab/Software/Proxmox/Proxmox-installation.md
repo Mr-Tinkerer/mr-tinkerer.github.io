@@ -1,5 +1,5 @@
 ---
-title: Proxmox Installation
+title: Proxmox Installation on Dell Optiplex 5060
 description: Installing Proxmox VE onto the Dell Optiplex 5060.
 tags:
   - Homelab

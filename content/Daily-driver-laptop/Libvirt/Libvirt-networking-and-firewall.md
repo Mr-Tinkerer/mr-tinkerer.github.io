@@ -1,6 +1,6 @@
 ---
-title: Libvirt Networking, nftables, and UFW
-description: How libvirt, nftables, and UFW interact on this host, and two networking failures and their fixes.
+title: Libvirt Networking, nftables, and UFW on Gigabyte Gaming A16 (CachyOS)
+description: How libvirt, nftables, and UFW interact on the daily driver laptop, and two networking failures and their fixes.
 tags:
   - Virtual_Machines
   - Networking

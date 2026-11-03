@@ -1,5 +1,5 @@
 ---
-title: DHCP Plan
+title: DHCP Plan on OpenWrt Router
 description: The DHCP pool range within the home lab's addressing plan and the Limit-vs-End configuration mistake.
 tags:
   - Homelab

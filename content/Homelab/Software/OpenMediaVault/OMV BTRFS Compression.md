@@ -1,5 +1,5 @@
 ---
-title: OMV BTRFS Compression Configuration
+title: OMV BTRFS Compression Configuration on OpenMediaVault NAS (Dell Vostro 260s)
 description: Guide to enabling ZSTD compression for BTRFS filesystem on OpenMediaVault.
 tags:
   - Homelab

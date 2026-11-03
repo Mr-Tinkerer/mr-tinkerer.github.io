@@ -1,5 +1,5 @@
 ---
-title: Fedora CPU Configuration
+title: Fedora CPU Configuration on Local-AI VM (Fedora)
 description: How the Local AI VM's virtual CPU and core pinning are configured at the guest-OS/VM level, independent of any service running on it.
 tags:
   - Homelab

@@ -1,5 +1,5 @@
 ---
-title: Bazarr Setup
+title: Bazarr Setup on Arrrrgh Windows Server
 description: Subtitle management service for the ARR stack.
 tags:
   - Homelab

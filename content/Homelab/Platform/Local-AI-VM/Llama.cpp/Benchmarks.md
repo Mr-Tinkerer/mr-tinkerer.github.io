@@ -1,5 +1,5 @@
 ---
-title: Llama.cpp Benchmarks
+title: Llama.cpp Benchmarks on Local-AI VM (Fedora)
 description: Text and vision model throughput, accuracy, and context-size limits measured on the Local AI VM's CPU-only hardware.
 tags:
   - Homelab

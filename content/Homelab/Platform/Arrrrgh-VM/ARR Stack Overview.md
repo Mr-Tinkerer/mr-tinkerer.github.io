@@ -1,5 +1,5 @@
 ---
-title: ARR Stack Overview
+title: ARR Stack Services Overview on Arrrrgh Windows Server
 description: Overview of the ARR (App Repository & Remote) stack services for media management on the Arrrrgh VM.
 tags:
   - Homelab
@@ -20,11 +20,11 @@ The ARR (App Repository & Remote) stack is a collection of interconnected media 
 
 ## Services
 
-### ARR Stack Configuration
+### ARR Stack Services Overview
 
 Overview of ARR stack service configuration and integration.
 
-- [[Homelab/Platform/Arrrrgh-VM/ARR stack Configuration|ARR Stack Configuration]]
+- [[Homelab/Platform/Arrrrgh-VM/ARR stack Configuration on Arrrrgh Windows Server|ARR stack Configuration]]
 
 ### Prowlarr
 
@@ -60,7 +60,7 @@ Movie management and automation.
 
 Subtitle management service.
 
-- [[Homelab/Platform/Arrrrgh-VM/Bazarr Setup|Bazarr Setup]]
+- [[Homelab/Platform/Arrrrgh-VM/Bazarr Installation and Configuration on Arrrrgh VM|Bazarr Installation and Configuration]]
 
 ---
 

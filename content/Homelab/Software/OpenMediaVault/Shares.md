@@ -1,5 +1,5 @@
 ---
-title: OpenMediaVault Shares
+title: OpenMediaVault Shares on Dell Vostro 260s
 description: Turning the BTRFS storage pool into NFS shares, SMART monitoring, and the extra share needed for Tailscale.
 tags:
   - Homelab

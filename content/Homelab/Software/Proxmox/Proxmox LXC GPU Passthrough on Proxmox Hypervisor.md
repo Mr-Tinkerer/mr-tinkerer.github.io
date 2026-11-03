@@ -1,5 +1,5 @@
 ---
-title: Proxmox LXC GPU Passthrough
+title: Proxmox LXC GPU Passthrough on Proxmox Hypervisor
 description: Passing an NVIDIA GPU through to a Proxmox LXC container and sharing NAS storage into it over CIFS.
 tags:
   - Homelab

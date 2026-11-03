@@ -1,5 +1,5 @@
 ---
-title: Quartz Configuration
+title: Quartz Configuration on Mr.Tinkerer's Wiki
 description: The quartz.config.yaml changes — site title, sidebar plugin layout, and the Phoenix theme.
 tags:
   - wiki

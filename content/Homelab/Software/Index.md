@@ -16,7 +16,7 @@ This domain documents all software systems in the home lab, organized by type an
 
 Primary hypervisor managing all VMs and containers in the home lab.
 
-* [[Homelab/Software/Proxmox|Proxmox]]
+* [[Homelab/Software/Proxmox/Installing Proxmox on a Wi-Fi-Only Machine|Proxmox Installation]]
 
 # Networking
 
@@ -24,7 +24,8 @@ Primary hypervisor managing all VMs and containers in the home lab.
 
 Router operating system providing network infrastructure and Wi-Fi services.
 
-* [[Homelab/Software/OpenWrt|OpenWrt]]
+* [[Homelab/Software/OpenWrt/OpenWrt Overview on Lenovo ThinkPad P52s|OpenWrt Overview]]
+* [[Homelab/Software/OpenWrt/OpenWrt Glossary|OpenWrt Glossary]]
 
 ## Nginx
 
@@ -44,7 +45,8 @@ Mesh network and subnet routing for secure remote access.
 
 Network-attached storage providing file sharing, backups, and media services.
 
-* [[Homelab/Software/OpenMediaVault|OpenMediaVault]]
+* [[Homelab/Software/OpenMediaVault/OpenMediaVault-Glossary|OpenMediaVault Glossary]]
+* [[Homelab/Software/OpenMediaVault/Openmediavault-installation on Dell Vostro 260s|OpenMediaVault Installation]]
 
 # Containerization
 
@@ -72,19 +74,19 @@ VM allocation, resource distribution, and virtualization configuration.
 
 Document management and file sharing service.
 
-* [[Homelab/Platform/Productivity-VM/Nextcloud|Nextcloud]]
+* [[Homelab/Platform/Productivity-VM/Nextcloud/Nextcloud-installation|Nextcloud Installation]]
 
 ## Stirling-PDF
 
 PDF manipulation and conversion tool.
 
-* [[Homelab/Platform/Productivity-VM/Stirling-pdf|Stirling-PDF]]
+* [[Homelab/Platform/Productivity-VM/Stirling-pdf/Stirling-pdf-installation|Stirling-PDF Installation]]
 
 ## ConvertX
 
 E-book conversion service.
 
-* [[Homelab/Platform/Productivity-VM/Convertx|ConvertX]]
+* [[Homelab/Platform/Productivity-VM/Convertx/Convertx-installation|ConvertX Installation]]
 
 ## Llama.cpp
 

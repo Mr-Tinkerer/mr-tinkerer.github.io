@@ -1,5 +1,5 @@
 ---
-title: VM Allocation
+title: VM Allocation on Proxmox Hypervisor
 description: The roster of VMs running on the Proxmox hypervisor, what each one is for, and which OS it runs.
 tags:
   - Homelab

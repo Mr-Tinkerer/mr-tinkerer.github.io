@@ -1,9 +1,10 @@
 ---
-title: OpenWrt Wi-Fi Driver Installation
+title: OpenWrt Wi-Fi Driver Installation on Lenovo ThinkPad P52s
 description: Getting OpenWrt to recognize the ThinkPad's Intel 8265 Wi-Fi card, offline.
 tags:
   - Homelab
   - OpenWrt
+  - Networking
 ---
 
 ## Overview

@@ -1,5 +1,5 @@
 ---
-title: Homepage Setup
+title: Homepage Setup on Personal VM (openSUSE)
 description: Standing up a Homepage dashboard on the Personal VM to avoid typing full home lab hostnames.
 tags:
   - Homelab

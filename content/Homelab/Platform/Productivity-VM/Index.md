@@ -17,7 +17,7 @@ The Productivity VM provides a dedicated Debian-based platform for productivity-
 
 ## Guest OS
 
-The VM runs Debian as its guest operating system. See [[Homelab/Platform/Productivity-VM/Debian|Debian]] for OS-level details, including networking configuration, package management, and system maintenance.
+The VM runs Debian as its guest operating system. See [[Homelab/Platform/Productivity-VM/Debian/Debian-overview|Debian Overview]] for OS-level details, including networking configuration, package management, and system maintenance.
 
 ## Hosted Services
 
@@ -25,19 +25,19 @@ The VM runs Debian as its guest operating system. See [[Homelab/Platform/Product
 
 Primary document management and file sharing service with Collabora Office integration for document editing.
 
-- [[Homelab/Platform/Productivity-VM/Nextcloud|Nextcloud]]
+- [[Homelab/Platform/Productivity-VM/Nextcloud/Nextcloud-installation|Nextcloud Installation]]
 
 ### Stirling-PDF
 
 PDF manipulation tool providing document conversion, merging, splitting, and editing capabilities.
 
-- [[Homelab/Platform/Productivity-VM/Stirling-pdf|Stirling-PDF]]
+- [[Homelab/Platform/Productivity-VM/Stirling-pdf/Stirling-pdf-installation|Stirling-PDF Installation]]
 
 ### ConvertX
 
 E-book conversion service for transforming various ebook formats.
 
-- [[Homelab/Platform/Productivity-VM/Convertx|ConvertX]]
+- [[Homelab/Platform/Productivity-VM/Convertx/ConvertX Installation on Productivity VM (Debian)|ConvertX Installation]]
 
 ## Service Dependencies
 

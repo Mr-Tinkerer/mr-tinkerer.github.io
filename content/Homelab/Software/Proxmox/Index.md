@@ -26,7 +26,7 @@ Proxmox Virtual Environment (PVE) serves as the hypervisor platform for the home
 
 The `local` storage pool combines what was previously separate `local` and `local-lvm` pools into a single ext4-based storage system. This configuration trades LVM-thin features (fast snapshots, thin provisioning) for simpler management and better performance for large VM disks.
 
-- [[Homelab/Software/Proxmox/Proxmox Merge Local-LVM Into Local|Proxmox Merge Local-LVM Into Local]]
+- [[Homelab/Software/Proxmox/Proxmox Merge Local-LVM Into Local on Proxmox Hypervisor|Proxmox Merge Local-LVM Into Local]]
 
 ### Storage Trade-Offs
 

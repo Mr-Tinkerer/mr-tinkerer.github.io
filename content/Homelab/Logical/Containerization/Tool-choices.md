@@ -1,5 +1,5 @@
 ---
-title: Containerization Tool Choices
+title: Containerization Tool Choices in Home Lab
 description: The real reason behind running a different Linux distro per VM and picking Podman over Docker — deliberately choosing unfamiliar tools for the learning value, not because they're technically superior.
 tags:
   - Homelab

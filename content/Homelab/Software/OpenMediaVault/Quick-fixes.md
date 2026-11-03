@@ -1,5 +1,5 @@
 ---
-title: OpenMediaVault Quick Fixes
+title: OpenMediaVault Quick Fixes on Dell Vostro 260s
 description: Small post-install cleanup items for OpenMediaVault.
 tags:
   - Homelab

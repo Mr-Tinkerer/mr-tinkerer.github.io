@@ -1,5 +1,5 @@
 ---
-title: ARR Stack Configuration
+title: ARR Stack Configuration on Arrrrgh Windows Server
 description: Overview of ARR stack service configuration and integration on the Arrrrgh VM.
 tags:
   - Homelab
@@ -83,27 +83,27 @@ $folders | ForEach-Object {
 
 ### Prowlarr
 
-See [[Prowlarr Setup]] for detailed configuration.
+See [[Homelab/Platform/Arrrrgh-VM/Prowlarr Setup|Prowlarr]] for detailed configuration.
 
 ### FlareSolverr
 
-See [[FlareSolverr Setup]] for detailed configuration.
+See [[Homelab/Platform/Arrrrgh-VM/FlareSolverr Setup|FlareSolverr]] for detailed configuration.
 
 ### Deluge
 
-See [[Deluge Setup]] for detailed configuration.
+See [[Homelab/Platform/Arrrrgh-VM/Deluge Setup|Deluge]] for detailed configuration.
 
 ### Sonarr
 
-See [[Sonarr Setup]] for detailed configuration.
+See [[Homelab/Platform/Arrrrgh-VM/Sonarr Setup|Sonarr]] for detailed configuration.
 
 ### Radarr
 
-See [[Radarr Setup]] for detailed configuration.
+See [[Homelab/Platform/Arrrrgh-VM/Radarr Setup|Radarr]] for detailed configuration.
 
 ### Bazarr
 
-See [[Bazarr Setup]] for detailed configuration.
+See [[Homelab/Platform/Arrrrgh-VM/Bazarr Installation and Configuration on Arrrrgh VM|Bazarr Installation and Configuration]] for detailed configuration.
 
 ---
 

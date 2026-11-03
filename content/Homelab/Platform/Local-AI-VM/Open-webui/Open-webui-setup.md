@@ -1,5 +1,5 @@
 ---
-title: Open WebUI Setup
+title: Open WebUI Setup on Local-AI VM (Fedora)
 description: Standing up Open WebUI as a chat front-end for llama.cpp with web search via SearXNG.
 tags:
   - Homelab

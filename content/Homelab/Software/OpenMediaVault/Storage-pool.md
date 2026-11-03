@@ -1,5 +1,5 @@
 ---
-title: OpenMediaVault Storage Pool
+title: OpenMediaVault Storage Pool on Dell Vostro 260s
 description: Building the RAID array and BTRFS filesystem that back the NAS's shares.
 tags:
   - Homelab

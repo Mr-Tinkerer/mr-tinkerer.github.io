@@ -1,5 +1,5 @@
 ---
-title: Llama.cpp Installation on Gigabyte Laptop
+title: Llama.cpp Installation on Gigabyte Gaming A16
 description: Installing llama.cpp with CUDA support via CachyOS/Arch packages and GPU offload tuning.
 tags:
   - llama.cpp

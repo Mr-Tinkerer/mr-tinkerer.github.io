@@ -1,5 +1,5 @@
 ---
-title: BTRFS reference
+title: BTRFS Reference on OpenMediaVault NAS (Dell Vostro 260s)
 description: A deeper practical reference for the BTRFS filesystem on top of the NAS's mdadm RAID array — how it allocates space, how to read its usage output, and how to keep it healthy.
 tags:
   - Homelab

@@ -1,5 +1,5 @@
 ---
-title: Deluge Setup
+title: Deluge Setup on Arrrrgh Windows Server
 description: Torrent client for the ARR stack with label-based organization.
 tags:
   - Homelab

@@ -1,5 +1,5 @@
 ---
-title: Debian Overview
+title: Debian Overview on Productivity VM
 description: The Debian guest OS shared by every service on the Productivity VM.
 tags:
   - Homelab

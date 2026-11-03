@@ -9,7 +9,7 @@ tags:
 
 This machine (Gigabyte GAMING A16, RTX 5060 Laptop GPU, CachyOS) is separate hardware from the CPU-only Local-AI-VM tracked in [[Homelab/Platform/Local-AI-VM/Llama.cpp/Benchmarks|the Local-AI-VM benchmarks]] — don't mix numbers between the two, though the model sweep below uses the same model set for comparison.
 
-See [[Installation#GPU-specific flags|Installation]] for what each flag below means, and see [[Homelab/Platform/Local-AI-VM/Llama.cpp/Llama-cpp-glossary|the canonical glossary]] for `pp512`/`tg128` and other general terms.
+See [[Daily-driver-laptop/Llama.cpp/Llama.cpp Installation on Gigabyte Gaming A16#GPU-specific flags|Llama.cpp Installation on Gigabyte Gaming A16]] for what each flag below means, and see [[Homelab/Platform/Local-AI-VM/Llama.cpp/Llama-cpp-glossary|the canonical glossary]] for `pp512`/`tg128` and other general terms.
 
 ---
 

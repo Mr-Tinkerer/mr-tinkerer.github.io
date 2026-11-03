@@ -1,9 +1,10 @@
 ---
-title: OpenWrt Enterprise Wi-Fi (WPA2-EAP) Authentication
-description: Fixing a LuCI configuration generator bug that broke PEAP/MSCHAPv2 authentication to WPA2-Enterprise networks.
+title: OpenWrt Enterprise Wi-Fi (WPA2-EAP) Authentication on Lenovo ThinkPad P52s
+description: Fixing a LuCI configuration generator bug that broke PEAP/MSCHAPv2 authentication to WPA2-Enterprise networks on the router.
 tags:
   - Homelab
   - OpenWrt
+  - Networking
 ---
 
 ## Overview

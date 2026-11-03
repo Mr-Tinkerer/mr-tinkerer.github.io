@@ -1,15 +1,16 @@
 ---
-title: OpenWrt Installation Pt 3, Initial Access and Root Password
+title: OpenWrt Installation Pt 3, Initial Access and Root Password on Lenovo ThinkPad P52s
 description: Discovering the router laptop had no Ethernet port, transplanting the install, and the quirks of first login.
 tags:
   - Homelab
   - OpenWrt
+  - Installation
 ---
 
 ## Prerequisites
 
-- [[Homelab/Software/OpenWrt/Installation/Pt 1, Choosing-the-router-os|Pt 1, Choosing the router OS]]
-- [[Homelab/Software/OpenWrt/Installation/Pt 2, Flashing-and-booting|Pt 2, Flashing and booting]] — OpenWrt installed to the laptop's internal drive and booting successfully.
+- [[Homelab/Software/OpenWrt/Installation/OpenWrt Installation Pt 1, Choosing the Router OS on Lenovo ThinkPad P52s|Pt 1, Choosing the router OS]]
+- [[Homelab/Software/OpenWrt/Installation/OpenWrt Installation Pt 2, Flashing and Booting on Lenovo ThinkPad P52s|Pt 2, Flashing and booting]] — OpenWrt installed to the laptop's internal drive and booting successfully.
 
 ---
 

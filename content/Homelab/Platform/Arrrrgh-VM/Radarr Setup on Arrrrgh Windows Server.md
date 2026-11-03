@@ -1,5 +1,5 @@
 ---
-title: Radarr Setup
+title: Radarr Setup on Arrrrgh Windows Server
 description: Movie management and automated downloading for the ARR stack.
 tags:
   - Homelab

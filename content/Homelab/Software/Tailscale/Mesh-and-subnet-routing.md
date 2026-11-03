@@ -1,5 +1,5 @@
 ---
-title: Tailscale Mesh and Subnet Routing
+title: Tailscale Mesh and Subnet Routing on OpenWrt Router
 description: Advertising the home lab's LAN subnet through the router so every device is reachable over Tailscale, and getting DNS to follow along.
 tags:
   - Homelab

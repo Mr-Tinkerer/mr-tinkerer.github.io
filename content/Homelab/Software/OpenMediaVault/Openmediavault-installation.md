@@ -1,6 +1,6 @@
 ---
-title: OpenMediaVault Installation
-description: Wiping old partitions and installing OpenMediaVault onto the NAS hardware.
+title: OpenMediaVault Installation on Dell Vostro 260s
+description: Wiping old partitions and installing OpenMediaVault onto the Dell Vostro 260s NAS hardware.
 tags:
   - Homelab
   - OpenMediaVault

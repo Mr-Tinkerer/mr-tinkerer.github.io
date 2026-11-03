@@ -1,5 +1,5 @@
 ---
-title: OpenWrt DHCP and DNS Configuration
+title: OpenWrt DHCP and DNS Configuration on OpenWrt Router
 description: Configuring OpenWrt's dnsmasq-based DHCP server and custom DNS records to serve the home lab's addressing plan.
 tags:
   - Homelab

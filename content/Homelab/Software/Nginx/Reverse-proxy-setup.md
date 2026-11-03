@@ -1,5 +1,5 @@
 ---
-title: Nginx Reverse Proxy Setup
+title: Nginx Reverse Proxy Setup on OpenWrt Router
 description: Running Nginx on the OpenWrt router to give each home lab service a clean hostname instead of a raw IP:port.
 tags:
   - Homelab

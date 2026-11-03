@@ -1,5 +1,5 @@
 ---
-title: Proxmox Merge Local-LVM Into Local
+title: Proxmox Merge Local-LVM Into Local on Proxmox Hypervisor
 description: Procedure to merge Proxmox local-lvm storage into local storage by deleting the thin pool and growing the root filesystem.
 tags:
   - Homelab
@@ -346,7 +346,7 @@ qmrestore <archive>.vma.zst <ID> --storage local
       "type": "missing-url",
       "question": "What is the GitHub URL for any custom scripts or automation used in this procedure?",
       "context": "The draft mentions scripts but does not provide GitHub URLs for them.",
-      "related": ["Homelab/Software/Proxmox/Proxmox-installation.md"],
+      "related": ["Homelab/Software/Proxmox/Installing Proxmox on a Wi-Fi-Only Machine.md"],
       "answer": null
     }
   ]

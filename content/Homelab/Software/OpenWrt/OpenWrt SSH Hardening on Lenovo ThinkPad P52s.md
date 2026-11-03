@@ -1,9 +1,10 @@
 ---
-title: OpenWrt SSH Hardening
+title: OpenWrt SSH Hardening on Lenovo ThinkPad P52s
 description: Key-based auth, a non-default port, and a per-host SSH config entry for the OpenWrt router.
 tags:
   - Homelab
   - OpenWrt
+  - Security
 ---
 
 ## Overview

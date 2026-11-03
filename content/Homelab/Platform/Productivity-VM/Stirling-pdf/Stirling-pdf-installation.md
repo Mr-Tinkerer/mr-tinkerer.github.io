@@ -1,5 +1,5 @@
 ---
-title: Stirling-PDF Installation
+title: Stirling-PDF Installation on Productivity VM (Debian)
 description: Running Stirling PDF as a Podman container on the Productivity VM for PDF manipulation.
 tags:
   - Homelab

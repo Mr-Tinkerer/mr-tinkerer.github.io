@@ -24,11 +24,11 @@ Physical machines that make up the home lab, and the hardware-specific problems 
 
 Software that runs directly on its own dedicated physical hardware rather than as a guest on the Proxmox hypervisor — the router's OS/services, and the hypervisor and NAS OSes themselves. See Platform below for everything that runs as a guest VM on Proxmox instead.
 
-- [[Homelab/Software/OpenWrt/Openwrt-overview|OpenWrt]] — the router OS: installation, Wi-Fi driver bring-up, enterprise Wi-Fi authentication, GRUB, SSH, DHCP/DNS, and system maintenance. (Glossary)
+- [[Homelab/Software/OpenWrt/OpenWrt Overview on Lenovo ThinkPad P52s|OpenWrt]] — the router OS: installation, Wi-Fi driver bring-up, enterprise Wi-Fi authentication, GRUB, SSH, DHCP/DNS, and system maintenance. (Glossary)
 - [[Homelab/Software/Nginx/Reverse-proxy-setup|Nginx]] — reverse proxy and HTTPS/private-CA setup for home lab services, running on the router. (Glossary)
 - [[Homelab/Software/Tailscale/Tailscale-setup|Tailscale]] — mesh VPN for reaching the home lab from outside the building, running on the router. (Glossary)
-- [[Homelab/Software/Proxmox/Proxmox-installation|Proxmox]] — the hypervisor itself, including VM creation. (Glossary)
-- [[Homelab/Software/OpenMediaVault/Openmediavault-installation|OpenMediaVault]] — the NAS OS: install, networking, the RAID/BTRFS storage pool, shares, SMART monitoring, and SSH hardening. (Glossary)
+- [[Homelab/Software/Proxmox/Installing Proxmox on a Wi-Fi-Only Machine|Proxmox]] — the hypervisor itself, including VM creation. (Glossary)
+- [[Homelab/Software/OpenMediaVault/OpenMediaVault-Glossary|OpenMediaVault]] — the NAS OS: install, networking, the RAID/BTRFS storage pool, shares, SMART monitoring, and SSH hardening. (Glossary)
 
 ## Platform
 

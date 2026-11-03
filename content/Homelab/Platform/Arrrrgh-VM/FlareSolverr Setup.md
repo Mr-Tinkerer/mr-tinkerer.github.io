@@ -1,5 +1,5 @@
 ---
-title: FlareSolverr Setup
+title: FlareSolverr Setup on Arrrrgh Windows Server
 description: CAPTCHA bypass and indexer access tool for the ARR stack.
 tags:
   - Homelab

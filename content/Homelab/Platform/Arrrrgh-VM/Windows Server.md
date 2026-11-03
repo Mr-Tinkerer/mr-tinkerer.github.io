@@ -1,5 +1,5 @@
 ---
-title: Windows Server
+title: Windows Server 2019 Installation and Configuration on Arrrrgh VM
 description: Configuration guide for the Windows Server guest OS running on the Arrrrgh VM.
 tags:
   - Homelab

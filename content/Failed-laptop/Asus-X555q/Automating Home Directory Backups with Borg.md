@@ -13,7 +13,7 @@ This page covers backing up a client's home directory onto the NAS share with Bo
 
 ## Why Borg
 
-With the NAS share mounted (see [[Nfs-client-automount|Auto-Mounting the NAS Share]]), BorgBackup backs up the client's home directory onto it with compression, encryption, and deduplication of repeated data across backups. It's Unix-only — no Windows support — which isn't a limitation here since the client being backed up is Linux.
+With the NAS share mounted (see [[Auto-Mounting the NAS Share with autofs|Auto-Mounting the NAS Share]]), BorgBackup backs up the client's home directory onto it with compression, encryption, and deduplication of repeated data across backups. It's Unix-only — no Windows support — which isn't a limitation here since the client being backed up is Linux.
 
 ## Initial Repository and Manual Backup
 

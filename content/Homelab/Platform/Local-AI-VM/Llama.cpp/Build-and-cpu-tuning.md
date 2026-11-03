@@ -1,5 +1,5 @@
 ---
-title: Llama.cpp Build and CPU Tuning
+title: Llama.cpp Build and CPU Tuning on Local-AI VM (Fedora)
 description: Building llama.cpp from source on the Local AI VM and tuning it for CPU-only inference with no GPU.
 tags:
   - Homelab

@@ -1,9 +1,10 @@
 ---
-title: OpenWrt GRUB Boot Timeout
-description: Fixing GRUB waiting forever for Enter instead of auto-booting after a few seconds.
+title: OpenWrt GRUB Boot Timeout on Lenovo ThinkPad P52s
+description: Fixing GRUB waiting forever for Enter instead of auto-booting after a few seconds on the router.
 tags:
   - Homelab
   - OpenWrt
+  - Boot
 ---
 
 ## Overview

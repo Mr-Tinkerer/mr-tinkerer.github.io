@@ -1,5 +1,5 @@
 ---
-title: OpenWrt Overview
+title: OpenWrt Overview on Lenovo ThinkPad P52s
 description: What OpenWrt is used for in this home lab, and which services run on it.
 tags:
   - Homelab
@@ -16,7 +16,7 @@ See [full home lab services layout](Images/homelab-services-layout-diagram.png) 
 
 ## Pages in This Bucket
 
-- [[Homelab/Software/OpenWrt/Installation/Pt 1, Choosing-the-router-os|Installation]] — Sequential walkthrough of picking OpenWrt and getting it running on hardware
+- [[Homelab/Software/OpenWrt/Installation|Installation]] — Sequential walkthrough of picking OpenWrt and getting it running on hardware
 - [[Homelab/Software/OpenWrt/Wifi-driver-installation|Wi-Fi driver installation]]
 - [[Homelab/Software/OpenWrt/Enterprise-wifi-authentication|Enterprise Wi-Fi authentication]]
 - [[Homelab/Software/OpenWrt/Grub-boot-timeout|GRUB boot timeout]]

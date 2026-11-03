@@ -1,5 +1,5 @@
 ---
-title: Sonarr Setup
+title: Sonarr Setup on Arrrrgh Windows Server
 description: TV show management and automated downloading for the ARR stack.
 tags:
   - Homelab

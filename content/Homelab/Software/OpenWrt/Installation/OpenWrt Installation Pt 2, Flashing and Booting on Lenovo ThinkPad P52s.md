@@ -1,14 +1,15 @@
 ---
-title: OpenWrt Installation Pt 2, Flashing and Booting
+title: OpenWrt Installation Pt 2, Flashing and Booting on Lenovo ThinkPad P52s
 description: Getting the OpenWrt image onto a USB stick, discovering the .img file is the OS itself, and writing it to internal storage.
 tags:
   - Homelab
   - OpenWrt
+  - Installation
 ---
 
 ## Prerequisites
 
-- [[Homelab/Software/OpenWrt/Installation/Pt 1, Choosing-the-router-os|Pt 1, Choosing the router OS]] — OpenWrt selected, `.img.gz` downloaded.
+- [[Homelab/Software/OpenWrt/Installation/OpenWrt Installation Pt 1, Choosing the Router OS on Lenovo ThinkPad P52s|Pt 1, Choosing the router OS]] — OpenWrt selected, `.img.gz` downloaded.
 
 ---
 
@@ -40,4 +41,4 @@ After this, the laptop booted OpenWrt directly from internal storage with no USB
 
 ---
 
-Next: [[Homelab/Software/OpenWrt/Installation/Pt 3, Initial-access-and-root-password|Pt 3, Initial access and root password]]
+Next: [[Homelab/Software/OpenWrt/Installation/OpenWrt Installation Pt 3, Initial Access and Root Password on Lenovo ThinkPad P52s|Pt 3, Initial access and root password]]

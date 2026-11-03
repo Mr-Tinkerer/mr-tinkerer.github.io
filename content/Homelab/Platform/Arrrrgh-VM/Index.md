@@ -22,7 +22,7 @@ The Arrrrgh Windows Server VM provides a dedicated Windows-based platform for me
 
 ## Guest OS
 
-The VM runs Windows Server as its guest operating system. See [[Homelab/Platform/Arrrrgh-VM/Windows Server|Windows Server]] for OS-level details and virtualization configuration.
+The VM runs Windows Server as its guest operating system. See [[Homelab/Platform/Arrrrgh-VM/Windows Server 2019 Installation and Configuration on Arrrrgh VM|Windows Server]] for OS-level details and virtualization configuration.
 
 ---
 
@@ -38,7 +38,7 @@ Overview of ARR stack service configuration and integration.
 
 Indexer management and metadata coordination.
 
-- [[Homelab/Platform/Arrrrgh-VM/Prowlarr Setup|Prowlarr Setup]]
+- [[Homelab/Platform/Arrrrgh-VM/Prowlarr Setup on Arrrrgh Windows Server|Prowlarr Setup]]
 - [[Homelab/Platform/Arrrrgh-VM/ARR Stack Shared Glossary|ARR Stack Shared Glossary]]
 
 ### FlareSolverr
@@ -59,14 +59,14 @@ Torrent client for downloads.
 
 TV show management and automation.
 
-- [[Homelab/Platform/Arrrrgh-VM/Sonarr Setup|Sonarr Setup]]
+- [[Homelab/Platform/Arrrrgh-VM/Sonarr Setup on Arrrrgh Windows Server|Sonarr Setup]]
 - [[Homelab/Platform/Arrrrgh-VM/ARR Stack Shared Glossary|ARR Stack Shared Glossary]]
 
 ### Radarr
 
 Movie management and automation.
 
-- [[Homelab/Platform/Arrrrgh-VM/Radarr Setup|Radarr Setup]]
+- [[Homelab/Platform/Arrrrgh-VM/Radarr Setup on Arrrrgh Windows Server|Radarr Setup]]
 - [[Homelab/Platform/Arrrrgh-VM/ARR Stack Shared Glossary|ARR Stack Shared Glossary]]
 
 ### Bazarr

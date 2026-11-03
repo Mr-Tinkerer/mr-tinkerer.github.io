@@ -1,5 +1,5 @@
 ---
-title: SearXNG Setup
+title: SearXNG Setup on Local-AI VM (Fedora)
 description: Running a private SearXNG instance for local LLM web search without third-party API dependency.
 tags:
   - Homelab

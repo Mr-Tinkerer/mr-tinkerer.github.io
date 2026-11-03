@@ -1,5 +1,5 @@
 ---
-title: DNS Naming Scheme
+title: DNS Naming Scheme on OpenWrt Router
 description: The home lab's custom top-level domain and per-device hostnames.
 tags:
   - Homelab

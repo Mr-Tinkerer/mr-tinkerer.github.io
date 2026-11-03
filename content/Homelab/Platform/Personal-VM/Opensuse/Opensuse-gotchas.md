@@ -1,5 +1,5 @@
 ---
-title: openSUSE Gotchas
+title: openSUSE Gotchas on Personal VM
 description: openSUSE-specific defaults that tripped up getting any container reachable and writable on the Personal VM, independent of which service was actually installed.
 tags:
   - Homelab

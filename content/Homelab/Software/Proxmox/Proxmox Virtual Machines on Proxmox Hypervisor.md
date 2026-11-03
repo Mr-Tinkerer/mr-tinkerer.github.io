@@ -1,5 +1,5 @@
 ---
-title: Proxmox Virtual Machines
+title: Proxmox Virtual Machines on Proxmox Hypervisor
 description: Attaching install media and creating the home lab's VMs in Proxmox.
 tags:
   - Homelab

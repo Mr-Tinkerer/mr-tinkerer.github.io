@@ -1,5 +1,5 @@
 ---
-title: Hermes Desktop Installation and Configuration
+title: Hermes Agent Desktop Installation on CachyOS
 description: Installation and configuration of Hermes Agent desktop on Linux with custom LLM endpoint integration.
 tags:
   - Homelab

@@ -1,6 +1,6 @@
 ---
-title: QEMU/KVM Virtual Disks Reference
-description: Reference for everything that determines how a QEMU/KVM virtual disk behaves — bus type, controller, file format, and performance/safety settings.
+title: QEMU/KVM Virtual Disks Reference on Gigabyte Gaming A16 (Proxmox & Virt-Manager)
+description: Reference for everything that determines how a QEMU/KVM virtual disk behaves — bus type, controller, file format, and performance/safety settings on the daily driver laptop.
 tags:
   - Virtual_Machines
   - QEMU

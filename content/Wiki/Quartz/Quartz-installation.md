@@ -1,5 +1,5 @@
 ---
-title: Quartz Installation
+title: Quartz Installation on Mr.Tinkerer's Wiki
 description: Getting Quartz cloned, initialized, and plugins installed.
 tags:
   - wiki

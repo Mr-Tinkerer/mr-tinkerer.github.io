@@ -1,5 +1,5 @@
 ---
-title: Proxmox Quick Fixes
+title: Proxmox Quick Fixes on Proxmox Hypervisor
 description: Small post-install cleanup items for Proxmox.
 tags:
   - Homelab

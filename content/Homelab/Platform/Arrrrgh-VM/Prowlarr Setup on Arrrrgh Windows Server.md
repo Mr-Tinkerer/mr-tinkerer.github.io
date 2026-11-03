@@ -1,5 +1,5 @@
 ---
-title: Prowlarr Setup
+title: Prowlarr Setup on Arrrrgh Windows Server
 description: Indexer management and metadata coordination for the ARR stack.
 tags:
   - Homelab

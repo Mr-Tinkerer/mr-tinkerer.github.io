@@ -1,6 +1,6 @@
 ---
-title: Libvirt Information
-description: Important information relating to libvirt
+title: Libvirt Information on Gigabyte Gaming A16 (CachyOS)
+description: Important information relating to libvirt on the daily driver laptop
 tags:
   - Virtual_Machines
   - libvirt

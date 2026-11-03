@@ -1,5 +1,5 @@
 ---
-title: Tailscale Setup
+title: Tailscale Setup on OpenWrt
 description: Joining the router, laptop, and phone to a Tailscale mesh, and fixing the interface/firewall config needed for OpenWrt to actually respond.
 tags:
   - Homelab

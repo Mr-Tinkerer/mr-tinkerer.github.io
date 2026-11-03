@@ -40,7 +40,7 @@ Budget laptop used for specific purposes, including repair documentation.
 
 * [[Homelab/Hardware/Acer-Aspire-3|Acer Aspire 3]]
 
-# Router Hardware Details
+# Software Details
 
 ## Dell Optiplex 5060
 

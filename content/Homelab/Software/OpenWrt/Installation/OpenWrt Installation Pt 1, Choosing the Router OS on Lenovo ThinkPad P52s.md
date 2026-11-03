@@ -1,9 +1,10 @@
 ---
-title: OpenWrt Installation Pt 1, Choosing the Router OS
-description: Why OpenWrt was picked over pfSense and OPNsense, and which install image to download.
+title: OpenWrt Installation Pt 1, Choosing the Router OS on Lenovo ThinkPad P52s
+description: Why OpenWrt was picked over pfSense and OPNsense, and which install image to download for the router.
 tags:
   - Homelab
   - OpenWrt
+  - Installation
 ---
 
 ## Prerequisites
@@ -48,4 +49,4 @@ The **non-EFI** image was tried first since the target motherboard's UEFI boot s
 
 ---
 
-Next: [[Homelab/Software/OpenWrt/Installation/Pt 2, Flashing and booting|Pt 2, Flashing and booting]]
+Next: [[Homelab/Software/OpenWrt/Installation/OpenWrt Installation Pt 2, Flashing and Booting on Lenovo ThinkPad P52s|Pt 2, Flashing and booting]]

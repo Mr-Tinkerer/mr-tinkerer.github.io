@@ -1,5 +1,5 @@
 ---
-title: Llama.cpp Serving as a Service
+title: Llama.cpp Serving as a Service on Local-AI VM (Fedora)
 description: Running llama-server persistently via systemd and switching between downloaded models at runtime.
 tags:
   - Homelab

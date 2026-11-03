@@ -61,7 +61,7 @@ The standard Debian static-IP procedure was followed and it didn't work — the 
 
 The dorm's network was blocking static IP assignment outright. Per the OS-agnostic test: since this is a dorm network not controlled, and the same failure occurred regardless of the OS or static-IP method used, that explanation fits — it's the only thing that accounts for why no guide worked.
 
-As a result, the laptop was left on DHCP. See [[Failed-laptop/Asus-X555q/Proxmox-installation#Tracking a DHCP-only IP|Proxmox-installation]] for how the server's hostname/IP is tracked despite this.
+As a result, the laptop was left on DHCP. See [[Failed-laptop/Asus-X555q/Installing Proxmox on a Wi-Fi-Only Machine#Tracking a DHCP-only IP|Proxmox-installation]] for how the server's hostname/IP is tracked despite this.
 
 ## Gotchas
 

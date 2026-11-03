@@ -1,9 +1,10 @@
 ---
-title: OpenWrt System Maintenance
+title: OpenWrt System Maintenance on Lenovo ThinkPad P52s
 description: Password/timezone housekeeping, package updates, an SSH-over-Kitty fix, and expanding the root filesystem to use the full disk.
 tags:
   - Homelab
   - OpenWrt
+  - Maintenance
 ---
 
 ## Overview
