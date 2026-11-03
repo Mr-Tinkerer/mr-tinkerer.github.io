@@ -131,7 +131,7 @@ Separate from bus/controller — this is the file format storing the disk's actu
 > qemu-img convert -O raw disk.qcow2 disk.raw
 > ```
 
-For external snapshots and backing chains, see [[Libvirt-external-snapshots]].
+For external snapshots and backing chains, see [[Libvirt/Libvirt-external-snapshots]].
 
 ---
 

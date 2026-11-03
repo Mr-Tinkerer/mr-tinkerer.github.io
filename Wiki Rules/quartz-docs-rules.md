@@ -150,6 +150,40 @@ This means a single migrated post can trigger a domain-wide reorganization. That
 
 ---
 
+## 4a. Generic Domain
+
+Some topics appear across multiple domains and should live in a **Generic Info** top-level domain rather than being duplicated or split across multiple specific buckets.
+
+### When to use Generic Info
+
+Use `Generic-Info/` for information that:
+- **Applies uniformly across multiple systems** (e.g., libvirt concepts used on both QEMU on the laptop and Proxmox in the homelab)
+- **Is cross-platform/tool-agnostic** (e.g., Llama.cpp terminology that applies to CPU and GPU instances)
+- **Represents shared infrastructure** (e.g., virtualization, inference frameworks used in multiple contexts)
+
+### What stays in specific domains
+
+Keep in specific buckets when content is:
+- **Machine/hardware-specific** (e.g., benchmarks tied to a specific GPU, CPU, or RAM configuration)
+- **Service-instance-specific** (e.g., NAS backup workflow that only applies to one machine's Documents folder)
+- **Platform-specific** (e.g., building llama.cpp with `-DGGML_NATIVE=ON` for a specific CPU)
+- **Configuration-specific** (e.g., AutoFS mount points, systemd service configurations unique to one machine)
+
+### Examples
+
+**Generic (in Generic Info):**
+- **Libvirt**: Network modes, VM firmware options, virtual disk concepts, snapshot mechanics — applicable to any QEMU/KVM setup
+- **Llama.cpp glossary**: GGUF, quantization, pp512/tg128, KV cache, mmap, context windows, model types — applicable to any llama.cpp instance
+- **Virtualization concepts**: IOMMU groups, VFIO, PCI passthrough — applicable across virtualization setups
+
+**Specific (in their respective domains):**
+- **Llama.cpp benchmarks**: Specific to each machine's hardware (GPU vs CPU, specific RAM/VRAM capacity)
+- **Llama.cpp GPU tuning**: `-ngl`, `-nkvo`, power profiles — specific to GPU-enabled systems
+- **Llama.cpp CPU build**: `-DGGML_NATIVE=ON`, core pinning — specific to CPU-only builds
+- **NAS-Backup**: AutoFS maps, rsync service for Documents — specific to one machine's backup workflow
+
+---
+
 ## 5. One Concrete Thing Per Bucket
 
 - Keep a bucket focused on one item, OS, service, or tool.

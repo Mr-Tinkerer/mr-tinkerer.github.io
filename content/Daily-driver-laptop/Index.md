@@ -7,7 +7,7 @@ tags:
 
 # Daily Driver Laptop
 
-This domain covers the daily-driver laptop (not the separate failed/broken Asus laptop documented elsewhere in this vault): its hardware, the Windows gaming VM set up on it with GPU passthrough, the libvirt setup that runs VMs, and how backup storage is consumed from the home NAS on it.
+This domain covers the daily-driver laptop (not the separate failed/broken Asus laptop documented elsewhere in this vault): its hardware, the Windows gaming VM set up on it with GPU passthrough, and how backup storage is consumed from the home NAS on it.
 
 At this point, there aren't enough Hardware entries (only one) alongside Software/Logical entries to trigger the Hardware/Software/Logical bucket split (§3) — buckets stay flat at the domain root.
 
@@ -37,23 +37,7 @@ A Windows 10 VM with GPU passthrough (VFIO), set up so playing games or running 
   - [[Windows-Gaming-VM/GPU-Passthrough/Pt 7, Automating-with-libvirt-hooks|Pt 7, Automating with libvirt hooks]]
 - [[Windows-Gaming-VM/Post-install-tweaks|Post-install tweaks]]
 
-# Libvirt
 
-The libvirt and QEMU/KVM setup that runs all VMs on this laptop: network modes, firmware and chipset options, the host firewall interaction, virtual disk settings, VirtIO SCSI and SPICE display troubleshooting, external snapshots and their recovery, and converting VMware VMs to libvirt.
-
-- [[Libvirt/Libvirt-glossary|Glossary]]
-- [[Libvirt/Libvirt-Information|Libvirt information]]
-- [[Libvirt/Libvirt-networking-and-firewall|Libvirt networking and firewall]]
-- [[Libvirt/Virtual-disks-reference|Virtual disks reference]]
-- [[Libvirt/Scsi-drive-troubleshooting|SCSI drive troubleshooting]]
-- [[Libvirt/Spice-auto-resize-fix|SPICE auto-resize fix]]
-- [[Libvirt/Libvirt-external-snapshots|External snapshots]]
-- [[Libvirt/Libvirt-external-snapshot-recovery|External snapshot recovery]]
-- VMware-migration (sequential workflow):
-  - [[Libvirt/VMware-migration/Pt 1, Inventorying-the-VMware-source|Pt 1, Inventorying the VMware source]]
-  - [[Libvirt/VMware-migration/Pt 2, Converting-vmdk-to-qcow2|Pt 2, Converting VMDK to QCOW2]]
-  - [[Libvirt/VMware-migration/Pt 3, Importing-the-disk-into-libvirt|Pt 3, Importing the disk into libvirt]]
-  - [[Libvirt/VMware-migration/Pt 4, Importing-vmware-snapshots-into-libvirt|Pt 4, Importing VMware snapshots into libvirt]]
 
 # NAS-Backup
 

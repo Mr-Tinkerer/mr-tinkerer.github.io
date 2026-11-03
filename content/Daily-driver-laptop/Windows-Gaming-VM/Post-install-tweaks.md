@@ -44,7 +44,7 @@ The VM's vCPUs are pinned to specific host cores so it has full, exclusive contr
 ## Faster drives
 
 - The drive's **Discard mode** is set to `unmap` for SSD TRIM support — see [[Virtual-disks-reference#7. Discard / TRIM|the virtual disks reference]] for why this matters and its caveats.
-- The drive's bus type is set to **VirtIO** for better performance over SATA/IDE. This requires the [[Libvirt-glossary#VirtIO drivers|VirtIO drivers]] to be installed in the Windows guest before the drive is detected, plus the VirtIO Serial Controller hardware added to the VM. Installing from the VirtIO ISO during Windows setup only gets the SCSI driver in; the rest still needs installing from inside the already-installed OS.
+- The drive's bus type is set to **VirtIO** for better performance over SATA/IDE. This requires the [[Generic-Info/Libvirt/Libvirt-glossary#VirtIO drivers|VirtIO drivers]] to be installed in the Windows guest before the drive is detected, plus the VirtIO Serial Controller hardware added to the VM. Installing from the VirtIO ISO during Windows setup only gets the SCSI driver in; the rest still needs installing from inside the already-installed OS.
 
 ## Looking Glass port and hotkey
 

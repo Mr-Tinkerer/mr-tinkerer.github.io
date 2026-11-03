@@ -9,7 +9,7 @@ tags:
 
 This page documents terms used across the Llama.cpp bucket.
 
-GPU-offload and power-profile terms specific to running llama.cpp on the Gigabyte laptop live in the laptop's own glossary instead of here, since they don't apply to this VM's CPU-only setup — link there rather than duplicating.
+GPU-offload and power-profile terms specific to running llama.cpp on the Gigabyte laptop live in [[Daily-driver-laptop/Llama.cpp/Llama-cpp-glossary|the laptop's glossary]], since they don't apply to this VM's CPU-only setup. Core Llama.cpp terminology shared across all instances is defined in [[Generic-Info/Llama.cpp/Llama-cpp-glossary|the canonical Llama.cpp glossary]] — link there for shared terms rather than duplicating.
 
 ## llama.cpp
 

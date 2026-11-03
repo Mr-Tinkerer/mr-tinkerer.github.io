@@ -7,7 +7,7 @@ tags:
   - glossary
 ---
 
-Terms that are specific to running llama.cpp with GPU acceleration on this laptop. General llama.cpp/LLM vocabulary that also applies to the CPU-only Local-AI-VM setup (GGUF, quantization, context window, KV cache, pp512/tg128, etc.) is defined once in [[Homelab/Platform/Local-AI-VM/Llama.cpp/Llama-cpp-glossary|the canonical Llama.cpp glossary]] — link there instead of redefining it here.
+Terms that are specific to running llama.cpp with GPU acceleration on this laptop (GPU offload, VRAM management, power profiles). General llama.cpp/LLM vocabulary that applies across all Llama.cpp instances is defined once in [[Generic-Info/Llama.cpp/Llama-cpp-glossary|the canonical Llama.cpp glossary]] — link there instead of redefining it here.
 
 ---
 

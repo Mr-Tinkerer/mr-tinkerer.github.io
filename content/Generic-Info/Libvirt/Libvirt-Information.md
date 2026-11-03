@@ -31,4 +31,4 @@ tags:
 |**Q35**|`pc-q35-*`|Newer Intel Q35 chipset model|✅|Modern VMs
 
 # Libvirt Snapshots
-[[Libvirt-external-snapshots]]
+[[Libvirt/Libvirt-external-snapshots]]

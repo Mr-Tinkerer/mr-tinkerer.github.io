@@ -25,4 +25,4 @@ The Windows Server 2022 VM was given 4GB RAM and 32GB storage instead of the sha
 ## Related Documentation
 
 - [[Homelab/Logical/Virtual-machines/Vm-allocation|VM allocation]] — The resulting roster of VMs, what each one runs, and why
-- [[Libvirt-glossary/Virtual-disks-reference|Virtual disks reference]] — QEMU/libvirt virtual disk concepts (image formats, thin-provisioning, disk expansion) that apply here too, since Proxmox VMs are QEMU-backed under the hood
+- [[Generic-Info/Libvirt/Libvirt-glossary/Virtual-disks-reference|Virtual disks reference]] — QEMU/libvirt virtual disk concepts (image formats, thin-provisioning, disk expansion) that apply here too, since Proxmox VMs are QEMU-backed under the hood

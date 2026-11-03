@@ -10,7 +10,7 @@ tags:
 
 # libvirt external snapshot recovery
 
-This page covers a failed revert of a live [[Libvirt-glossary#External snapshot|external snapshot]]. It restores the disk state without the memory state, removes the leftover snapshot records, and flattens the result. For how the layers map to disk states, read [[Libvirt-external-snapshots]] first.
+This page covers a failed revert of a live [[Libvirt/Libvirt-glossary#External snapshot|external snapshot]]. It restores the disk state without the memory state, removes the leftover snapshot records, and flattens the result. For how the layers map to disk states, read [[Libvirt/Libvirt-external-snapshots]] first.
 
 Placeholders:
 
@@ -24,7 +24,7 @@ Commands use `sudo` when the VM lives in the system libvirt instance.
 
 ## Symptoms and cause
 
-Reverting in [[Libvirt-glossary#Virt Manager|Virt Manager]] or with `virsh snapshot-revert` fails with an error like this:
+Reverting in [[Libvirt/Libvirt-glossary#Virt Manager|Virt Manager]] or with `virsh snapshot-revert` fails with an error like this:
 
 ```text
 operation failed: job 'snapshot' failed: load of migration failed: Invalid argument:
@@ -33,7 +33,7 @@ Loading VM subsection 'vhost-user-fs-backend' in 'vhost-user-fs' failed:
 Failed to load element of type virtio-fs back-end state for back-end
 ```
 
-The snapshot was taken while the VM was running, so it includes a RAM and device-state file named `<vm>-mem.<snap>`. That state includes the [[Libvirt-glossary#virtiofs|virtiofs]] backend, which QEMU generally cannot reload. The disk data is fine. Only the RAM state is unrestorable.
+The snapshot was taken while the VM was running, so it includes a RAM and device-state file named `<vm>-mem.<snap>`. That state includes the [[Libvirt/Libvirt-glossary#virtiofs|virtiofs]] backend, which QEMU generally cannot reload. The disk data is fine. Only the RAM state is unrestorable.
 
 The workaround costs the running state: open programs and in-memory data. The guest boots as if power was cut, which NTFS, ext4, and xfs normally handle.
 
@@ -75,7 +75,7 @@ The glob is adjusted to catch every image file for the VM, including `-mem` file
 
 ## Restore the disk state without memory
 
-1. **Create a fresh [[Libvirt-glossary#Overlay|overlay]] on the frozen file.** The frozen backing file never boots directly.
+1. **Create a fresh [[Libvirt/Libvirt-glossary#Overlay|overlay]] on the frozen file.** The frozen backing file never boots directly.
    ```bash
    cd "<dir>"
    qemu-img create -f qcow2 \
@@ -113,7 +113,7 @@ virsh snapshot-list <vm>            # should be empty
 
 ## Flatten to a single image
 
-[[Libvirt-glossary#Flattening|Flattening]] removes every dependency on the old overlays. It is recommended after a recovery.
+[[Libvirt/Libvirt-glossary#Flattening|Flattening]] removes every dependency on the old overlays. It is recommended after a recovery.
 
 1. Shut the VM down completely.
 2. Verify the chain about to be flattened:
