@@ -17,7 +17,7 @@ The Personal-VM provides a dedicated openSUSE-based platform for personal comput
 
 ## Guest OS
 
-The VM runs openSUSE as its guest operating system, configured with appropriate resource allocation for desktop workloads. See [[Homelab/Platform/Personal-VM/Opensuse|openSUSE]] for OS-level details, including system configuration and troubleshooting.
+The VM runs openSUSE as its guest operating system, configured with appropriate resource allocation for desktop workloads. See [[Homelab/Platform/Personal-VM/Opensuse|openSUSE]] for OS-level details, including system configuration, troubleshooting, and [[Homelab/Platform/Personal-VM/Opensuse/Growing-disk-on-openSUSE-Leap|disk growth guide]].
 
 ## Hosted Services
 
