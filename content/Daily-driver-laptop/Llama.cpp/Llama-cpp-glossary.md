@@ -34,3 +34,35 @@ Linux's `power-profiles-daemon`, controlled via `powerprofilesctl set <performan
 ## CUDA backend (`libggml-cuda.so`)
 
 The GPU compute backend llama.cpp loads when a CUDA-capable NVIDIA GPU is detected, alongside the CPU backend (`libggml-cpu-alderlake.so` on this laptop's Alder Lake-based i7-13620H). Note that `llama-bench`'s `backend` column reports `CUDA` as soon as this backend is loaded, even at `-ngl 0` where no actual compute happens on the GPU — it reflects what loaded, not what's doing the work. Verify actual GPU utilization independently (e.g. `btop`) when it matters.
+
+## mmproj / `--mmproj`
+
+A multimodal projector file required for vision models to accept images. llama.cpp's router only treats a model as multimodal when the model lives in a subfolder containing the model `.gguf` and a second file whose name starts with `mmproj`. The projector must match the model weights; a mismatched projector fails to load or produces garbage output. See [[Local AI Model Presets and Context Tuning (Laptop)#Vision Projectors|the vision projector section]] for the specific projectors used on this laptop.
+
+## Context Tiers
+
+Per-model context size configurations organized into three tiers: Small (1/3 of maximum), Medium (2/3 of maximum), and Max (full usable value). The Max tier keeps the KV cache in VRAM for optimal performance, while smaller tiers allow more headroom for a second model when using `--models-max 2`. See [[Local AI Model Presets and Context Tuning (Laptop)#Context Tiers|the context tiers table]] for the specific values used on this laptop.
+
+### Context Tier Examples
+
+| Model | Binding limit | Small | Medium | Max |
+|---|---|---:|---:|---:|
+| Gemma 3 1B | Trained context (32K) | 10,922 | 21,845 | 32,768 |
+| Qwen3.5-4B (both modes) | VRAM | 60,074 | 120,149 | 180,224 |
+| Qwen3.5-9B (both modes) | VRAM | 24,917 | 49,834 | 74,752 |
+| Qwen3.5-9B Uncensored (both modes) | VRAM | 25,770 | 51,541 | 77,312 |
+| Gemma 4 E4B (both modes) | Trained context (128K) | 43,690 | 87,381 | 131,072 |
+
+## KV Cache
+
+The key-value cache used during autoregressive generation. By default it sits in VRAM next to the model weights, so a large context competes with the model for the same memory. When the cache does not fit, the system either offloads fewer layers to GPU (with fit enabled), fails to load, or moves the cache to system RAM using `--no-kv-offload`. The Max context tiers keep the cache in VRAM, while smaller tiers allow the cache to spill to CPU RAM when a second model is loaded.
+
+### KV Cache Performance Impact
+
+Moving a full KV cache from VRAM to system RAM is expensive. Benchmarks on this laptop show:
+
+- **Gemma 4 E4B:** 18x generation slowdown (32.4 t/s in VRAM → 1.9 t/s in RAM)
+- **Qwen3.5-9B:** 6.2x generation slowdown (34.8 t/s in VRAM → 5.6 t/s in RAM)
+- **Qwen3.5-4B:** 10x generation slowdown (27.9 t/s in VRAM → 2.8 t/s in RAM)
+
+This is why the Max context tiers keep `no-kv-offload` off. See [[Local AI Model Presets and Context Tuning (Laptop)#VRAM versus RAM Cache Benchmark|the VRAM versus RAM benchmark]] for full results.

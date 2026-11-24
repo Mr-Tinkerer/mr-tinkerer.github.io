@@ -1,6 +1,6 @@
 ---
 title: Llama.cpp Benchmarks (Gigabyte Laptop, RTX 5060)
-description: GPU-offload throughput, power-profile, and -nkvo/context sweeps for llama.cpp on the Gigabyte GAMING A16.
+description: GPU-offload throughput, power-profile, and -nkvo/context sweeps for llama.cpp on the Gigabyte GAMING A16, including new context tier measurements.
 tags:
   - llama.cpp
   - gigabyte-gaming-a16
@@ -31,6 +31,46 @@ Max-safe-`-c` figures here are VRAM-driven ceilings (8GB card), not directly com
 - Power profile in effect during this sweep wasn't recorded — given the [[Power-profiles-and-gpu-performance|power-profile finding]], confirm/record it and ideally re-run under the laptop's chosen standard profile.
 - `-fa`/flash-attention state during this run wasn't recorded.
 - Compare against the [[Homelab/Platform/Local-AI-VM/Llama.cpp/Benchmarks|Local-AI-VM CPU baselines]] once profile/flash-attention state is confirmed, to quantify GPU speedup per model.
+
+---
+
+## New context tier measurements
+
+Rather than guess context sizes, the largest context that stays fully in VRAM was measured per preset. Each model has three context tiers: Small (1/3 of maximum), Medium (2/3 of maximum), and Max (full usable value). The Max tier keeps the KV cache in VRAM for optimal performance, while smaller tiers allow more headroom for a second model when using `--models-max 2`.
+
+### Maximum context in VRAM
+
+| Model | Configured before | Max context in VRAM | Trials |
+|---|---|---|---|
+| Gemma 3 1B | 16,384 | 262,144 | 10 |
+| Qwen3.5-4B (and thinking) | 32,768 / 131,072 | 180,224 | 18 |
+| Qwen3.5-9B (and thinking) | 32,768 / 65,536 | 74,752 | 16 |
+| Qwen3.5-9B Uncensored (and thinking) | 32,768 / 65,536 | 77,312 | 16 |
+| Gemma 4 E4B | 65,536 | 185,344 | 18 |
+| Gemma 4 E4B Uncensored | 65,536 | 185,856 | 18 |
+
+### Context tiers
+
+Each tier is rounded down: Small = 1/3, Medium = 2/3, Max = the full usable value.
+
+| Model | Binding limit | Small | Medium | Max |
+|---|---|---:|---:|---:|
+| Gemma 3 1B | Trained context (32K) | 10,922 | 21,845 | 32,768 |
+| Qwen3.5-4B (both modes) | VRAM | 60,074 | 120,149 | 180,224 |
+| Qwen3.5-9B (both modes) | VRAM | 24,917 | 49,834 | 74,752 |
+| Qwen3.5-9B Uncensored (both modes) | VRAM | 25,770 | 51,541 | 77,312 |
+| Gemma 4 E4B (both modes) | Trained context (128K) | 43,690 | 87,381 | 131,072 |
+
+The idea is that the Max tier is a good default for most use, and the smaller tiers exist for when VRAM is needed by a second model.
+
+### Capping at trained context
+
+Two models fit more context in VRAM than they were trained to handle:
+
+- **Gemma 3 1B:** measured 262,144 in VRAM, but the [Gemma 3 model card](https://ai.google.dev/gemma/docs/core/model_card_3) lists 32K tokens for the 1B size.
+- **Gemma 4 E4B (and its uncensored fine-tune):** measured about 185K in VRAM, but the [Gemma 4 model card](https://ai.google.dev/gemma/docs/core/model_card_4) lists 128K tokens for E2B and E4B.
+
+Their Max tiers use the trained size (32,768 and 131,072), and the Small and Medium tiers were recalculated from that. The Qwen3.5 maxima (180,224 for the 4B, 74,752 and 77,312 for the 9B models) are below Qwen3.5's native context, which is understood to be 262,144 but was not re-verified here. `n_ctx_train` in each model's load log shows what llama.cpp itself reads from the file.
 
 ---
 
@@ -125,3 +165,4 @@ Even with most of a larger (14B) model sitting in VRAM, generation speed lands m
 - The usual `load_tensors: offloaded X/Y layers to GPU` log line wasn't visible in this run's output — re-run with output piped to a log file (or a verbose flag) to capture the exact split.
 - Re-run with explicit `-ngl` values around what auto-offload chose, to see how sensitive throughput is to exact layer count at this model size.
 - Test without `-nkvo` at the same `-c`, now that the sweep above shows it isn't a universal win at small-to-mid context.
+

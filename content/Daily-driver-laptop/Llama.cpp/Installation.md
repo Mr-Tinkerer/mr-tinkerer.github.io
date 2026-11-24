@@ -1,6 +1,6 @@
 ---
 title: Llama.cpp Installation on Gigabyte Gaming A16
-description: Installing llama.cpp with CUDA support via CachyOS/Arch packages and GPU offload tuning.
+description: Installing llama.cpp with CUDA support via CachyOS/Arch packages, GPU offload tuning, and model cleanup.
 tags:
   - llama.cpp
   - gigabyte-gaming-a16
@@ -10,6 +10,48 @@ tags:
 ## Overview
 
 This page documents llama.cpp installation on the Gigabyte Gaming A16 laptop, using prebuilt CachyOS/Arch packages with CUDA backend support.
+
+## Model Cleanup
+
+The model library was reduced from about 20 files to 12 (9 usable models plus their vision projectors).
+
+### Kept Models
+
+| Model | Role |
+|---|---|
+| Qwen3.5-9B Q4_K_M (+ mmproj) | Main general model, wiki jobs |
+| Qwen3.5-9B Uncensored, HauhauCS Aggressive Q4_K_M | Uncensored general model |
+| Qwen3.5-4B Q4_K_M (+ mmproj) | Smaller general model, LightRAG logic role |
+| Gemma 4 E4B (plain, + mmproj) | Characters and general chat |
+| Gemma 4 E4B Uncensored, TrevorJS Q4_K_M | Uncensored characters |
+| Gemma 3 1B | Open WebUI background tasks (titles, tags, follow-ups) |
+| Qwen2.5-VL-3B-Instruct (+ mmproj) | LightRAG vision role |
+| Qwen3-Embedding-0.6B f16 | LightRAG embeddings |
+
+### Removed Models and Reasons
+
+| Model | Reason |
+|---|---|
+| Mistral-7B-Instruct v0.3 | Old and outclassed by the Qwen3.5 and Gemma 4 models |
+| Gemma 3 12B | Failed to load fully onto the GPU with -ngl 999; it had only been kept to test how context-heavy the Hermes agent was |
+| Qwen3-14B | Same failure to fit on the GPU |
+| Qwen3-Embedding 4B and 8B | Different embedding dimension from the existing LightRAG index (1024), so unusable without re-indexing |
+| Phi-4-mini-reasoning, DeepSeek-R1-Distill-Llama-8B | Never used; Qwen3.5 with thinking on covers the same ground |
+| Gemma 3 4B | Kept originally because Gemma 4 E4B was a thinking model; once thinking could be turned off per preset it was redundant |
+| Qwen3-8B abliterated, Qwen3.5-4B Uncensored (HauhauCS) | Replaced by the Qwen3.5-9B Uncensored and Gemma 4 E4B Uncensored |
+| Llama 3.1 8B, Ministral-3 8B | Unused and overlapping with the Qwen3.5 / Gemma 4 models. Llama 3.1 8B's benchmark numbers remain in the OptiPlex log |
+| Underdog-Saluki 27B IQ2-mix | Too large for the GPU at 2-bit, so it would run mostly on CPU with heavy quality loss |
+
+### Uncensored Models
+
+Newer uncensored releases were searched for. The decision was to replace the old Qwen3.5-4B uncensored model with the 9B version from the same author, and to add a Gemma 4 E4B uncensored model for character use.
+
+- HauhauCS Qwen3.5-9B Aggressive: [Hugging Face](https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive). A third-party comparison reported little capability loss relative to the base model.
+- TrevorJS Gemma 4 E4B uncensored: [Hugging Face](https://huggingface.co/TrevorJS/gemma-4-E4B-it-uncensored-GGUF), with the method described in [gemma-4-abliteration](https://github.com/TrevorS/gemma-4-abliteration). It reported a very low refusal rate with small drift from the original.
+
+Neither was compared head-to-head against the base models on this hardware.
+
+---
 
 ## Installation
 
